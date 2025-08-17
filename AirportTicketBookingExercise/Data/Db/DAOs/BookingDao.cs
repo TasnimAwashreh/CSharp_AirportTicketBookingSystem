@@ -1,0 +1,105 @@
+﻿using System.Collections.Generic;
+using Microsoft.Data.Sqlite;
+using ATB.Data.Models;
+using ATB.Logic.Enums;
+
+namespace AirportTicketBookingExercise.Data.Db.DAOs
+{
+    public class BookingDAO
+    {
+        private readonly string _connectionString;
+
+        public BookingDAO(string connectionString)
+        {
+            _connectionString = connectionString;
+        }
+
+        public void CreateBooking(Booking booking)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "INSERT INTO Booking (FlightId, PassengerId, BookingClass) VALUES ($flight, $passenger, $class)";
+            cmd.Parameters.AddWithValue("$flight", booking.FlightId);
+            cmd.Parameters.AddWithValue("$passenger", booking.PassengerId);
+            cmd.Parameters.AddWithValue("$class", booking.BookingClass.ToString());
+            cmd.ExecuteNonQuery();
+        }
+
+        public List<Booking> GetAllBookings()
+        {
+            var list = new List<Booking>();
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM Booking";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(MapBooking(reader));
+            }
+            return list;
+        }
+
+        public List<Booking> GetBookingsByUserId(int passengerId)
+        {
+            var list = new List<Booking>();
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM Booking WHERE PassengerId = $userId";
+            cmd.Parameters.AddWithValue("$userId", passengerId);
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                list.Add(MapBooking(reader));
+            }
+            return list;
+        }
+
+        public bool ValidateBooking(int bookingId, int passengerId)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT 1 FROM Booking WHERE BookingId = $bookingId AND PassengerId = $passengerId";
+            cmd.Parameters.AddWithValue("$bookingId", bookingId);
+            cmd.Parameters.AddWithValue("$passengerId", passengerId);
+            using var reader = cmd.ExecuteReader();
+            return reader.Read();
+        }
+
+        public void UpdateBookingClass(int bookingId, string newClass)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "UPDATE Booking SET BookingClass = $class WHERE BookingId = $id";
+            cmd.Parameters.AddWithValue("$class", newClass);
+            cmd.Parameters.AddWithValue("$id", bookingId);
+            cmd.ExecuteNonQuery();
+        }
+
+        public bool DeleteBookingById(int bookingId)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "DELETE FROM Booking WHERE BookingId = $bookingId";
+            cmd.Parameters.AddWithValue("$bookingId", bookingId);
+            return cmd.ExecuteNonQuery() > 0;
+        }
+
+
+        private Booking MapBooking(SqliteDataReader reader)
+        {
+            return new Booking
+            {
+                BookingId = reader.GetInt32(0),
+                FlightId = reader.GetInt32(1),
+                PassengerId = reader.GetInt32(2),
+                BookingClass = BookingClasses.strToBookingClass(reader.GetString(3))
+            };
+        }
+    }
+}

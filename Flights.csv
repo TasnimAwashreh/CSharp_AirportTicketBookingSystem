@@ -1,0 +1,4 @@
+FlightId (Integer),FlightName (String),DepartureCountry (String),DestinationCountry (String),DepartureDate (DateTime),DepartureAirport (String),ArrivalAirport (String),EconomyPrice (Decimal),BusinessPrice (Decimal),FirstClassPrice (Decimal),SeatCapacity (Integer)
+1,KLM,Netherlands,Jordan,14/08/25,Amsterdam Schiphol International Airport,Queen Alia International Airport,300,800,1200,340
+2,AirFrance,France,Netherlands,15/08/25,Paris-Charles de Gaulle Airport,Amsterdam Schiphol International Airport,100,350,740,120
+3,American Airlines,USA,France,25/08/25,Orlando International Airport,Paris-Charles de Gaulle Airport,1500,2100,2900,200

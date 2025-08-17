@@ -1,0 +1,14 @@
+﻿using ATB.Data.Models;
+
+namespace ATB.Logic.Service
+{
+    public interface IFlightService
+    {
+        void AddPassengerToSeat(Flight flight);
+        Flight? GetFlightById(int flightid);
+        List<Flight> GetFlights();
+        bool ImportFlightData();
+        void RemovePassengerToSeat(Flight flight);
+        string ValidateFlightData();
+    }
+}
