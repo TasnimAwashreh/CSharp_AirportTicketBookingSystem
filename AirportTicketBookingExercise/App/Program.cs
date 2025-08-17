@@ -12,14 +12,11 @@ using Microsoft.Extensions.DependencyInjection;
 class Program
 {
 
-
-
     public static void startLoop(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
         databaseManager.CreateDatabase();
-
         var manager = scope.ServiceProvider.GetRequiredService<BookingManager>();
 
 
@@ -50,7 +47,6 @@ class Program
     public static void Main(string[] args)
     {
         var serviceCollection = new ServiceCollection();
-
         serviceCollection
             .AddDaos()
             .AddRepositories()
@@ -59,22 +55,14 @@ class Program
             .AddManager();
 
         Console.WriteLine(introduction());
-
         var serviceProvider = serviceCollection.BuildServiceProvider();
-       
-
         startLoop(serviceProvider);
-        
     }
 
-    private static void processInput(BookingManager manager, string managerInput, ManagerCommandHnadler managerCommandHnadler)
+    private static void processInput(BookingManager manager, string managerInput, ManagerCommandHandler managerCommandHnadler)
     {
-
         string[] productInfo = managerInput.Split(' ');
         ManagerCommand command = ManagerCommands.GetManagerCommand(productInfo[0]);
-
         managerCommandHnadler.executeManagerCommand(productInfo, command);
-
-
     }
 }

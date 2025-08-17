@@ -16,7 +16,6 @@ namespace AirportTicketBookingExercise.Extensions
 
             const string DbFile = "bookingDb.db";
             string connectionString = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", DbFile);
-            Console.WriteLine($"SQLite DB Path: {Path.GetFullPath(connectionString)}");
 
             services
                     .AddSingleton<UserDAO>(_ => new UserDAO(connectionString))
@@ -43,7 +42,6 @@ namespace AirportTicketBookingExercise.Extensions
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IFlightService, FlightService>()
                 .AddScoped<IBookingService, BookingService>();
-
             return services;
         }
 
@@ -51,11 +49,10 @@ namespace AirportTicketBookingExercise.Extensions
         {
             services
                 .AddScoped<PassengerCommandHandler>()
-                .AddScoped<ManagerCommandHnadler>();
+                .AddScoped<ManagerCommandHandler>();
 
             return services;
         }
-
         public static IServiceCollection AddManager(this IServiceCollection services)
         {
             services.AddScoped<BookingManager>();

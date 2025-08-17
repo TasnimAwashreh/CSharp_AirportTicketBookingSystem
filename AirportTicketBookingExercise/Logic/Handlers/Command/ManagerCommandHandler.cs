@@ -7,7 +7,7 @@ using ATB.Logic.Service;
 
 namespace AirportTicketBookingExercise.Logic.Handlers.Command
 {
-    public class ManagerCommandHnadler
+    public class ManagerCommandHandler
     {
        
         private readonly IFlightService _flightService;
@@ -15,7 +15,7 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
         private readonly IBookingService _bookingService;
         private User? loggedInUser;
 
-        public ManagerCommandHnadler(IFlightService flightService,IUserService userService, IBookingService bookingService)
+        public ManagerCommandHandler(IFlightService flightService,IUserService userService, IBookingService bookingService)
         {
             _flightService = flightService;
             _userService = userService;

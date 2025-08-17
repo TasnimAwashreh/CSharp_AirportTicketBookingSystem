@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Reflection;
 using System.Text;
 using AirportTicketBookingExercise.Data.Repository;
@@ -47,7 +48,11 @@ namespace ATB.Data.Repository
             var attributes = property.GetCustomAttributes(typeof(ValidationAttribute), true);
             try
             {
-                T value = parseValue(fieldInput);
+                T value;
+                if (typeof(T) == typeof(DateTime))
+                    DateTime.ParseExact(fieldInput, "dd/MM/yy", CultureInfo.InvariantCulture);
+                else
+                    value = parseValue(fieldInput);
                 foreach (ValidationAttribute attr in attributes)
                 {
                     if (!attr.IsValid(fieldInput))
@@ -67,19 +72,16 @@ namespace ATB.Data.Repository
                 csvParser.SetDelimiters(new string[] { "," });
                 csvParser.HasFieldsEnclosedInQuotes = true;
                 csvParser.ReadLine();
-
                 StringBuilder strBuilder = new StringBuilder("");
                 int rowCount = 1;
                 while (!csvParser.EndOfData)
                 {
                     string[] fields = csvParser.ReadFields();
-
-
                     validateField("FlightId", fields[0], int.Parse, strBuilder, rowCount);
                     validateField("FlightName", fields[1], x => x, strBuilder, rowCount);
                     validateField("DepartureCountry", fields[2], x => x, strBuilder, rowCount);
                     validateField("DestinationCountry", fields[3], x => x, strBuilder, rowCount);
-                    //validateField("DepartureDate", fields[4], DateTime.Parse, strBuilder, rowCount);
+                    validateField("DepartureDate", fields[4], DateTime.Parse, strBuilder, rowCount);
                     validateField("DepartureAirport", fields[5], x => x, strBuilder, rowCount);
                     validateField("ArrivalAirport", fields[6], x => x, strBuilder, rowCount);
                     validateField("EconomyPrice", fields[7], Decimal.Parse, strBuilder, rowCount);
@@ -101,20 +103,18 @@ namespace ATB.Data.Repository
                 csvParser.SetDelimiters(new string[] { "," });
                 csvParser.HasFieldsEnclosedInQuotes = true;
                 csvParser.ReadLine();
-
                 try
                 {
                     while (!csvParser.EndOfData)
                     {
                         string[] fields = csvParser.ReadFields();
-
                         Flight flight = new Flight
                         {
                             FlightId = int.Parse(fields[0]),
                             FlightName = fields[1],
                             DepartureCountry = fields[2],
                             DestinationCountry = fields[3],
-                            //DepartureDate = fields[4],
+                            DepartureDate = DateTime.ParseExact(fields[4], "dd/MM/yy", CultureInfo.InvariantCulture),
                             DepartureAirport = fields[5],
                             ArrivalAirport = fields[6],
                             EconomyPrice = Decimal.Parse(fields[7]),

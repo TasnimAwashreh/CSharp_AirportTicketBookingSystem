@@ -8,14 +8,11 @@ namespace ATB.Logic
     {
 
         private PassengerCommandHandler _passengerCommandHandler;
-        private ManagerCommandHnadler _managerCommandHnadler;
-
-
+        private ManagerCommandHandler _managerCommandHnadler;
 
         public BookingManager(
-            ManagerCommandHnadler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
+            ManagerCommandHandler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
         {
-
             _passengerCommandHandler = passengerCommandHandler;
             _managerCommandHnadler = managerCommndHandler;
         }
@@ -23,10 +20,8 @@ namespace ATB.Logic
         public void processInput(string input)
         {
             var line = CommandParser.ParseCommand(input);
-
             ManagerCommand managerCommand = ManagerCommands.GetManagerCommand(line[0]);
             PassengerCommand passengerCommand = PassengerCommands.GetPassengerCommand(line[0]);
-
             if (passengerCommand != PassengerCommand.none)
                 _passengerCommandHandler.ExecutePassengerCommand(line, passengerCommand);
             else if (managerCommand != ManagerCommand.none)

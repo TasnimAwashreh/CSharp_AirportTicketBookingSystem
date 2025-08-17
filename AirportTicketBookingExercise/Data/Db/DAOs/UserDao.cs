@@ -88,7 +88,6 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             return users;
         }
 
-
         private User MapUser(SqliteDataReader reader)
         {
             return new User

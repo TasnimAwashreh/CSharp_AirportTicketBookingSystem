@@ -24,6 +24,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             cmd.Parameters.AddWithValue("$passenger", booking.PassengerId);
             cmd.Parameters.AddWithValue("$class", booking.BookingClass.ToString());
             cmd.ExecuteNonQuery();
+            conn.Close();
         }
 
         public List<Booking> GetAllBookings()
@@ -38,6 +39,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             {
                 list.Add(MapBooking(reader));
             }
+            conn.Close();
             return list;
         }
 
@@ -54,6 +56,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             {
                 list.Add(MapBooking(reader));
             }
+            conn.Close();
             return list;
         }
 
@@ -66,6 +69,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             cmd.Parameters.AddWithValue("$bookingId", bookingId);
             cmd.Parameters.AddWithValue("$passengerId", passengerId);
             using var reader = cmd.ExecuteReader();
+            conn.Close();
             return reader.Read();
         }
 
@@ -78,6 +82,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             cmd.Parameters.AddWithValue("$class", newClass);
             cmd.Parameters.AddWithValue("$id", bookingId);
             cmd.ExecuteNonQuery();
+            conn.Close();
         }
 
         public bool DeleteBookingById(int bookingId)
@@ -87,9 +92,10 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "DELETE FROM Booking WHERE BookingId = $bookingId";
             cmd.Parameters.AddWithValue("$bookingId", bookingId);
-            return cmd.ExecuteNonQuery() > 0;
+            bool res = cmd.ExecuteNonQuery() > 0;
+            conn.Close();
+            return res;
         }
-
 
         private Booking MapBooking(SqliteDataReader reader)
         {

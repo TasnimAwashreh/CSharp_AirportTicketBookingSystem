@@ -1,4 +1,5 @@
 ﻿
+using ATB.Data.Attributes;
 using System.ComponentModel.DataAnnotations;
 
 namespace ATB.Data.Models
@@ -33,7 +34,8 @@ namespace ATB.Data.Models
         [MinLength(3, ErrorMessage = "Arrival Airport must be longer than 3 characters")]
         public string ArrivalAirport { get; set; }
 
-        //[Required(ErrorMessage = "Depature Date is missing")]
+        [PresentAndFutureOnly]
+        [Required(ErrorMessage = "Depature Date is missing")]
         public DateTime? DepartureDate { get; set; }
 
         [Required(ErrorMessage = "Economy Seat Price is missing")]

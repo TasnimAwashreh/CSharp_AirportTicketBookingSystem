@@ -1,29 +1,37 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace ATB.Data.Attributes
 {
-    [AttributeUsage(AttributeTargets.Field, Inherited = false, AllowMultiple = false)]
-    public class PresentAndFutureOnlyAttribute : Attribute
+    [System.AttributeUsage(System.AttributeTargets.Field | System.AttributeTargets.Parameter | System.AttributeTargets.Property, AllowMultiple = false)]
+    public class PresentAndFutureOnlyAttribute : ValidationAttribute
     {
-        public bool IsValid(object value)
+        public PresentAndFutureOnlyAttribute()
         {
-            if (value is DateTime dt)
+            ErrorMessage = "Invalid date.";
+        }
+
+        public override bool IsValid(object? value)
+        {
+            try
             {
-                return dt >= DateTime.Now;
+                DateTime datetime = DateTime.ParseExact(value.ToString(), "dd/MM/yy", CultureInfo.InvariantCulture);
+                if (datetime == null)
+                    return false;
+                else if (datetime is DateTime date)
+                    return date.Date >= DateTime.Today;
+                else return false;
+            }
+            catch
+            {
+                return false;
             }
 
-            return false; 
         }
-
-        public string FormatErrorMessage(string name)
-        {
-            return $"{name} must be in the present or future.";
-        }
-
-
     }
 }

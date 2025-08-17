@@ -50,8 +50,6 @@ namespace AirportTicketBookingExercise.Logic.Enums
                 default:
                     return FilterParam.none;
             }
-
-
         }
         public static BookingFilter Parse(string[] parts)
         {
@@ -59,7 +57,7 @@ namespace AirportTicketBookingExercise.Logic.Enums
 
             foreach (var part in parts)
             {
-                var keyValue = part.Split('=', 2, StringSplitOptions.TrimEntries);
+                var keyValue = part.Split('=');
                 if (keyValue.Length != 2) continue;
 
                 var key = keyValue[0].Trim();

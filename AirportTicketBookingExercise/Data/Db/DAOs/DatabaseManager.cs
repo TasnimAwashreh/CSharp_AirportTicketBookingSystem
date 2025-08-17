@@ -13,8 +13,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
 
         public DatabaseManager(string connString)
         {
-
-        _connString = connString;
+            _connString = connString;
         }
         public void CreateDatabase()
         {
@@ -37,6 +36,7 @@ namespace AirportTicketBookingExercise.Data.Db.DAOs
                 using var cmd = conn.CreateCommand();
                 cmd.CommandText = createManagerTable;
                 cmd.ExecuteNonQuery();
+                conn.Close();
             }
         }
 

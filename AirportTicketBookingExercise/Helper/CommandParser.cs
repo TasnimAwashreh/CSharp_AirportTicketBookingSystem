@@ -8,7 +8,6 @@ namespace AirportTicketBookingExercise.Helper
 {
     public static  class CommandParser
     {
-
         public static string[] ParseCommand(string input)
         {
             string[] line = input.Split(' ');
