@@ -2,7 +2,6 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using AirportTicketBookingExercise.Data.Repository;
 using ATB.Data.Models;
 using Microsoft.VisualBasic.FileIO;
 
@@ -11,7 +10,8 @@ namespace ATB.Data.Repository
 {
     public class FlightRepository: IFlightRepository
     {
-        string path = $"C:/Users/TasnimAwashreh/Desktop/Learning/FTSBackendEngineerNotes/2_CSHARP/AirportTicketBookingExercise/Flights.csv";
+        const string csvFile = "Flights.csv";
+        string path = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
         private List<Flight> _flights;
 
         public FlightRepository()

@@ -1,12 +1,7 @@
 ﻿
-using AirportTicketBookingExercise.Data.Db.DAOs;
-using AirportTicketBookingExercise.Extensions;
-using AirportTicketBookingExercise.Logic.Handlers.Command;
-using ATB.Data.Repository;
+using ATB.Data.Db.DAOs;
+using ATB.Configuration;
 using ATB.Logic;
-using ATB.Logic.Enums;
-using ATB.Logic.Service;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
 class Program
@@ -17,7 +12,7 @@ class Program
         using var scope = serviceProvider.CreateScope();
         var databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
         databaseManager.CreateDatabase();
-        var manager = scope.ServiceProvider.GetRequiredService<BookingManager>();
+        var bookingManager = scope.ServiceProvider.GetRequiredService<BookingManager>();
 
 
         while (true)
@@ -27,7 +22,7 @@ class Program
             if (string.IsNullOrWhiteSpace(input))
                 Console.WriteLine("Empty input: Please try again");
             else
-                manager.processInput(input);
+                bookingManager.processInput(input);
         }
     }
 
@@ -57,12 +52,5 @@ class Program
         Console.WriteLine(introduction());
         var serviceProvider = serviceCollection.BuildServiceProvider();
         startLoop(serviceProvider);
-    }
-
-    private static void processInput(BookingManager manager, string managerInput, ManagerCommandHandler managerCommandHnadler)
-    {
-        string[] productInfo = managerInput.Split(' ');
-        ManagerCommand command = ManagerCommands.GetManagerCommand(productInfo[0]);
-        managerCommandHnadler.executeManagerCommand(productInfo, command);
     }
 }

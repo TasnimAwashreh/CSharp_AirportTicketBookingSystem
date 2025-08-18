@@ -1,11 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AirportTicketBookingExercise.Data.Db.DAOs
+namespace ATB.Data.Db.DAOs
 {
     public class DatabaseManager
     {

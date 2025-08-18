@@ -1,10 +1,4 @@
-﻿using ATB.Logic.Enums;
-using ATB.Logic.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿
 
 namespace ATB.Logic.Enums
 {
@@ -21,14 +15,10 @@ namespace ATB.Logic.Enums
         {
             switch (bookingClass.ToLower())
             {
-                case "first":
-                    return BookingClass.first;
-                case "business":
-                    return BookingClass.business;
-                case "economy":
-                    return BookingClass.economy;
-                default:
-                    return BookingClass.none;
+                case "first": return BookingClass.first;
+                case "business": return BookingClass.business;
+                case "economy": return BookingClass.economy;
+                default: return BookingClass.none;
             }
         }
     }

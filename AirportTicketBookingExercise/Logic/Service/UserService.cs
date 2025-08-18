@@ -1,12 +1,7 @@
-﻿using AirportTicketBookingExercise.Data.Repository;
+﻿using ATB.Data.Repository;
 using ATB.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AirportTicketBookingExercise.Logic.Service
+namespace ATB.Logic.Service
 {
     public class UserService : IUserService
     {

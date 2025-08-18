@@ -1,4 +1,4 @@
-﻿using AirportTicketBookingExercise.Data;
+﻿using ATB.Data;
 using ATB.Data.Models;
 
 namespace ATB.Logic.Service

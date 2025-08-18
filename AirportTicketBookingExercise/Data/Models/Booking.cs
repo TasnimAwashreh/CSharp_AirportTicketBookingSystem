@@ -1,10 +1,4 @@
 ﻿using ATB.Logic.Enums;
-using ATB.Data.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ATB.Data.Models
 {
@@ -17,7 +11,7 @@ namespace ATB.Data.Models
 
         public string ToString()
         {
-            return $"Flight Id: {this.FlightId}, Class: {this.BookingClass}";
+            return $"{BookingId}| Flight Id: {this.FlightId}, Class: {this.BookingClass}";
         }
 
     }

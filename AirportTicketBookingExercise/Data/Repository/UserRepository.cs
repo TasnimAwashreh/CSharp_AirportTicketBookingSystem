@@ -1,8 +1,8 @@
-﻿using AirportTicketBookingExercise.Data.Db.DAOs;
+﻿using ATB.Data.Db.DAOs;
 using ATB.Data.Models;
 
 
-namespace AirportTicketBookingExercise.Data.Repository
+namespace ATB.Data.Repository
 {
     public class UserRepository : IUserRepository
     {

@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingExercise.Data.Db.DAOs;
-using AirportTicketBookingExercise.Data.Repository;
+﻿using ATB.Data.Db.DAOs;
 using ATB.Data.Models;
 
 namespace ATB.Data.Repository

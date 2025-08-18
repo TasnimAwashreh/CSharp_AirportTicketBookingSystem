@@ -1,6 +1,6 @@
 ﻿using ATB.Data.Models;
 
-namespace AirportTicketBookingExercise.Data.Repository
+namespace ATB.Data.Repository
 {
     public interface IFlightRepository
     {

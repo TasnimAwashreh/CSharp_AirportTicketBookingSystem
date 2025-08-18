@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Xml.Serialization;
-using AirportTicketBookingExercise.Data.Repository;
+﻿
+using ATB.Data.Repository;
 using ATB.Data.Models;
-using ATB.Logic.Enums;
-using Microsoft.VisualBasic.FileIO;
 
 namespace ATB.Logic.Service
 {

@@ -1,13 +1,7 @@
-﻿using AirportTicketBookingExercise.Data;
-using ATB.Logic.Enums;
-using System;
-using System.Collections.Generic;
+﻿using ATB.Data;
 using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace AirportTicketBookingExercise.Logic.Enums
+namespace ATB.Logic.Enums
 {
 
     public enum FilterParam

@@ -1,11 +1,10 @@
-﻿using AirportTicketBookingExercise.Data;
-using AirportTicketBookingExercise.Logic.Enums;
-using ATB.Data.Models;
+﻿using ATB.Data;
 using ATB.Logic.Enums;
+using ATB.Data.Models;
 using ATB.Logic.Service;
 
 
-namespace AirportTicketBookingExercise.Logic.Handlers.Command
+namespace ATB.Logic.Handlers.Command
 {
     public class ManagerCommandHandler
     {
@@ -83,15 +82,20 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                 Console.WriteLine(errorStr);
             else Console.WriteLine("No fields are in need of fixing!");
         }
-        public List<Booking> Filter(string[] input)
+        public void Filter(string[] input)
         {
-               
             BookingFilter filter = BookingFilters.Parse(input.Skip(1).ToArray());
-
-            return _bookingService.FilterBookings(filter);
-            
-           
+            List<Booking> bookingResults = _bookingService.FilterBookings(filter);
+            if (bookingResults.Count > 0)
+            {
+                Console.WriteLine("Filter Results: \n");
+                foreach (Booking booking in bookingResults)
+                {
+                    Console.WriteLine(booking.ToString() + $" booked by passenger with Id ({booking.PassengerId})");
+                }
+            }
         }
+
         private void ManagerLogIn(string[] productInfo)
         {
             if (productInfo.Length >= 3)
@@ -106,15 +110,9 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                     loggedInUser = user;
                     Console.WriteLine($"Welcome back, {user.Name}!");
                 }
-                else
-                {
-                    Console.WriteLine("Invalid credentials or not a manager.");
-                }
+                else Console.WriteLine("Invalid credentials or not a manager.");
             }
-            else
-            {
-                Console.WriteLine("Please enter your name and password.");
-            }
+            else Console.WriteLine("Please enter your name and password.");
         }
 
         private void ManagerSignOut()
@@ -124,10 +122,7 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                 Console.WriteLine($"Manager {loggedInUser.Name} has logged out.");
                 loggedInUser = null;
             }
-            else
-            {
-                Console.WriteLine("No Manager is currently logged in.");
-            }
+            else Console.WriteLine("No Manager is currently logged in.");
         }
 
         private void ManagerSignUp(string[] productInfo)

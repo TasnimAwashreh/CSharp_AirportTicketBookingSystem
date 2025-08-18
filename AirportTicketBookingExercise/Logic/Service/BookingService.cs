@@ -1,5 +1,5 @@
-﻿using AirportTicketBookingExercise.Data;
-using AirportTicketBookingExercise.Data.Repository;
+﻿using ATB.Data;
+using ATB.Data.Repository;
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 
@@ -46,7 +46,7 @@ namespace ATB.Logic.Service
         {
             var bookings = _bookingRepository.GetAllBookings();
             var flights = _flightRepository.getFlights();
-            var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passanger).ToList();
+            var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passenger).ToList();
 
             var filtered = bookings.Where(b =>
             {

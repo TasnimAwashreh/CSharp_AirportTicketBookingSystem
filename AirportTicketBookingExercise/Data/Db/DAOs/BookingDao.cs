@@ -1,9 +1,9 @@
-﻿using System.Collections.Generic;
+﻿
 using Microsoft.Data.Sqlite;
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 
-namespace AirportTicketBookingExercise.Data.Db.DAOs
+namespace ATB.Data.Db.DAOs
 {
     public class BookingDAO
     {

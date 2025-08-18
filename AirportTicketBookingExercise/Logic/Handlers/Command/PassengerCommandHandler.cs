@@ -1,10 +1,9 @@
-﻿using AirportTicketBookingExercise.Logic.Enums;
+﻿using ATB.Logic.Enums;
 using ATB.Data.Models;
-using ATB.Logic.Enums;
 using ATB.Logic.Service;
 
 
-namespace AirportTicketBookingExercise.Logic.Handlers.Command
+namespace ATB.Logic.Handlers.Command
 {
     public class PassengerCommandHandler
     {
@@ -90,7 +89,6 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                         BookingClass.economy => flight.EconomyPrice,
                         _ => 0
                     };
-
                     if (price != 0)
                     {
                         var booking = new Booking
@@ -99,7 +97,6 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                             PassengerId = loggedInUser!.UserId,
                             BookingClass = bookingClass
                         };
-
                         _bookingService.CreateBooking(booking);
                         _flightService.AddPassengerToSeat(flight);
 
@@ -205,7 +202,7 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                     {
                         Name = productInfo[1],
                         Password = productInfo[2],
-                        UserType = UserType.Passanger
+                        UserType = UserType.Passenger
                     };
 
                     if (_userService.GetUserByName(user.Name) == null)
@@ -216,20 +213,14 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
                         else
                             Console.WriteLine("Passenger signup was unsuccessful.");
                     }
-                    else
-                    {
-                        Console.WriteLine("Passenger with this username already exists.");
-                    }
+                    else Console.WriteLine("Passenger with this username already exists.");
                 }
                 catch
                 {
                     Console.WriteLine("Something went wrong. Please try again later.");
                 }
             }
-            else
-            {
-                Console.WriteLine("Please enter name and password to sign up as a passenger.");
-            }
+            else Console.WriteLine("Please enter name and password to sign up as a passenger.");
         }
 
         private void PassengerLogIn(string[] productInfo)
@@ -241,7 +232,7 @@ namespace AirportTicketBookingExercise.Logic.Handlers.Command
 
                 var user = _userService.Authenticate(username, password);
 
-                if (user != null && user.UserType == UserType.Passanger)
+                if (user != null && user.UserType == UserType.Passenger)
                 {
                     loggedInUser = user;
                     Console.WriteLine($"Welcome back, {user.Name}!");

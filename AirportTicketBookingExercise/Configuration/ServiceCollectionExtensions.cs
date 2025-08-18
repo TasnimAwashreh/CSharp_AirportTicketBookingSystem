@@ -1,14 +1,12 @@
-﻿using AirportTicketBookingExercise.Data.Db.DAOs;
-using AirportTicketBookingExercise.Data.Repository;
-using AirportTicketBookingExercise.Logic.Handlers.Command;
-using AirportTicketBookingExercise.Logic.Service;
+﻿using ATB.Data.Db.DAOs;
 using ATB.Data.Repository;
-using ATB.Logic;
+using ATB.Logic.Handlers.Command;
 using ATB.Logic.Service;
+using ATB.Logic;
 using Microsoft.Extensions.DependencyInjection;
 
 
-namespace AirportTicketBookingExercise.Extensions
+namespace ATB.Configuration
 {
     public static class ServiceCollectionExtensions
     {
@@ -56,9 +54,7 @@ namespace AirportTicketBookingExercise.Extensions
         public static IServiceCollection AddManager(this IServiceCollection services)
         {
             services.AddScoped<BookingManager>();
-
             return services;
-
         }
 
     }

@@ -1,7 +1,6 @@
 ﻿using ATB.Data.Models;
-using System.Collections.Generic;
 
-namespace AirportTicketBookingExercise.Data.Repository
+namespace ATB.Data.Repository
 {
     public interface IBookingRepository
     {

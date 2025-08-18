@@ -1,5 +1,4 @@
-﻿using AirportTicketBookingExercise.Helper;
-using AirportTicketBookingExercise.Logic.Handlers.Command;
+﻿using ATB.Logic.Handlers.Command;
 using ATB.Logic.Enums;
 
 namespace ATB.Logic
@@ -19,7 +18,7 @@ namespace ATB.Logic
 
         public void processInput(string input)
         {
-            var line = CommandParser.ParseCommand(input);
+            string[] line = input.Split(' ');
             ManagerCommand managerCommand = ManagerCommands.GetManagerCommand(line[0]);
             PassengerCommand passengerCommand = PassengerCommands.GetPassengerCommand(line[0]);
             if (passengerCommand != PassengerCommand.none)
