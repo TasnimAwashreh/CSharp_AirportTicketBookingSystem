@@ -4,21 +4,21 @@ namespace ATB.Logic.Enums
 {
     public enum BookingClass
     {
-        first,
-        business,
-        economy,
-        none
+        None = 0,
+        First = 1,
+        Business = 2,
+        Economy = 3
     }
     public class BookingClasses
     {
-        public static BookingClass strToBookingClass(string bookingClass)
+        public static BookingClass parseBookingClass(string bookingClassStr)
         {
-            switch (bookingClass.ToLower())
+            switch (bookingClassStr.ToLower())
             {
-                case "first": return BookingClass.first;
-                case "business": return BookingClass.business;
-                case "economy": return BookingClass.economy;
-                default: return BookingClass.none;
+                case "first": return BookingClass.First;
+                case "business": return BookingClass.Business;
+                case "economy": return BookingClass.Economy;
+                default: return BookingClass.None;
             }
         }
     }

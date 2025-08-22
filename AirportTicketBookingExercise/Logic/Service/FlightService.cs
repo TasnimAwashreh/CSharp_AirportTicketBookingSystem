@@ -4,11 +4,11 @@ using ATB.Data.Models;
 
 namespace ATB.Logic.Service
 {
-    public class FlightService : IFlightService
+    public class Flightservice : IFlightservice
     {
         private IFlightRepository _flightRepo;
 
-        public FlightService(IFlightRepository fightRepo)
+        public Flightservice(IFlightRepository fightRepo)
         {
             _flightRepo = fightRepo;
         }

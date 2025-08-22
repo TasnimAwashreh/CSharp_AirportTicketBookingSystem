@@ -7,17 +7,17 @@ namespace ATB.Logic.Handlers.Command
 {
     public class PassengerCommandHandler
     {
-        private readonly IBookingService _bookingService;
+        private readonly IBookingService _BookingService;
         private readonly IUserService _userService;
-        private readonly IFlightService _flightService;
+        private readonly IFlightservice _flightService;
 
         private User? loggedInUser;
 
-        public PassengerCommandHandler(IBookingService bookingService, IUserService userService, IFlightService flightService)
+        public PassengerCommandHandler(IBookingService BookingService, IUserService userService, IFlightservice Flightservice)
         {
-            _bookingService = bookingService;
+            _BookingService = BookingService;
             _userService = userService;
-            _flightService = flightService;
+            _flightService = Flightservice;
         }
 
         public void ExecutePassengerCommand(string[] productInfo, PassengerCommand command)
@@ -26,28 +26,28 @@ namespace ATB.Logic.Handlers.Command
             {
                 switch (command)
                 {
-                    case PassengerCommand.logout:
+                    case PassengerCommand.LogOut:
                         PassengerSignOut();
                         break;
-                    case PassengerCommand.book:
+                    case PassengerCommand.Book:
                         PassengerBookFlight(productInfo);
                         break;
-                    case PassengerCommand.search:
+                    case PassengerCommand.Search:
                         Search(productInfo);
                         break;
-                    case PassengerCommand.cancel:
+                    case PassengerCommand.Cancel:
                         Cancel(productInfo);
                         break;
-                    case PassengerCommand.modify:
+                    case PassengerCommand.Modify:
                         Console.WriteLine("Modify functionality not yet implemented.");
                         break;
-                    case PassengerCommand.flights:
+                    case PassengerCommand.Flights:
                         Flights();
                         break;
-                    case PassengerCommand.bookings:
+                    case PassengerCommand.Bookings:
                         Bookings();
                         break;
-                    case PassengerCommand.none:
+                    case PassengerCommand.None:
                         Console.WriteLine("\nPlease enter an appropriate action.");
                         break;
                 }
@@ -56,13 +56,13 @@ namespace ATB.Logic.Handlers.Command
             {
                 switch (command)
                 {
-                    case PassengerCommand.signup:
+                    case PassengerCommand.SignUp:
                         PassengerSignUp(productInfo);
                         break;
-                    case PassengerCommand.login:
+                    case PassengerCommand.LogIn:
                         PassengerLogIn(productInfo);
                         break;
-                    case PassengerCommand.none:
+                    case PassengerCommand.None:
                         Console.WriteLine("\nPassenger, please enter an appropriate action.");
                         break;
                     default:
@@ -77,34 +77,34 @@ namespace ATB.Logic.Handlers.Command
             try
             {
                 int flightId = int.Parse(productInfo[1]);
-                BookingClass bookingClass = BookingClasses.strToBookingClass(productInfo[2]);
+                BookingClass BookingClass = BookingClasses.parseBookingClass(productInfo[2]);
 
                 Flight? flight = _flightService.GetFlightById(flightId);
                 if (flight != null && flight.seatsAvailable < flight.SeatCapacity)
                 {
-                    decimal price = bookingClass switch
+                    decimal price = BookingClass switch
                     {
-                        BookingClass.first => flight.FirstClassPrice,
-                        BookingClass.business => flight.BuisnessPrice,
-                        BookingClass.economy => flight.EconomyPrice,
+                        BookingClass.First => flight.FirstClassPrice,
+                        BookingClass.Business => flight.BuisnessPrice,
+                        BookingClass.Economy => flight.EconomyPrice,
                         _ => 0
                     };
                     if (price != 0)
                     {
-                        var booking = new Booking
+                        var Booking = new Booking
                         {
                             FlightId = flightId,
                             PassengerId = loggedInUser!.UserId,
-                            BookingClass = bookingClass
+                            BookingClass = BookingClass
                         };
-                        _bookingService.CreateBooking(booking);
+                        _BookingService.CreateBooking(Booking);
                         _flightService.AddPassengerToSeat(flight);
 
-                        Console.WriteLine($"You have booked flight ID {flightId} in {bookingClass} class.");
+                        Console.WriteLine($"You have Booked flight ID {flightId} in {BookingClass} class.");
                     }
                     else
                     {
-                        Console.WriteLine($"This flight does not offer {bookingClass} class.");
+                        Console.WriteLine($"This flight does not offer {BookingClass} class.");
                     }
                 }
                 else
@@ -124,26 +124,26 @@ namespace ATB.Logic.Handlers.Command
             {
                 try
                 {
-                    FilterParam searchParam = BookingFilters.GetFilterParam(productInfo[1]);
+                    FilterParam SearchParam = BookingFilters.ParseFilterParam(productInfo[1]);
                     string input = productInfo[2];
 
-                    var flights = _flightService.GetFlights();
-                    List<Flight> filteredFlights = searchParam switch
+                    var Flights = _flightService.GetFlights();
+                    List<Flight> FilteredFlights = SearchParam switch
                     {
-                        FilterParam.flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
-                        FilterParam.price => flights.Where(f =>
+                        FilterParam.Flight => Flights.Where(f => f.FlightName.Equals(input)).ToList(),
+                        FilterParam.Price => Flights.Where(f =>
                             f.BuisnessPrice == decimal.Parse(input) ||
                             f.EconomyPrice == decimal.Parse(input) ||
                             f.FirstClassPrice == decimal.Parse(input)).ToList(),
-                        FilterParam.departure_country => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
-                        FilterParam.destination_country => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
-                        FilterParam.departure_date => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
-                        FilterParam.departure_airport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
-                        FilterParam.arrival_airport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
+                        FilterParam.DepartureCountry => Flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
+                        FilterParam.DestinationCountry => Flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
+                        FilterParam.DepartureDate => Flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
+                        FilterParam.DepartureAirport => Flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
+                        FilterParam.ArrivalAirport => Flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
                         _ => []
                     };
 
-                    PrintOutFlights(filteredFlights);
+                    PrintOutFlights(FilteredFlights);
                 }
                 catch
                 {
@@ -160,36 +160,36 @@ namespace ATB.Logic.Handlers.Command
         {
             try
             {
-                int bookingId = int.Parse(productInfo[1]);
-                if (_bookingService.ValidateBookingById(bookingId, loggedInUser!.UserId))
+                int BookingId = int.Parse(productInfo[1]);
+                if (_BookingService.ValidateBookingById(BookingId, loggedInUser!.UserId))
                 {
-                    bool isSuccess = _bookingService.RemoveBookingById(bookingId);
+                    bool isSuccess = _BookingService.RemoveBookingById(BookingId);
                     if (isSuccess)
-                        Console.WriteLine($"Booking with ID {bookingId} deleted successfully.");
+                        Console.WriteLine($"Booking with ID {BookingId} deleted successfully.");
                     else
-                        Console.WriteLine($"Failed to delete booking with ID {bookingId}.");
+                        Console.WriteLine($"Failed to delete Booking with ID {BookingId}.");
                 }
                 else
                 {
-                    Console.WriteLine("You did not book this specific flight.");
+                    Console.WriteLine("You did not Book this specific flight.");
                 }
             }
             catch
             {
-                Console.WriteLine("Invalid booking ID.");
+                Console.WriteLine("Invalid Booking ID.");
             }
         }
 
         private void Bookings()
         {
-            var bookings = _bookingService.GetBookingsByUserId(loggedInUser!.UserId);
-            PrintOutBookings(bookings);
+            var Bookings = _BookingService.GetBookingsByUserId(loggedInUser!.UserId);
+            PrintOutBookings(Bookings);
         }
 
         private void Flights()
         {
-            var flights = _flightService.GetFlights();
-            PrintOutFlights(flights);
+            var Flights = _flightService.GetFlights();
+            PrintOutFlights(Flights);
         }
 
         private void PassengerSignUp(string[] productInfo)
@@ -211,7 +211,7 @@ namespace ATB.Logic.Handlers.Command
                         if (isSuccess)
                             Console.WriteLine($"Passenger {user.Name} signed up successfully.");
                         else
-                            Console.WriteLine("Passenger signup was unsuccessful.");
+                            Console.WriteLine("Passenger SignUp was unsuccessful.");
                     }
                     else Console.WriteLine("Passenger with this username already exists.");
                 }
@@ -261,19 +261,19 @@ namespace ATB.Logic.Handlers.Command
             }
         }
 
-        private void PrintOutFlights(List<Flight> flights)
+        private void PrintOutFlights(List<Flight> Flights)
         {
-            foreach (var flight in flights)
+            foreach (var flight in Flights)
             {
                 Console.WriteLine(flight.ToString());
             }
         }
 
-        private void PrintOutBookings(List<Booking> bookingList)
+        private void PrintOutBookings(List<Booking> BookingList)
         {
-            foreach (var booking in bookingList)
+            foreach (var Booking in BookingList)
             {
-                Console.WriteLine(booking.ToString());
+                Console.WriteLine(Booking.ToString());
             }
         }
     }

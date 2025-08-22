@@ -19,11 +19,11 @@ namespace ATB.Logic
         public void processInput(string input)
         {
             string[] line = input.Split(' ');
-            ManagerCommand managerCommand = ManagerCommands.GetManagerCommand(line[0]);
-            PassengerCommand passengerCommand = PassengerCommands.GetPassengerCommand(line[0]);
-            if (passengerCommand != PassengerCommand.none)
+            ManagerCommand managerCommand = ManagerCommands.ParseManagerCommand(line[0]);
+            PassengerCommand passengerCommand = PassengerCommands.ParsePassengerCommand(line[0]);
+            if (passengerCommand != PassengerCommand.None)
                 _passengerCommandHandler.ExecutePassengerCommand(line, passengerCommand);
-            else if (managerCommand != ManagerCommand.none)
+            else if (managerCommand != ManagerCommand.None)
                 _managerCommandHnadler.executeManagerCommand(line, managerCommand);
             else Console.WriteLine("\n Please enter an appropriate action");
         }

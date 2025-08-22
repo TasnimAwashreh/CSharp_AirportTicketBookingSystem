@@ -3,43 +3,44 @@ namespace ATB.Logic.Enums
 {
     public enum PassengerCommand
     {
-        signup,
-        login,
-        logout,
-        book,
-        search,
-        cancel,
-        modify,
-        flights,
-        bookings,
-        none
+        None = 0,
+        SignUp = 1,
+        LogIn = 2,
+        LogOut = 3,
+        Book = 4,
+        Search = 5,
+        Cancel = 6,
+        Modify = 7,
+        Flights = 8,
+        Bookings = 9,
+        
     }
     public class PassengerCommands
     {
-        public static PassengerCommand GetPassengerCommand(string command)
+        public static PassengerCommand ParsePassengerCommand(string command)
         {
             switch (command.ToLower())
             {
                 case "signup":
-                    return PassengerCommand.signup;
+                    return PassengerCommand.SignUp;
                 case "login":
-                    return PassengerCommand.login;
+                    return PassengerCommand.LogIn;
                 case "logout":
-                    return PassengerCommand.logout;
+                    return PassengerCommand.LogOut;
                 case "book":
-                    return PassengerCommand.book;
+                    return PassengerCommand.Book;
                 case "search":
-                    return PassengerCommand.search;
+                    return PassengerCommand.Search;
                 case "cancel":
-                    return PassengerCommand.cancel;
+                    return PassengerCommand.Cancel;
                 case "modify":
-                    return PassengerCommand.modify;
+                    return PassengerCommand.Modify;
                 case "flights":
-                    return PassengerCommand.flights;
+                    return PassengerCommand.Flights;
                 case "bookings":
-                    return PassengerCommand.bookings;
+                    return PassengerCommand.Bookings;
                 default:
-                    return PassengerCommand.none;
+                    return PassengerCommand.None;
             }
         }
     }

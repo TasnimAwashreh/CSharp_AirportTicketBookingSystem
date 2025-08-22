@@ -6,43 +6,43 @@ namespace ATB.Logic.Enums
 
     public enum FilterParam
     {
-        flight,
-        price,
-        departure_country,
-        destination_country,
-        departure_date,
-        departure_airport,
-        arrival_airport,
-        flight_class,
-        passenger,
-        none
+        None = 0,
+        Flight = 1,
+        Price = 2,
+        DepartureCountry = 3,
+        DestinationCountry = 4,
+        DepartureDate = 5,
+        DepartureAirport = 6,
+        ArrivalAirport = 7,
+        FlightClass = 8,
+        Passenger = 9,
     }
     public class BookingFilters
     {
-        public static FilterParam GetFilterParam(string command)
+        public static FilterParam ParseFilterParam(string command)
         {
             switch (command.ToLower())
             {
                 case "flight":
-                    return FilterParam.flight;
+                    return FilterParam.Flight;
                 case "price":
-                    return FilterParam.price;
+                    return FilterParam.Price;
                 case "departure_country":
-                    return FilterParam.departure_country;
+                    return FilterParam.DepartureCountry;
                 case "destination_country":
-                    return FilterParam.destination_country;
+                    return FilterParam.DestinationCountry;
                 case "departure_date":
-                    return FilterParam.departure_date;
+                    return FilterParam.DepartureDate;
                 case "departure_airport":
-                    return FilterParam.departure_airport;
+                    return FilterParam.DepartureAirport;
                 case "arrival_airport":
-                    return FilterParam.arrival_airport;
+                    return FilterParam.ArrivalAirport;
                 case "flight_class":
-                    return FilterParam.flight_class;
+                    return FilterParam.FlightClass;
                 case "passenger":
-                    return FilterParam.passenger;
+                    return FilterParam.Passenger;
                 default:
-                    return FilterParam.none;
+                    return FilterParam.None;
             }
         }
         public static BookingFilter Parse(string[] parts)
@@ -57,40 +57,40 @@ namespace ATB.Logic.Enums
                 var key = keyValue[0].Trim();
                 var value = keyValue[1].Trim();
 
-                var filter = BookingFilters.GetFilterParam(key);
+                var Filter = BookingFilters.ParseFilterParam(key);
 
-                switch (filter)
+                switch (Filter)
                 {
-                    case FilterParam.flight:
+                    case FilterParam.Flight:
                         query.FlightName = value;
                         break;
-                    case FilterParam.price:
+                    case FilterParam.Price:
                         if (decimal.TryParse(value, NumberStyles.Currency, CultureInfo.InvariantCulture, out var price))
                             query.Price = price;
                         break;
-                    case FilterParam.departure_country:
+                    case FilterParam.DepartureCountry:
                         query.DepartureCountry = value;
                         break;
-                    case FilterParam.destination_country:
+                    case FilterParam.DestinationCountry:
                         query.DestinationCountry = value;
                         break;
-                    case FilterParam.departure_date:
+                    case FilterParam.DepartureDate:
                         if (DateTime.TryParse(value, out var date))
                             query.DepartureDate = date;
                         break;
-                    case FilterParam.departure_airport:
+                    case FilterParam.DepartureAirport:
                         query.DepartureAirport = value;
                         break;
-                    case FilterParam.arrival_airport:
+                    case FilterParam.ArrivalAirport:
                         query.ArrivalAirport = value;
                         break;
-                    case FilterParam.flight_class:
+                    case FilterParam.FlightClass:
                         query.BookingClass = value;
                         break;
-                    case FilterParam.passenger:
+                    case FilterParam.Passenger:
                         query.PassengerName = value;
                         break;
-                    case FilterParam.none:
+                    case FilterParam.None:
                     default:
                         break;
                 }

@@ -9,16 +9,16 @@ namespace ATB.Logic.Handlers.Command
     public class ManagerCommandHandler
     {
        
-        private readonly IFlightService _flightService;
+        private readonly IFlightservice _flightService;
         private readonly IUserService _userService;
         private readonly IBookingService _bookingService;
         private User? loggedInUser;
 
-        public ManagerCommandHandler(IFlightService flightService,IUserService userService, IBookingService bookingService)
+        public ManagerCommandHandler(IFlightservice flightService,IUserService userService, IBookingService BookingService)
         {
             _flightService = flightService;
             _userService = userService;
-            _bookingService = bookingService;
+            _bookingService = BookingService;
               
         }
         public void executeManagerCommand(string[] productInfo, ManagerCommand command)
@@ -27,20 +27,20 @@ namespace ATB.Logic.Handlers.Command
             {
                 switch (command)
                 {
-                    case ManagerCommand.manager_logout:
+                    case ManagerCommand.ManagerLogOut:
                         ManagerSignOut();
                         break;
-                    case ManagerCommand.upload:
+                    case ManagerCommand.Upload:
                         Upload();
                         break;
-                    case ManagerCommand.validate:
+                    case ManagerCommand.Validate:
                         Validate();
                         break;
-                    case ManagerCommand.filter:
+                    case ManagerCommand.Filter:
                         Console.WriteLine($"\n Filter: \n");
                         Filter(productInfo);
                         break;
-                    case ManagerCommand.none:
+                    case ManagerCommand.None:
                         Console.WriteLine("\n Manager, please enter an appropriate action");
                         break;
                 }
@@ -49,13 +49,13 @@ namespace ATB.Logic.Handlers.Command
             {
                 switch (command)
                 {
-                    case ManagerCommand.manager_signup:
+                    case ManagerCommand.ManagerSignUp:
                         ManagerSignUp(productInfo);
                         break;
-                    case ManagerCommand.manager_login:
+                    case ManagerCommand.ManagerLogIn:
                         ManagerLogIn(productInfo);
                         break;
-                    case ManagerCommand.none:
+                    case ManagerCommand.None:
                         Console.WriteLine("\n Manager, please enter an appropriate action");
                         break;
                     default:
@@ -72,7 +72,7 @@ namespace ATB.Logic.Handlers.Command
             if (isSuccess == true)
                 Console.WriteLine("Flight Data has been imported successfully");
             else Console.WriteLine("The CSV is not in the correct format. " +
-                "Please use the 'validate' command to check which fields must be changed.");
+                "Please use the 'Validate' command to check which fields must be changed.");
         }
         public void Validate()
         {
@@ -84,14 +84,14 @@ namespace ATB.Logic.Handlers.Command
         }
         public void Filter(string[] input)
         {
-            BookingFilter filter = BookingFilters.Parse(input.Skip(1).ToArray());
-            List<Booking> bookingResults = _bookingService.FilterBookings(filter);
-            if (bookingResults.Count > 0)
+            BookingFilter Filter = BookingFilters.Parse(input.Skip(1).ToArray());
+            List<Booking> BookingResults = _bookingService.FilterBookings(Filter);
+            if (BookingResults.Count > 0)
             {
                 Console.WriteLine("Filter Results: \n");
-                foreach (Booking booking in bookingResults)
+                foreach (Booking Booking in BookingResults)
                 {
-                    Console.WriteLine(booking.ToString() + $" booked by passenger with Id ({booking.PassengerId})");
+                    Console.WriteLine(Booking.ToString() + $" Booked by passenger with Id ({Booking.PassengerId})");
                 }
             }
         }
@@ -144,12 +144,9 @@ namespace ATB.Logic.Handlers.Command
                         if (isSuccess)
                             Console.WriteLine($"Manager {user.Name} signed up successfully.");
                         else
-                            Console.WriteLine("Manager signup was unsuccessful.");
+                            Console.WriteLine("Manager SignUp was unsuccessful.");
                     }
-                    else
-                    {
-                        Console.WriteLine("Manager with this username already exists.");
-                    }
+                    else Console.WriteLine("Manager with this username already exists.");
                 }
                 catch
                 {

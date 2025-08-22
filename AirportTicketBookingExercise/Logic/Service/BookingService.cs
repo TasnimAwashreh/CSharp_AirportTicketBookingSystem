@@ -7,50 +7,50 @@ namespace ATB.Logic.Service
 {
     public class BookingService : IBookingService
     {
-        private readonly IBookingRepository _bookingRepository;
+        private readonly IBookingRepository _BookingRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFlightRepository _flightRepository;
-        public BookingService(IBookingRepository bookingRepository,IFlightRepository flightRepository, IUserRepository userRepository)
+        public BookingService(IBookingRepository BookingRepository,IFlightRepository flightRepository, IUserRepository userRepository)
         {
-            this._bookingRepository = bookingRepository;
+            this._BookingRepository = BookingRepository;
             this._userRepository = userRepository;
             this._flightRepository = flightRepository;
         }
 
-        public bool CreateBooking(Booking booking)
+        public bool CreateBooking(Booking Booking)
         {
-            return _bookingRepository.CreateBooking(booking);
+            return _BookingRepository.CreateBooking(Booking);
         }
 
         public List<Booking> GetAllBookings()
         {
-            return _bookingRepository.GetAllBookings();
+            return _BookingRepository.GetAllBookings();
         }
 
-        public bool ValidateBookingById(int bookingId, int passengerId)
+        public bool ValidateBookingById(int BookingId, int passengerId)
         {
-            return _bookingRepository.ValidatePassengerBooking(bookingId, passengerId);
+            return _BookingRepository.ValidatePassengerBooking(BookingId, passengerId);
         }
 
         public List<Booking> GetBookingsByUserId(int passengerId)
         {
-            return _bookingRepository.GetBookingsByUserId(passengerId);
+            return _BookingRepository.GetBookingsByUserId(passengerId);
         }
 
-        public bool RemoveBookingById(int bookingId)
+        public bool RemoveBookingById(int BookingId)
         {
-            return _bookingRepository.DeleteBooking(bookingId);
+            return _BookingRepository.DeleteBooking(BookingId);
         }
 
         public List<Booking> FilterBookings(BookingFilter query)
         {
-            var bookings = _bookingRepository.GetAllBookings();
-            var flights = _flightRepository.getFlights();
+            var Bookings = _BookingRepository.GetAllBookings();
+            var Flights = _flightRepository.getFlights();
             var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passenger).ToList();
 
-            var filtered = bookings.Where(b =>
+            var Filtered = Bookings.Where(b =>
             {
-                var flight = flights.FirstOrDefault(f => f.FlightId == b.FlightId);
+                var flight = Flights.FirstOrDefault(f => f.FlightId == b.FlightId);
                 var passenger = passengers.FirstOrDefault(p => p.UserId == b.PassengerId);
 
                 if (flight == null)
@@ -64,13 +64,13 @@ namespace ATB.Logic.Service
                     decimal price = 0;
                     switch (b.BookingClass)
                     {
-                        case BookingClass.economy:
+                        case BookingClass.Economy:
                             price = flight.EconomyPrice;
                             break;
-                        case BookingClass.business:
+                        case BookingClass.Business:
                             price = flight.BuisnessPrice;
                             break;
-                        case BookingClass.first:
+                        case BookingClass.First:
                             price = flight.FirstClassPrice;
                             break;
                     }
@@ -98,14 +98,14 @@ namespace ATB.Logic.Service
 
                 if (!string.IsNullOrEmpty(query.BookingClass))
                 {
-                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass) || b.BookingClass != bookingClass)
+                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var BookingClass) || b.BookingClass != BookingClass)
                         return false;
                 }
 
                 return true;
             }).ToList();
 
-            return filtered;
+            return Filtered;
         }
 
     }

@@ -12,7 +12,7 @@ namespace ATB.Configuration
     {
         public static IServiceCollection AddDaos(this IServiceCollection services){
 
-            const string DbFile = "bookingDb.db";
+            const string DbFile = "BookingDb.db";
             string connectionString = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", DbFile);
 
             services
@@ -38,7 +38,7 @@ namespace ATB.Configuration
         {
             services
                 .AddScoped<IUserService, UserService>()
-                .AddScoped<IFlightService, FlightService>()
+                .AddScoped<IFlightservice, Flightservice>()
                 .AddScoped<IBookingService, BookingService>();
             return services;
         }

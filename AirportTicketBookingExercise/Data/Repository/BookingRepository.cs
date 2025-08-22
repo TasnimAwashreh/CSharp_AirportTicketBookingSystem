@@ -12,11 +12,11 @@ namespace ATB.Data.Repository
             this._dao = dao;
         }
 
-        public bool CreateBooking(Booking booking)
+        public bool CreateBooking(Booking Booking)
         {
             try
             {
-                _dao.CreateBooking(booking);
+                _dao.CreateBooking(Booking);
                 return true;
             }
             catch (Exception ex)
@@ -27,24 +27,24 @@ namespace ATB.Data.Repository
 
         public List<Booking> GetBookingsByUserId(int PassengerId)
         {
-            List<Booking> bookings = _dao.GetBookingsByUserId(PassengerId);
-            return bookings;
+            List<Booking> Bookings = _dao.GetBookingsByUserId(PassengerId);
+            return Bookings;
         }
 
         public List<Booking> GetAllBookings()
         {
-            List<Booking> bookings = _dao.GetAllBookings();
-            return bookings;
+            List<Booking> Bookings = _dao.GetAllBookings();
+            return Bookings;
         }
 
-        public bool ValidatePassengerBooking(int bookingId, int passengerId)
+        public bool ValidatePassengerBooking(int BookingId, int passengerId)
         {
-            return _dao.ValidateBooking(bookingId, passengerId);
+            return _dao.ValidateBooking(BookingId, passengerId);
         }
 
-        public bool DeleteBooking(int bookingId)
+        public bool DeleteBooking(int BookingId)
         {
-            return _dao.DeleteBookingById(bookingId);
+            return _dao.DeleteBookingById(BookingId);
         }
 
     }

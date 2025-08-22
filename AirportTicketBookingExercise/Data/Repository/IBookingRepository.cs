@@ -4,11 +4,11 @@ namespace ATB.Data.Repository
 {
     public interface IBookingRepository
     {
-        public bool CreateBooking(Booking booking);
+        public bool CreateBooking(Booking Booking);
         public List<Booking> GetBookingsByUserId(int PassengerId);
         public List<Booking> GetAllBookings();
-        public bool ValidatePassengerBooking(int bookingId, int passengerId);
-        public bool DeleteBooking(int bookingId);
+        public bool ValidatePassengerBooking(int BookingId, int passengerId);
+        public bool DeleteBooking(int BookingId);
 
     }
 }

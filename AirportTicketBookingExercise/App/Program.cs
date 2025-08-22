@@ -12,7 +12,7 @@ class Program
         using var scope = serviceProvider.CreateScope();
         var databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
         databaseManager.CreateDatabase();
-        var bookingManager = scope.ServiceProvider.GetRequiredService<BookingManager>();
+        var BookingManager = scope.ServiceProvider.GetRequiredService<BookingManager>();
 
 
         while (true)
@@ -22,7 +22,7 @@ class Program
             if (string.IsNullOrWhiteSpace(input))
                 Console.WriteLine("Empty input: Please try again");
             else
-                bookingManager.processInput(input);
+                BookingManager.processInput(input);
         }
     }
 

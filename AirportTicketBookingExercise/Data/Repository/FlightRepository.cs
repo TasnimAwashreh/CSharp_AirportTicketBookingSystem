@@ -12,23 +12,23 @@ namespace ATB.Data.Repository
     {
         const string csvFile = "Flights.csv";
         string path = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
-        private List<Flight> _flights;
+        private List<Flight> _Flights;
 
         public FlightRepository()
         {
-            _flights = new List<Flight>();
+            _Flights = new List<Flight>();
         }
 
-        public List<Flight> getFlights() { return _flights; }
+        public List<Flight> getFlights() { return _Flights; }
 
         public Flight? getFlightById(int flightId)
         {
-            return _flights.Find(flight => flight.FlightId == flightId);
+            return _Flights.Find(flight => flight.FlightId == flightId);
         }
 
         public Flight GetFlightByName(string? name)
         {
-            return _flights.Find(flight => flight.FlightName.ToLowerInvariant() == name.ToLowerInvariant());
+            return _Flights.Find(flight => flight.FlightName.ToLowerInvariant() == name.ToLowerInvariant());
         }
 
         public void AddPassengerToSeat(Flight flight)
@@ -41,7 +41,7 @@ namespace ATB.Data.Repository
             flight.seatsAvailable--;
         }
 
-        private void validateField<T>(string fieldName, string fieldInput, 
+        private void ValidateField<T>(string fieldName, string fieldInput, 
             Func<string, T> parseValue, StringBuilder strBuilder, int rowCount)
         {
             PropertyInfo property = typeof(Flight).GetProperty(fieldName);
@@ -77,17 +77,17 @@ namespace ATB.Data.Repository
                 while (!csvParser.EndOfData)
                 {
                     string[] fields = csvParser.ReadFields();
-                    validateField("FlightId", fields[0], int.Parse, strBuilder, rowCount);
-                    validateField("FlightName", fields[1], x => x, strBuilder, rowCount);
-                    validateField("DepartureCountry", fields[2], x => x, strBuilder, rowCount);
-                    validateField("DestinationCountry", fields[3], x => x, strBuilder, rowCount);
-                    validateField("DepartureDate", fields[4], DateTime.Parse, strBuilder, rowCount);
-                    validateField("DepartureAirport", fields[5], x => x, strBuilder, rowCount);
-                    validateField("ArrivalAirport", fields[6], x => x, strBuilder, rowCount);
-                    validateField("EconomyPrice", fields[7], Decimal.Parse, strBuilder, rowCount);
-                    validateField("BuisnessPrice", fields[8], Decimal.Parse, strBuilder, rowCount);
-                    validateField("FirstClassPrice", fields[9], Decimal.Parse, strBuilder, rowCount);
-                    validateField("SeatCapacity", fields[10], int.Parse, strBuilder, rowCount);
+                    ValidateField("FlightId", fields[0], int.Parse, strBuilder, rowCount);
+                    ValidateField("FlightName", fields[1], x => x, strBuilder, rowCount);
+                    ValidateField("DepartureCountry", fields[2], x => x, strBuilder, rowCount);
+                    ValidateField("DestinationCountry", fields[3], x => x, strBuilder, rowCount);
+                    ValidateField("DepartureDate", fields[4], DateTime.Parse, strBuilder, rowCount);
+                    ValidateField("DepartureAirport", fields[5], x => x, strBuilder, rowCount);
+                    ValidateField("ArrivalAirport", fields[6], x => x, strBuilder, rowCount);
+                    ValidateField("EconomyPrice", fields[7], Decimal.Parse, strBuilder, rowCount);
+                    ValidateField("BuisnessPrice", fields[8], Decimal.Parse, strBuilder, rowCount);
+                    ValidateField("FirstClassPrice", fields[9], Decimal.Parse, strBuilder, rowCount);
+                    ValidateField("SeatCapacity", fields[10], int.Parse, strBuilder, rowCount);
                     rowCount++;
                 }
                 return strBuilder.ToString();
@@ -124,7 +124,7 @@ namespace ATB.Data.Repository
                         };
                         flightData.Add(flight);
                     }
-                    _flights = flightData;
+                    _Flights = flightData;
                     return true;
                 }
                 catch

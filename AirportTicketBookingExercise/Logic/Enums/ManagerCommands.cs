@@ -2,35 +2,36 @@
 {
     public enum ManagerCommand
     {
-        manager_login,
-        manager_signup,
-        manager_logout,
-        validate,
-        upload,
-        filter,
-        none
+        None = 0, 
+        ManagerLogIn = 1,
+        ManagerSignUp = 2,
+        ManagerLogOut = 3,
+        Validate = 4,
+        Upload = 5,
+        Filter = 6,
+        
     }
 
     public class ManagerCommands
     {
-        public static ManagerCommand GetManagerCommand(string command)
+        public static ManagerCommand ParseManagerCommand(string command)
         {
             switch (command.ToLower())
             {
                 case "manager_signup":
-                    return ManagerCommand.manager_signup;
+                    return ManagerCommand.ManagerSignUp;
                 case "manager_login":
-                    return ManagerCommand.manager_login;
+                    return ManagerCommand.ManagerLogIn;
                 case "manager_logout":
-                    return ManagerCommand.manager_logout;
+                    return ManagerCommand.ManagerLogOut;
                 case "validate":
-                    return ManagerCommand.validate;
+                    return ManagerCommand.Validate;
                 case "upload":
-                    return ManagerCommand.upload;
+                    return ManagerCommand.Upload;
                 case "filter":
-                    return ManagerCommand.filter;
+                    return ManagerCommand.Filter;
                 default:
-                    return ManagerCommand.none;
+                    return ManagerCommand.None;
             }
         }
 
