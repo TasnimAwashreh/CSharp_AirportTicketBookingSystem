@@ -12,9 +12,9 @@
         
     }
 
-    public class ManagerCommands
+    public static class ManagerCommands
     {
-        public static ManagerCommand ParseManagerCommand(string command)
+        public static ManagerCommand ParseManagerCommand(this string command)
         {
             switch (command.ToLower())
             {

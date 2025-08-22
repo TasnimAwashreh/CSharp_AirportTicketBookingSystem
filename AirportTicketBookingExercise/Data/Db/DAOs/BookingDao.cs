@@ -107,7 +107,7 @@ namespace ATB.Data.Db.DAOs
                 BookingId = reader.GetInt32(0),
                 FlightId = reader.GetInt32(1),
                 PassengerId = reader.GetInt32(2),
-                BookingClass = BookingClasses.ParseBookingClass(reader.GetString(3))
+                BookingClass = reader.GetString(3).ParseBookingClass()
             };
         }
     }

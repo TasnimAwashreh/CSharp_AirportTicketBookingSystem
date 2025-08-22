@@ -17,9 +17,9 @@ namespace ATB.Logic.Enums
         FlightClass = 8,
         Passenger = 9,
     }
-    public class BookingFilters
+    public static class BookingFilters
     {
-        public static FilterParam ParseFilterParam(string command)
+        public static FilterParam ParseFilterParam(this string command)
         {
             switch (command.ToLower())
             {
@@ -57,7 +57,7 @@ namespace ATB.Logic.Enums
                 var key = keyValue[0].Trim();
                 var value = keyValue[1].Trim();
 
-                var Filter = BookingFilters.ParseFilterParam(key);
+                var Filter = key.ParseFilterParam();
 
                 switch (Filter)
                 {

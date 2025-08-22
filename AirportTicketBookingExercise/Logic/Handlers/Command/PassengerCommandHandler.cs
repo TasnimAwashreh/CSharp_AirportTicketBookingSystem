@@ -77,7 +77,7 @@ namespace ATB.Logic.Handlers.Command
             try
             {
                 int flightId = int.Parse(productInfo[1]);
-                BookingClass BookingClass = BookingClasses.ParseBookingClass(productInfo[2]);
+                BookingClass BookingClass = productInfo[2].ParseBookingClass();
 
                 Flight? flight = _flightService.GetFlight(flightId);
                 if (flight != null && flight.SeatsAvailable < flight.SeatCapacity)
@@ -124,7 +124,7 @@ namespace ATB.Logic.Handlers.Command
             {
                 try
                 {
-                    FilterParam SearchParam = BookingFilters.ParseFilterParam(productInfo[1]);
+                    FilterParam SearchParam = productInfo[1].ParseFilterParam();
                     string input = productInfo[2];
 
                     var Flights = _flightService.GetFlights();

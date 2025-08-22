@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 class Program
 {
 
-    public static void startLoop(IServiceProvider serviceProvider)
+    public static void StartLoop(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
@@ -22,7 +22,7 @@ class Program
             if (string.IsNullOrWhiteSpace(input))
                 Console.WriteLine("Empty input: Please try again");
             else
-                BookingManager.processInput(input);
+                BookingManager.ProcessInput(input);
         }
     }
 
@@ -51,6 +51,6 @@ class Program
 
         Console.WriteLine(introduction());
         var serviceProvider = serviceCollection.BuildServiceProvider();
-        startLoop(serviceProvider);
+        StartLoop(serviceProvider);
     }
 }

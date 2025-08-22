@@ -9,9 +9,9 @@ namespace ATB.Logic.Enums
         Business = 2,
         Economy = 3
     }
-    public class BookingClasses
+    public static class BookingClasses
     {
-        public static BookingClass ParseBookingClass(string bookingClassStr)
+        public static BookingClass ParseBookingClass(this string bookingClassStr)
         {
             switch (bookingClassStr.ToLower())
             {

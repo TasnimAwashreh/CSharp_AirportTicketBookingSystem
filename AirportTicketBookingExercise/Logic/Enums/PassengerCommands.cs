@@ -15,9 +15,9 @@ namespace ATB.Logic.Enums
         Bookings = 9,
         
     }
-    public class PassengerCommands
+    public static class PassengerCommands
     {
-        public static PassengerCommand ParsePassengerCommand(string command)
+        public static PassengerCommand ParsePassengerCommand(this string command)
         {
             switch (command.ToLower())
             {

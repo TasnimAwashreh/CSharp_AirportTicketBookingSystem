@@ -19,8 +19,8 @@ namespace ATB.Logic
         public void ProcessInput(string input)
         {
             string[] line = input.Split(' ');
-            ManagerCommand managerCommand = ManagerCommands.ParseManagerCommand(line[0]);
-            PassengerCommand passengerCommand = PassengerCommands.ParsePassengerCommand(line[0]);
+            ManagerCommand managerCommand = line[0].ParseManagerCommand();
+            PassengerCommand passengerCommand = line[0].ParsePassengerCommand();
             if (passengerCommand != PassengerCommand.None)
                 _passengerCommandHandler.ExecutePassengerCommand(line, passengerCommand);
             else if (managerCommand != ManagerCommand.None)
