@@ -7,16 +7,16 @@ namespace ATB.Logic
     {
 
         private PassengerCommandHandler _passengerCommandHandler;
-        private ManagerCommandHandler _managerCommandHnadler;
+        private ManagerCommandHandler _managerCommandHandler;
 
         public BookingManager(
             ManagerCommandHandler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
         {
             _passengerCommandHandler = passengerCommandHandler;
-            _managerCommandHnadler = managerCommndHandler;
+            _managerCommandHandler = managerCommndHandler;
         }
 
-        public void processInput(string input)
+        public void ProcessInput(string input)
         {
             string[] line = input.Split(' ');
             ManagerCommand managerCommand = ManagerCommands.ParseManagerCommand(line[0]);
@@ -24,7 +24,7 @@ namespace ATB.Logic
             if (passengerCommand != PassengerCommand.None)
                 _passengerCommandHandler.ExecutePassengerCommand(line, passengerCommand);
             else if (managerCommand != ManagerCommand.None)
-                _managerCommandHnadler.executeManagerCommand(line, managerCommand);
+                _managerCommandHandler.executeManagerCommand(line, managerCommand);
             else Console.WriteLine("\n Please enter an appropriate action");
         }
 

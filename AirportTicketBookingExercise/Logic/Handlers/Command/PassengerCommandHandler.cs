@@ -7,17 +7,17 @@ namespace ATB.Logic.Handlers.Command
 {
     public class PassengerCommandHandler
     {
-        private readonly IBookingService _BookingService;
+        private readonly IBookingService _bookingService;
         private readonly IUserService _userService;
         private readonly IFlightservice _flightService;
 
         private User? loggedInUser;
 
-        public PassengerCommandHandler(IBookingService BookingService, IUserService userService, IFlightservice Flightservice)
+        public PassengerCommandHandler(IBookingService bookingService, IUserService userService, IFlightservice flightService)
         {
-            _BookingService = BookingService;
+            _bookingService = bookingService;
             _userService = userService;
-            _flightService = Flightservice;
+            _flightService = flightService;
         }
 
         public void ExecutePassengerCommand(string[] productInfo, PassengerCommand command)
@@ -77,10 +77,10 @@ namespace ATB.Logic.Handlers.Command
             try
             {
                 int flightId = int.Parse(productInfo[1]);
-                BookingClass BookingClass = BookingClasses.parseBookingClass(productInfo[2]);
+                BookingClass BookingClass = BookingClasses.ParseBookingClass(productInfo[2]);
 
-                Flight? flight = _flightService.GetFlightById(flightId);
-                if (flight != null && flight.seatsAvailable < flight.SeatCapacity)
+                Flight? flight = _flightService.GetFlight(flightId);
+                if (flight != null && flight.SeatsAvailable < flight.SeatCapacity)
                 {
                     decimal price = BookingClass switch
                     {
@@ -97,7 +97,7 @@ namespace ATB.Logic.Handlers.Command
                             PassengerId = loggedInUser!.UserId,
                             BookingClass = BookingClass
                         };
-                        _BookingService.CreateBooking(Booking);
+                        _bookingService.CreateBooking(Booking);
                         _flightService.AddPassengerToSeat(flight);
 
                         Console.WriteLine($"You have Booked flight ID {flightId} in {BookingClass} class.");
@@ -161,9 +161,9 @@ namespace ATB.Logic.Handlers.Command
             try
             {
                 int BookingId = int.Parse(productInfo[1]);
-                if (_BookingService.ValidateBookingById(BookingId, loggedInUser!.UserId))
+                if (_bookingService.IsBookingValidById(BookingId, loggedInUser!.UserId))
                 {
-                    bool isSuccess = _BookingService.RemoveBookingById(BookingId);
+                    bool isSuccess = _bookingService.RemoveBookingById(BookingId);
                     if (isSuccess)
                         Console.WriteLine($"Booking with ID {BookingId} deleted successfully.");
                     else
@@ -182,7 +182,7 @@ namespace ATB.Logic.Handlers.Command
 
         private void Bookings()
         {
-            var Bookings = _BookingService.GetBookingsByUserId(loggedInUser!.UserId);
+            var Bookings = _bookingService.GetBookings(loggedInUser!.UserId);
             PrintOutBookings(Bookings);
         }
 

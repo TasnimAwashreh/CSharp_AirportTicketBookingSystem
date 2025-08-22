@@ -25,12 +25,12 @@ namespace ATB.Logic.Service
 
         public List<Flight> GetFlights()
         {
-            return _flightRepo.getFlights();
+            return _flightRepo.GetFlights();
         }
 
-        public Flight? GetFlightById(int flightid)
+        public Flight? GetFlight(int flightid)
         {
-            return _flightRepo.getFlightById(flightid);
+            return _flightRepo.GetFlight(flightid);
         }
 
         public void AddPassengerToSeat(Flight flight)

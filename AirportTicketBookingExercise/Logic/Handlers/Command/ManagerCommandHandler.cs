@@ -14,11 +14,11 @@ namespace ATB.Logic.Handlers.Command
         private readonly IBookingService _bookingService;
         private User? loggedInUser;
 
-        public ManagerCommandHandler(IFlightservice flightService,IUserService userService, IBookingService BookingService)
+        public ManagerCommandHandler(IFlightservice flightService,IUserService userService, IBookingService bookingService)
         {
             _flightService = flightService;
             _userService = userService;
-            _bookingService = BookingService;
+            _bookingService = bookingService;
               
         }
         public void executeManagerCommand(string[] productInfo, ManagerCommand command)

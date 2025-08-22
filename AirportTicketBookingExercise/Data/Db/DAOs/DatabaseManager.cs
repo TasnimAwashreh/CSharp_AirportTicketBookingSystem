@@ -28,10 +28,11 @@ namespace ATB.Data.Db.DAOs
                                             PassengerId INTEGER NOT NULL,
                                             BookingClass TEXT NOT NULL
                                         );";
-                using var cmd = conn.CreateCommand();
-                cmd.CommandText = createManagerTable;
-                cmd.ExecuteNonQuery();
-                conn.Close();
+                using (var cmd = conn.CreateCommand())
+                {
+                    cmd.CommandText = createManagerTable;
+                    cmd.ExecuteNonQuery();
+                }
             }
         }
 

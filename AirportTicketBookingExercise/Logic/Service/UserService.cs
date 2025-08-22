@@ -27,10 +27,10 @@ namespace ATB.Logic.Service
             return _userRepository.CreateUser(user);
         }
 
-        public User? GetUserById(int userId)
+        public User? GetUser(int userId)
         {
 
-           return _userRepository.GetUserById(userId);
+           return _userRepository.GetUser(userId);
         }
 
         public User? GetUserByName(string username)

@@ -7,9 +7,9 @@ namespace ATB.Logic.Service
     {
         bool CreateBooking(Booking Booking);
         List<Booking> GetAllBookings();
-        List<Booking> GetBookingsByUserId(int passengerId);
+        List<Booking> GetBookings(int passengerId);
         bool RemoveBookingById(int BookingId);
-        bool ValidateBookingById(int BookingId, int passengerId);
+        bool IsBookingValidById(int BookingId, int passengerId);
         List<Booking> FilterBookings(BookingFilter query);
     }
 }

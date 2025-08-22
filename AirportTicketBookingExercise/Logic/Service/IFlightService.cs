@@ -5,7 +5,7 @@ namespace ATB.Logic.Service
     public interface IFlightservice
     {
         void AddPassengerToSeat(Flight flight);
-        Flight? GetFlightById(int flightid);
+        Flight? GetFlight(int flightid);
         List<Flight> GetFlights();
         bool ImportFlightData();
         void RemovePassengerToSeat(Flight flight);

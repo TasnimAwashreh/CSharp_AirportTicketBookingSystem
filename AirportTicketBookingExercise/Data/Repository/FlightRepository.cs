@@ -12,33 +12,33 @@ namespace ATB.Data.Repository
     {
         const string csvFile = "Flights.csv";
         string path = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
-        private List<Flight> _Flights;
+        private List<Flight> _flights;
 
         public FlightRepository()
         {
-            _Flights = new List<Flight>();
+            _flights = new List<Flight>();
         }
 
-        public List<Flight> getFlights() { return _Flights; }
+        public List<Flight> GetFlights() { return _flights; }
 
-        public Flight? getFlightById(int flightId)
+        public Flight? GetFlight(int flightId)
         {
-            return _Flights.Find(flight => flight.FlightId == flightId);
+            return _flights.Find(flight => flight.FlightId == flightId);
         }
 
-        public Flight GetFlightByName(string? name)
+        public Flight GetFlight(string? name)
         {
-            return _Flights.Find(flight => flight.FlightName.ToLowerInvariant() == name.ToLowerInvariant());
+            return _flights.Find(flight => flight.FlightName.ToLowerInvariant() == name.ToLowerInvariant());
         }
 
         public void AddPassengerToSeat(Flight flight)
         {
-            flight.seatsAvailable++;
+            flight.SeatsAvailable++;
         }
 
         public void RemovePassengerFromSeat(Flight flight)
         {
-            flight.seatsAvailable--;
+            flight.SeatsAvailable--;
         }
 
         private void ValidateField<T>(string fieldName, string fieldInput, 
@@ -124,7 +124,7 @@ namespace ATB.Data.Repository
                         };
                         flightData.Add(flight);
                     }
-                    _Flights = flightData;
+                    _flights = flightData;
                     return true;
                 }
                 catch

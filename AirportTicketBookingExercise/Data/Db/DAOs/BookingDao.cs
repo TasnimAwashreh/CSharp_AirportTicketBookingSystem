@@ -43,7 +43,7 @@ namespace ATB.Data.Db.DAOs
             return list;
         }
 
-        public List<Booking> GetBookingsByUserId(int passengerId)
+        public List<Booking> GetBookings(int passengerId)
         {
             var list = new List<Booking>();
             using var conn = new SqliteConnection($"Data Source={_connectionString}");
@@ -51,16 +51,17 @@ namespace ATB.Data.Db.DAOs
             using var cmd = conn.CreateCommand();
             cmd.CommandText = "SELECT * FROM Booking WHERE PassengerId = $userId";
             cmd.Parameters.AddWithValue("$userId", passengerId);
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
+            using (var reader = cmd.ExecuteReader())
             {
-                list.Add(MapBooking(reader));
+                while (reader.Read())
+                {
+                    list.Add(MapBooking(reader));
+                }
             }
-            conn.Close();
             return list;
         }
 
-        public bool ValidateBooking(int BookingId, int passengerId)
+        public bool IsBookingValid(int BookingId, int passengerId)
         {
             using var conn = new SqliteConnection($"Data Source={_connectionString}");
             conn.Open();
@@ -68,7 +69,7 @@ namespace ATB.Data.Db.DAOs
             cmd.CommandText = "SELECT 1 FROM Booking WHERE BookingId = $BookingId AND PassengerId = $passengerId";
             cmd.Parameters.AddWithValue("$BookingId", BookingId);
             cmd.Parameters.AddWithValue("$passengerId", passengerId);
-            using var reader = cmd.ExecuteReader();
+            var reader = cmd.ExecuteReader();
             conn.Close();
             return reader.Read();
         }
@@ -85,15 +86,17 @@ namespace ATB.Data.Db.DAOs
             conn.Close();
         }
 
-        public bool DeleteBookingById(int BookingId)
+        public bool DeleteBooking(int BookingId)
         {
             using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            bool res = false;
             conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "DELETE FROM Booking WHERE BookingId = $BookingId";
-            cmd.Parameters.AddWithValue("$BookingId", BookingId);
-            bool res = cmd.ExecuteNonQuery() > 0;
-            conn.Close();
+            using (var cmd = conn.CreateCommand())
+            {
+                cmd.CommandText = "DELETE FROM Booking WHERE BookingId = $BookingId";
+                cmd.Parameters.AddWithValue("$BookingId", BookingId);
+                res = cmd.ExecuteNonQuery() > 0;
+            }
             return res;
         }
 
@@ -104,7 +107,7 @@ namespace ATB.Data.Db.DAOs
                 BookingId = reader.GetInt32(0),
                 FlightId = reader.GetInt32(1),
                 PassengerId = reader.GetInt32(2),
-                BookingClass = BookingClasses.parseBookingClass(reader.GetString(3))
+                BookingClass = BookingClasses.ParseBookingClass(reader.GetString(3))
             };
         }
     }

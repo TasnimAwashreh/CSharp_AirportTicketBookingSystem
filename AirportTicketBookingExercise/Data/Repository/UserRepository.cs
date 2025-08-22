@@ -29,9 +29,9 @@ namespace ATB.Data.Repository
 
             return _dao.GetAllUsers();
         }
-        public User? GetUserById(int id) => _dao.GetUserById(id);
+        public User? GetUser(int id) => _dao.GetUser(id);
 
-        public User? GetUserByName(string name) => _dao.GetUserByUsername(name);
+        public User? GetUserByName(string name) => _dao.GetUser(name);
 
         public List<User> GetUserByType(UserType type)
         {

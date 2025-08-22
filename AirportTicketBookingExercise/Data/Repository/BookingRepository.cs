@@ -25,9 +25,9 @@ namespace ATB.Data.Repository
             }
         }
 
-        public List<Booking> GetBookingsByUserId(int PassengerId)
+        public List<Booking> GetBookings(int PassengerId)
         {
-            List<Booking> Bookings = _dao.GetBookingsByUserId(PassengerId);
+            List<Booking> Bookings = _dao.GetBookings(PassengerId);
             return Bookings;
         }
 
@@ -37,14 +37,14 @@ namespace ATB.Data.Repository
             return Bookings;
         }
 
-        public bool ValidatePassengerBooking(int BookingId, int passengerId)
+        public bool IsPassengerBookingValid(int BookingId, int passengerId)
         {
-            return _dao.ValidateBooking(BookingId, passengerId);
+            return _dao.IsBookingValid(BookingId, passengerId);
         }
 
         public bool DeleteBooking(int BookingId)
         {
-            return _dao.DeleteBookingById(BookingId);
+            return _dao.DeleteBooking(BookingId);
         }
 
     }

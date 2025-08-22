@@ -15,17 +15,19 @@ namespace ATB.Data.Db.DAOs
 
         public void CreateUser(User user)
         {
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "INSERT INTO User (Name, Password, Type) VALUES ($name, $pass, $type)";
-            cmd.Parameters.AddWithValue("$name", user.Name);
-            cmd.Parameters.AddWithValue("$pass", user.Password);
-            cmd.Parameters.AddWithValue("$type", user.UserType.ToString());
-            cmd.ExecuteNonQuery();
+            using (var conn = new SqliteConnection($"Data Source={_connectionString}"))
+            {
+                conn.Open();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "INSERT INTO User (Name, Password, Type) VALUES ($name, $pass, $type)";
+                cmd.Parameters.AddWithValue("$name", user.Name);
+                cmd.Parameters.AddWithValue("$pass", user.Password);
+                cmd.Parameters.AddWithValue("$type", user.UserType.ToString());
+                cmd.ExecuteNonQuery();
+            }
         }
 
-        public User? GetUserById(int userId)
+        public User? GetUser(int userId)
         {
             using var conn = new SqliteConnection($"Data Source={_connectionString}");
             conn.Open();
@@ -40,7 +42,7 @@ namespace ATB.Data.Db.DAOs
             return null;
         }
 
-        public User? GetUserByUsername(string username)
+        public User? GetUser(string username)
         {
             using var conn = new SqliteConnection($"Data Source={_connectionString}");
             conn.Open();

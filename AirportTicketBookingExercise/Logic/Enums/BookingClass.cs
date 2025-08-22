@@ -11,7 +11,7 @@ namespace ATB.Logic.Enums
     }
     public class BookingClasses
     {
-        public static BookingClass parseBookingClass(string bookingClassStr)
+        public static BookingClass ParseBookingClass(string bookingClassStr)
         {
             switch (bookingClassStr.ToLower())
             {

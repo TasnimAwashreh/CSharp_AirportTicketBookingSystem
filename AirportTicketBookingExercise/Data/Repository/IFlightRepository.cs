@@ -6,10 +6,10 @@ namespace ATB.Data.Repository
     {
         public string ValidateCSVData();
         public bool ImportCSVData();
-        public List<Flight> getFlights();
-        public Flight? getFlightById(int flightId);
+        public List<Flight> GetFlights();
+        public Flight? GetFlight(int flightId);
         public void AddPassengerToSeat(Flight flight);
         public void RemovePassengerFromSeat(Flight flight);
-        public Flight GetFlightByName(string name);
+        public Flight GetFlight(string name);
     }
 }

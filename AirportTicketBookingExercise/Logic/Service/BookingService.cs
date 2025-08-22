@@ -7,45 +7,45 @@ namespace ATB.Logic.Service
 {
     public class BookingService : IBookingService
     {
-        private readonly IBookingRepository _BookingRepository;
+        private readonly IBookingRepository _bookingRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFlightRepository _flightRepository;
         public BookingService(IBookingRepository BookingRepository,IFlightRepository flightRepository, IUserRepository userRepository)
         {
-            this._BookingRepository = BookingRepository;
+            this._bookingRepository = BookingRepository;
             this._userRepository = userRepository;
             this._flightRepository = flightRepository;
         }
 
         public bool CreateBooking(Booking Booking)
         {
-            return _BookingRepository.CreateBooking(Booking);
+            return _bookingRepository.CreateBooking(Booking);
         }
 
         public List<Booking> GetAllBookings()
         {
-            return _BookingRepository.GetAllBookings();
+            return _bookingRepository.GetAllBookings();
         }
 
-        public bool ValidateBookingById(int BookingId, int passengerId)
+        public bool IsBookingValidById(int BookingId, int passengerId)
         {
-            return _BookingRepository.ValidatePassengerBooking(BookingId, passengerId);
+            return _bookingRepository.IsPassengerBookingValid(BookingId, passengerId);
         }
 
-        public List<Booking> GetBookingsByUserId(int passengerId)
+        public List<Booking> GetBookings(int passengerId)
         {
-            return _BookingRepository.GetBookingsByUserId(passengerId);
+            return _bookingRepository.GetBookings(passengerId);
         }
 
         public bool RemoveBookingById(int BookingId)
         {
-            return _BookingRepository.DeleteBooking(BookingId);
+            return _bookingRepository.DeleteBooking(BookingId);
         }
 
         public List<Booking> FilterBookings(BookingFilter query)
         {
-            var Bookings = _BookingRepository.GetAllBookings();
-            var Flights = _flightRepository.getFlights();
+            var Bookings = _bookingRepository.GetAllBookings();
+            var Flights = _flightRepository.GetFlights();
             var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passenger).ToList();
 
             var Filtered = Bookings.Where(b =>
@@ -84,7 +84,7 @@ namespace ATB.Logic.Service
                 if (!string.IsNullOrEmpty(query.DestinationCountry) && (flight.DestinationCountry == null || !flight.DestinationCountry.Contains(query.DestinationCountry)))
                     return false;
 
-                if (query.DepartureDate.HasValue && (!flight.DepartureDate.HasValue || flight.DepartureDate.Value.Date != query.DepartureDate.Value.Date))
+                if (query.DepartureDate.HasValue && (flight.DepartureDate.Date != query.DepartureDate.Value.Date))
                     return false;
 
                 if (!string.IsNullOrEmpty(query.DepartureAirport) && (flight.DepartureAirport == null || !flight.DepartureAirport.Contains(query.DepartureAirport)))

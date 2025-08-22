@@ -36,7 +36,7 @@ namespace ATB.Data.Models
 
         [PresentAndFutureOnly]
         [Required(ErrorMessage = "Depature Date is missing")]
-        public DateTime? DepartureDate { get; set; }
+        public DateTime DepartureDate { get; set; }
 
         [Required(ErrorMessage = "Economy Seat Price is missing")]
         public decimal EconomyPrice { get; set; }
@@ -50,7 +50,7 @@ namespace ATB.Data.Models
         [Required(ErrorMessage = "Seat Capacity is missing")]
         public int SeatCapacity { get; set; }
         
-        public int seatsAvailable { get; set; }
+        public int SeatsAvailable { get; set; }
 
         public override string ToString()
         {

@@ -9,9 +9,9 @@ namespace ATB.Data.Models
         public int PassengerId;
         public BookingClass BookingClass;
 
-        public string ToString()
+        public override string ToString()
         {
-            return $"{BookingId}| Flight Id: {this.FlightId}, Class: {this.BookingClass}";
+            return $"{BookingId}| Flight Id: {this.FlightId}, Class: {this.BookingClass}, Passenger Id: {this.PassengerId}";
         }
 
     }

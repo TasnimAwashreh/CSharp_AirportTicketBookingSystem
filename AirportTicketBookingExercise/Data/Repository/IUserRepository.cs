@@ -7,7 +7,7 @@ namespace ATB.Data.Repository
 
         public bool CreateUser(User User);
         public bool UpdateUser(User User);
-        public User? GetUserById(int id);
+        public User? GetUser(int id);
         public User? GetUserByName(string username);
         public List<User> GetUserByType(UserType type);
         public List<User> GetAllUsers();
