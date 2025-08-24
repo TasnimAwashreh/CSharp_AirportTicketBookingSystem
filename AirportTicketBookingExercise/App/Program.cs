@@ -1,8 +1,7 @@
-﻿
-using ATB.Data.Db.DAOs;
-using ATB.Configuration;
+﻿using ATB.Configuration;
 using ATB.Logic;
 using Microsoft.Extensions.DependencyInjection;
+using ATB.Data.Db;
 
 class Program
 {
@@ -43,7 +42,6 @@ class Program
     {
         var serviceCollection = new ServiceCollection();
         serviceCollection
-            .AddDaos()
             .AddRepositories()
             .AddServices()
             .AddCommandHandlers()

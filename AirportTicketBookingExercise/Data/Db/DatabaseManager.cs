@@ -1,6 +1,6 @@
 ﻿using Microsoft.Data.Sqlite;
 
-namespace ATB.Data.Db.DAOs
+namespace ATB.Data.Db
 {
     public class DatabaseManager
     {

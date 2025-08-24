@@ -1,21 +1,42 @@
-﻿using ATB.Data.Db.DAOs;
+﻿
 using ATB.Data.Models;
+using Microsoft.Data.Sqlite;
 
 
 namespace ATB.Data.Repository
 {
     public class UserRepository : IUserRepository
     {
-       private readonly UserDAO _dao;
+        private readonly string _connectionString;
 
-        public UserRepository(UserDAO dao) { 
-            _dao = dao;
+        public UserRepository(string connectionString) {
+            _connectionString = connectionString;
         }
-        public bool CreateUser(User User)
+
+        private User MapUser(SqliteDataReader reader)
+        {
+            return new User
+            {
+                UserId = reader.GetInt32(0),
+                Name = reader.GetString(1),
+                Password = reader.GetString(2),
+                UserType = Enum.Parse<UserType>(reader.GetString(3), true)
+            };
+        }
+        public bool CreateUser(User user)
         {
             try
             {
-                _dao.CreateUser(User);
+                using (var conn = new SqliteConnection($"Data Source={_connectionString}"))
+                {
+                    conn.Open();
+                    using var cmd = conn.CreateCommand();
+                    cmd.CommandText = "INSERT INTO User (Name, Password, Type) VALUES ($name, $pass, $type)";
+                    cmd.Parameters.AddWithValue("$name", user.Name);
+                    cmd.Parameters.AddWithValue("$pass", user.Password);
+                    cmd.Parameters.AddWithValue("$type", user.UserType.ToString());
+                    cmd.ExecuteNonQuery();
+                }
                 return true;
             }
             catch
@@ -24,18 +45,64 @@ namespace ATB.Data.Repository
             }
 
         }
-
         public List<User> GetAllUsers() {
 
-            return _dao.GetAllUsers();
+            var users = new List<User>();
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM User";
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                users.Add(MapUser(reader));
+            }
+            return users;
         }
-        public User? GetUser(int id) => _dao.GetUser(id);
+        public User? GetUser(int userId)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM User WHERE UserId = $userid";
+            cmd.Parameters.AddWithValue("$userid", userId);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return MapUser(reader);
+            }
+            return null;
+        }
 
-        public User? GetUserByName(string name) => _dao.GetUser(name);
+        public User? GetUserByName(string username)
+        {
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM User WHERE Name = $name";
+            cmd.Parameters.AddWithValue("$name", username);
+            using var reader = cmd.ExecuteReader();
+            if (reader.Read())
+            {
+                return MapUser(reader);
+            }
+            return null;
+        }
 
         public List<User> GetUserByType(UserType type)
         {
-            return _dao.GetUsersByType(type);
+            var users = new List<User>();
+            using var conn = new SqliteConnection($"Data Source={_connectionString}");
+            conn.Open();
+            using var cmd = conn.CreateCommand();
+            cmd.CommandText = "SELECT * FROM User WHERE Type = $type";
+            cmd.Parameters.AddWithValue("$type", type.ToString());
+            using var reader = cmd.ExecuteReader();
+            while (reader.Read())
+            {
+                users.Add(MapUser(reader));
+            }
+            return users;
         }
 
         public bool UpdateUser(User User)

@@ -10,12 +10,12 @@ namespace ATB.Data.Repository
 {
     public class FlightRepository: IFlightRepository
     {
-        const string csvFile = "Flights.csv";
-        string path = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
+        private readonly string _flightsCSVPath;
         private List<Flight> _flights;
 
-        public FlightRepository()
+        public FlightRepository(string flightsCSVPath)
         {
+            _flightsCSVPath = flightsCSVPath;
             _flights = new List<Flight>();
         }
 
@@ -66,7 +66,7 @@ namespace ATB.Data.Repository
 
         public string ValidateCSVData()
         {
-            using (TextFieldParser csvParser = new TextFieldParser(path))
+            using (TextFieldParser csvParser = new TextFieldParser(_flightsCSVPath))
             {
                 csvParser.CommentTokens = new string[] { "#" };
                 csvParser.SetDelimiters(new string[] { "," });
@@ -97,7 +97,7 @@ namespace ATB.Data.Repository
         public bool ImportCSVData()
         {
             List<Flight> flightData = new List<Flight>();
-            using (TextFieldParser csvParser = new TextFieldParser(path))
+            using (TextFieldParser csvParser = new TextFieldParser(_flightsCSVPath))
             {
                 csvParser.CommentTokens = new string[] { "#" };
                 csvParser.SetDelimiters(new string[] { "," });

@@ -1,35 +1,30 @@
-﻿using ATB.Data.Db.DAOs;
-using ATB.Data.Repository;
+﻿using ATB.Data.Repository;
 using ATB.Logic.Handlers.Command;
 using ATB.Logic.Service;
 using ATB.Logic;
 using Microsoft.Extensions.DependencyInjection;
+using ATB.Data.Db;
 
 
 namespace ATB.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddDaos(this IServiceCollection services){
-
-            const string DbFile = "BookingDb.db";
-            string connectionString = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", DbFile);
-
-            services
-                    .AddSingleton<UserDAO>(_ => new UserDAO(connectionString))
-                     .AddSingleton<BookingDAO>(_ => new BookingDAO(connectionString))
-                     .AddSingleton<DatabaseManager>(_ => new DatabaseManager(connectionString));
-
-            return services;
-        }
-
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
+            const string DbFile = "BookingDb.db";
+            string connectionString = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", DbFile);
+
+            const string csvFile = "Flights.csv";
+            string filghtsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
+
             services
-                .AddScoped<IUserRepository, UserRepository>()
-                .AddScoped<IFlightRepository, FlightRepository>()
-                .AddScoped<IBookingRepository, BookingRepository>();
+                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(connectionString))
+                    .AddScoped<IUserRepository>(_ => new UserRepository(connectionString))
+                    .AddScoped<IBookingRepository>(_ => new BookingRepository(connectionString))
+                    .AddScoped<IFlightRepository>(_ => new FlightRepository(filghtsFilePath));
+                    
 
             return services;
         }
