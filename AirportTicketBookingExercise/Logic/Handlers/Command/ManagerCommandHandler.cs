@@ -1,7 +1,7 @@
-﻿using ATB.Data;
-using ATB.Logic.Enums;
+﻿using ATB.Logic.Enums;
 using ATB.Data.Models;
 using ATB.Logic.Service;
+using ATB.Logic;
 
 
 namespace ATB.Logic.Handlers.Command

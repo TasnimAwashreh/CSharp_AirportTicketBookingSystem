@@ -1,7 +1,7 @@
-﻿using ATB.Data;
-using ATB.Data.Repository;
+﻿using ATB.Data.Repository;
 using ATB.Data.Models;
 using ATB.Logic.Enums;
+using ATB.Logic;
 
 namespace ATB.Logic.Service
 {

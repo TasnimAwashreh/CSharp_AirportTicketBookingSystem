@@ -1,4 +1,4 @@
-﻿using ATB.Data;
+﻿using ATB.Logic;
 using ATB.Data.Models;
 
 namespace ATB.Logic.Service

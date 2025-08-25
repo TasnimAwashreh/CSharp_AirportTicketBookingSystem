@@ -1,6 +1,4 @@
-﻿
-
-namespace ATB.Data
+﻿namespace ATB.Logic
 {
     public class BookingFilter
     {

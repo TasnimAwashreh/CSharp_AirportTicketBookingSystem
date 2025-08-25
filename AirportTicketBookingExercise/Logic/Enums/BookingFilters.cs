@@ -1,4 +1,4 @@
-﻿using ATB.Data;
+﻿using ATB.Logic;
 using System.Globalization;
 
 namespace ATB.Logic.Enums
