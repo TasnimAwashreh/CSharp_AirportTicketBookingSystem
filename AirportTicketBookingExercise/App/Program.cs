@@ -1,7 +1,7 @@
 ﻿using ATB.Configuration;
-using ATB.Logic;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
+using ATB.App;
 
 class Program
 {

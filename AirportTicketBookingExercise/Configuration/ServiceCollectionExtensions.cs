@@ -1,9 +1,10 @@
 ﻿using ATB.Data.Repository;
 using ATB.Logic.Handlers.Command;
 using ATB.Logic.Service;
-using ATB.Logic;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
+using ATB.App;
+
 
 
 namespace ATB.Configuration

@@ -1,6 +1,7 @@
 ﻿using ATB.Logic.Enums;
 using ATB.Data.Models;
 using ATB.Logic.Service;
+using System.Text;
 
 
 namespace ATB.Logic.Handlers.Command
@@ -11,8 +12,6 @@ namespace ATB.Logic.Handlers.Command
         private readonly IUserService _userService;
         private readonly IFlightservice _flightService;
 
-        private User? loggedInUser;
-
         public PassengerCommandHandler(IBookingService bookingService, IUserService userService, IFlightservice flightService)
         {
             _bookingService = bookingService;
@@ -20,59 +19,7 @@ namespace ATB.Logic.Handlers.Command
             _flightService = flightService;
         }
 
-        public void ExecutePassengerCommand(string[] productInfo, PassengerCommand command)
-        {
-            if (loggedInUser != null)
-            {
-                switch (command)
-                {
-                    case PassengerCommand.LogOut:
-                        PassengerSignOut();
-                        break;
-                    case PassengerCommand.Book:
-                        PassengerBookFlight(productInfo);
-                        break;
-                    case PassengerCommand.Search:
-                        Search(productInfo);
-                        break;
-                    case PassengerCommand.Cancel:
-                        Cancel(productInfo);
-                        break;
-                    case PassengerCommand.Modify:
-                        Console.WriteLine("Modify functionality not yet implemented.");
-                        break;
-                    case PassengerCommand.Flights:
-                        Flights();
-                        break;
-                    case PassengerCommand.Bookings:
-                        Bookings();
-                        break;
-                    case PassengerCommand.None:
-                        Console.WriteLine("\nPlease enter an appropriate action.");
-                        break;
-                }
-            }
-            else
-            {
-                switch (command)
-                {
-                    case PassengerCommand.SignUp:
-                        PassengerSignUp(productInfo);
-                        break;
-                    case PassengerCommand.LogIn:
-                        PassengerLogIn(productInfo);
-                        break;
-                    case PassengerCommand.None:
-                        Console.WriteLine("\nPassenger, please enter an appropriate action.");
-                        break;
-                    default:
-                        Console.WriteLine("You must log in to use this command.");
-                        break;
-                }
-            }
-        }
-
-        private void PassengerBookFlight(string[] productInfo)
+        public bool PassengerBookFlight(string[] productInfo, User loggedInUser)
         {
             try
             {
@@ -80,7 +27,9 @@ namespace ATB.Logic.Handlers.Command
                 BookingClass BookingClass = productInfo[2].ParseBookingClass();
 
                 Flight? flight = _flightService.GetFlight(flightId);
-                if (flight != null && flight.SeatsAvailable < flight.SeatCapacity)
+                if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
+                    return false;
+                else
                 {
                     decimal price = BookingClass switch
                     {
@@ -89,112 +38,103 @@ namespace ATB.Logic.Handlers.Command
                         BookingClass.Economy => flight.EconomyPrice,
                         _ => 0
                     };
-                    if (price != 0)
+                    if (price == 0)
+                        return false;
+                    else
                     {
                         var Booking = new Booking
                         {
                             FlightId = flightId,
-                            PassengerId = loggedInUser!.UserId,
+                            PassengerId = loggedInUser.UserId,
                             BookingClass = BookingClass
                         };
                         _bookingService.CreateBooking(Booking);
                         _flightService.AddPassengerToSeat(flight);
 
-                        Console.WriteLine($"You have Booked flight ID {flightId} in {BookingClass} class.");
-                    }
-                    else
-                    {
-                        Console.WriteLine($"This flight does not offer {BookingClass} class.");
-                    }
+                        return true;
+                    };
                 }
-                else
-                {
-                    Console.WriteLine("The selected flight is full or does not exist.");
-                }
+                
             }
             catch
             {
-                Console.WriteLine("Please enter flight ID and class in the correct format.");
+                return false;
             }
         }
 
-        private void Search(string[] productInfo)
+        public List<Flight> Search(string[] productInfo)
         {
-            if (productInfo.Length >= 3)
+            List<Flight> filteredFlights = new List<Flight>();
+            if (productInfo.Length < 3)
             {
-                try
-                {
-                    FilterParam SearchParam = productInfo[1].ParseFilterParam();
-                    string input = productInfo[2];
-
-                    var Flights = _flightService.GetFlights();
-                    List<Flight> FilteredFlights = SearchParam switch
-                    {
-                        FilterParam.Flight => Flights.Where(f => f.FlightName.Equals(input)).ToList(),
-                        FilterParam.Price => Flights.Where(f =>
-                            f.BuisnessPrice == decimal.Parse(input) ||
-                            f.EconomyPrice == decimal.Parse(input) ||
-                            f.FirstClassPrice == decimal.Parse(input)).ToList(),
-                        FilterParam.DepartureCountry => Flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
-                        FilterParam.DestinationCountry => Flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
-                        FilterParam.DepartureDate => Flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
-                        FilterParam.DepartureAirport => Flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
-                        FilterParam.ArrivalAirport => Flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
-                        _ => []
-                    };
-
-                    PrintOutFlights(FilteredFlights);
-                }
-                catch
-                {
-                    Console.WriteLine("Invalid input. Please try again.");
-                }
+                return _flightService.GetFlights();
             }
             else
             {
-                Console.WriteLine("Please enter the correct format.");
+                    FilterParam SearchParam = productInfo[1].ParseFilterParam();
+                    string input = productInfo[2];
+
+                    var flights = _flightService.GetFlights();
+                filteredFlights = SearchParam switch
+                    {
+                        FilterParam.Flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
+                        FilterParam.Price => flights.Where(f =>
+                            f.BuisnessPrice == decimal.Parse(input) ||
+                            f.EconomyPrice == decimal.Parse(input) ||
+                            f.FirstClassPrice == decimal.Parse(input)).ToList(),
+                        FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
+                        FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
+                        FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
+                        FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
+                        FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
+                        _ => []
+                    };
             }
+            return filteredFlights;
         }
 
-        private void Cancel(string[] productInfo)
+        public bool Cancel(string[] productInfo, User loggedInUser)
         {
             try
             {
                 int BookingId = int.Parse(productInfo[1]);
-                if (_bookingService.IsBookingValidById(BookingId, loggedInUser!.UserId))
-                {
-                    bool isSuccess = _bookingService.RemoveBookingById(BookingId);
-                    if (isSuccess)
-                        Console.WriteLine($"Booking with ID {BookingId} deleted successfully.");
-                    else
-                        Console.WriteLine($"Failed to delete Booking with ID {BookingId}.");
-                }
+                if (!_bookingService.IsBookingValidById(BookingId, loggedInUser.UserId))
+                    return false;
                 else
                 {
-                    Console.WriteLine("You did not Book this specific flight.");
+                    bool isSuccess = _bookingService.RemoveBookingById(BookingId);
+                    if (!isSuccess)
+                        return false;
+                    else return true;
                 }
             }
             catch
             {
-                Console.WriteLine("Invalid Booking ID.");
+                return false;
             }
         }
 
-        private void Bookings()
+        public List<Booking> Bookings(User loggedInUser)
         {
-            var Bookings = _bookingService.GetBookings(loggedInUser!.UserId);
-            PrintOutBookings(Bookings);
+            List<Booking> bookings = new List<Booking>();
+            if (loggedInUser == null)
+                bookings = _bookingService.GetBookings(loggedInUser.UserId);
+            return bookings;
         }
 
-        private void Flights()
+        public List<Flight> Flights()
         {
-            var Flights = _flightService.GetFlights();
-            PrintOutFlights(Flights);
+            List<Flight> flights = new List<Flight>();
+            flights = _flightService.GetFlights();
+            return flights;
+            
         }
 
-        private void PassengerSignUp(string[] productInfo)
+        public bool PassengerSignUp(string[] productInfo)
         {
-            if (productInfo.Length >= 3)
+            if (productInfo.Length < 3)
+                return false;
+            else
             {
                 try
                 {
@@ -205,76 +145,74 @@ namespace ATB.Logic.Handlers.Command
                         UserType = UserType.Passenger
                     };
 
-                    if (_userService.GetUserByName(user.Name) == null)
+                    if (_userService.GetUserByName(user.Name) != null)
+                        return false;
+                    else
                     {
                         bool isSuccess = _userService.CreateUser(user);
                         if (isSuccess)
-                            Console.WriteLine($"Passenger {user.Name} signed up successfully.");
+                            return true;
                         else
-                            Console.WriteLine("Passenger SignUp was unsuccessful.");
+                            return false;
                     }
-                    else Console.WriteLine("Passenger with this username already exists.");
                 }
                 catch
                 {
-                    Console.WriteLine("Something went wrong. Please try again later.");
+                    return false;
                 }
             }
-            else Console.WriteLine("Please enter name and password to sign up as a passenger.");
+
         }
 
-        private void PassengerLogIn(string[] productInfo)
+        public bool PassengerLogIn(string[] productInfo, User? loggedInUser)
         {
-            if (productInfo.Length >= 3)
+            if (productInfo.Length < 3)
+                return false;
+            else
             {
                 string username = productInfo[1];
                 string password = productInfo[2];
 
                 var user = _userService.Authenticate(username, password);
 
-                if (user != null && user.UserType == UserType.Passenger)
-                {
-                    loggedInUser = user;
-                    Console.WriteLine($"Welcome back, {user.Name}!");
-                }
+                if (user == null || user.UserType != UserType.Passenger)
+                    return false;
                 else
                 {
-                    Console.WriteLine("Invalid credentials or not a passenger.");
+                    loggedInUser = user;
+                    return true;
                 }
             }
-            else
-            {
-                Console.WriteLine("Please enter your name and password.");
-            }
         }
 
-        private void PassengerSignOut()
+        public bool PassengerSignOut(User? loggedInUser)
         {
-            if (loggedInUser != null)
+            if (loggedInUser == null)
+                return false;
+            else
             {
-                Console.WriteLine($"Passenger {loggedInUser.Name} has logged out.");
                 loggedInUser = null;
-            }
-            else
-            {
-                Console.WriteLine("No passenger is currently logged in.");
+                return true;
             }
         }
 
-        private void PrintOutFlights(List<Flight> Flights)
+        public string FlightsToString(List<Flight> Flights)
         {
+            StringBuilder stringBuilder = new StringBuilder();
             foreach (var flight in Flights)
             {
-                Console.WriteLine(flight.ToString());
+                stringBuilder.AppendLine(flight.ToString());
             }
+            return stringBuilder.ToString();    
         }
-
-        private void PrintOutBookings(List<Booking> BookingList)
+        public string BookingsToString(List<Booking> BookingList)
         {
+            StringBuilder stringBuilder = new StringBuilder();
             foreach (var Booking in BookingList)
             {
-                Console.WriteLine(Booking.ToString());
+                stringBuilder.AppendLine(Booking.ToString());
             }
+            return stringBuilder.ToString();
         }
     }
 }
