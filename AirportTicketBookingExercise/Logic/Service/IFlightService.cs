@@ -7,8 +7,9 @@ namespace ATB.Logic.Service
         void AddPassengerToSeat(Flight flight);
         Flight? GetFlight(int flightid);
         List<Flight> GetFlights();
-        bool ImportFlightData();
         void RemovePassengerToSeat(Flight flight);
-        string ValidateFlightData();
+        public string ValidateFlightData(string importPath);
+        public bool ImportFlightData(string importPath);
+
     }
 }

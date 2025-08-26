@@ -17,13 +17,21 @@ namespace ATB.Data.Repository
 
         public List<Booking> GetAllBookings()
         {
-            using (var reader = new StreamReader(_bookingPath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            List<Booking> records = new List<Booking>();
+            try
             {
-                csv.Context.RegisterClassMap<BookingMap>();
-                var records = csv.GetRecords<Booking>().ToList();
-                return records;
+                using (var reader = new StreamReader(_bookingPath))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<BookingMap>();
+                    records = csv.GetRecords<Booking>().ToList();
+                }
             }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
+            }
+            return records;
         }
 
         public bool CreateBooking(Booking booking)

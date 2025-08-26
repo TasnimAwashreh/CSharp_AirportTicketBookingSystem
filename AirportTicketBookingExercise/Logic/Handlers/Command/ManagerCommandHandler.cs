@@ -20,15 +20,14 @@ namespace ATB.Logic.Handlers.Command
 
         }
 
-        public bool Upload()
+        public bool Upload(string flightCSVPath)
         {
-            return _flightService.ImportFlightData();
+            return _flightService.ImportFlightData(flightCSVPath);
         }
 
-        public string Validate()
+        public string Validate(string flightCSVPath)
         {
-            Console.WriteLine($"\n Validating... \n");
-            return _flightService.ValidateFlightData();
+            return _flightService.ValidateFlightData(flightCSVPath);
         }
 
         public List<Booking> Filter(string[] input)

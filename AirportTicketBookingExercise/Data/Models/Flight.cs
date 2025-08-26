@@ -1,5 +1,6 @@
 ﻿
 using ATB.Data.Attributes;
+using CsvHelper.Configuration;
 using System.ComponentModel.DataAnnotations;
 
 namespace ATB.Data.Models
@@ -59,6 +60,25 @@ namespace ATB.Data.Models
                 (this.EconomyPrice != 0 ? ("Economy Price: " + this.EconomyPrice.ToString()) : "") +
                 (this.BuisnessPrice != 0 ? (" Business Class Price: " + this.BuisnessPrice.ToString()) : "") +
                 (this.FirstClassPrice != 0 ? (" First Class Price: " + this.FirstClassPrice.ToString()) : "");
+        }
+    }
+
+    public sealed class FlightMap : ClassMap<Flight>
+    {
+        public FlightMap()
+        {
+            Map(f => f.FlightId).Name("FlightId");
+            Map(f => f.FlightName).Name("FlightName");
+            Map(f => f.DepartureCountry).Name("DepartureCountry");
+            Map(f => f.DestinationCountry).Name("DestinationCountry");
+            Map(f => f.DepartureAirport).Name("DepartureAirport");
+            Map(f => f.ArrivalAirport).Name("ArrivalAirport");
+            Map(f => f.DepartureDate).Name("DepartureDate");
+            Map(f => f.EconomyPrice).Name("EconomyPrice");
+            Map(f => f.BuisnessPrice).Name("BuisnessPrice");
+            Map(f => f.FirstClassPrice).Name("FirstClassPrice");
+            Map(f => f.SeatCapacity).Name("SeatCapacity");
+            Map(f => f.SeatsAvailable).Name("SeatsAvailable");
         }
     }
 }

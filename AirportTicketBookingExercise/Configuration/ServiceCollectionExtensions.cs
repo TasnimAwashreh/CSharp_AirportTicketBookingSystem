@@ -15,17 +15,16 @@ namespace ATB.Configuration
         {
             const string bookingFile = "bookings.csv";
             const string userFile = "users.csv";
+            const string flightsFile = "flights.csv";
             string bookingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", bookingFile);
             string usersPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", userFile);
-
-            const string csvFile = "Flights.csv";
-            string filghtsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
+            string flightsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", flightsFile);
 
             services
-                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(usersPath, bookingsPath))
+                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(usersPath, bookingsPath, flightsPath))
                     .AddScoped<IUserRepository>(_ => new UserRepository(usersPath))
                     .AddScoped<IBookingRepository>(_ => new BookingRepository(bookingsPath))
-                    .AddScoped<IFlightRepository>(_ => new FlightRepository(filghtsFilePath));
+                    .AddScoped<IFlightRepository>(_ => new FlightRepository(flightsPath));
                     
 
             return services;

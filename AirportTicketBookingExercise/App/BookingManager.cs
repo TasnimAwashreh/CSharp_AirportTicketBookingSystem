@@ -36,22 +36,27 @@ namespace ATB.App
                 {
                     case ManagerCommand.ManagerLogOut:
                         if (loggedInUser == null || loggedInUser.UserType != UserType.Manager)
-                            Console.WriteLine("You did not log in as a manager to log out");
-                        else
                         {
-                            loggedInUser = null;
-                            Console.WriteLine("Logged out successfully! See you soon, manager!");
+                            Console.WriteLine("You did not log in as a manager to log out");
+                            break;
                         }
+                        loggedInUser = null;
+                        Console.WriteLine("Logged out successfully! See you soon, manager!");
                         break;
                     case ManagerCommand.Upload:
-                        bool isUploadSuccess = _managerCommandHandler.Upload();
+                        if (productInfo.Length < 2)
+                        {
+                            Console.WriteLine("Please enter the CSV file's path");
+                            break;
+                        }
+                        bool isUploadSuccess = _managerCommandHandler.Upload(productInfo[1]);
                         if (isUploadSuccess) Console.WriteLine("Flight Data has been imported successfully");
                         else Console.WriteLine("The CSV is not in the correct format. " +
                             "Please use the 'Validate' command to check which fields must be changed.");
                         break;
                     case ManagerCommand.Validate:
                         Console.WriteLine($"\n Validating... \n");
-                        string errorStr = _managerCommandHandler.Validate();
+                        string errorStr = _managerCommandHandler.Validate(productInfo[1]);
                         if (errorStr != "")
                             Console.WriteLine(errorStr);
                         else Console.WriteLine("No fields are in need of fixing!");
@@ -67,6 +72,12 @@ namespace ATB.App
                                 Console.WriteLine(Booking.ToString() + $" Booked by passenger with Id ({Booking.PassengerId})");
                             }
                         }
+                        break;
+                    case ManagerCommand.ManagerSignUp:
+                        Console.WriteLine("Please log out first to sign up");
+                        break;
+                    case ManagerCommand.ManagerLogIn:
+                        Console.WriteLine($"You are already logged in, {loggedInUser}!");
                         break;
                     case ManagerCommand.None:
                         Console.WriteLine("\n Manager, please enter an appropriate action");
