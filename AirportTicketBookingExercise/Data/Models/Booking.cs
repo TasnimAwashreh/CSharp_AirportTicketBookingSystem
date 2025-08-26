@@ -14,7 +14,6 @@ namespace ATB.Data.Models
         {
             return $"{BookingId}| Flight Id: {this.FlightId}, Class: {this.BookingClass}, Passenger Id: {this.PassengerId}";
         }
-
     }
 
     public sealed class BookingMap : ClassMap<Booking>

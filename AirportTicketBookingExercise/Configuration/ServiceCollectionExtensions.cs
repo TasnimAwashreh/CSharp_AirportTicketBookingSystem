@@ -25,8 +25,6 @@ namespace ATB.Configuration
                     .AddScoped<IUserRepository>(_ => new UserRepository(usersPath))
                     .AddScoped<IBookingRepository>(_ => new BookingRepository(bookingsPath))
                     .AddScoped<IFlightRepository>(_ => new FlightRepository(flightsPath));
-                    
-
             return services;
         }
 

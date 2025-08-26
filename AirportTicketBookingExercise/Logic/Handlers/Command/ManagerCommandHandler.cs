@@ -17,7 +17,6 @@ namespace ATB.Logic.Handlers.Command
             _flightService = flightService;
             _userService = userService;
             _bookingService = bookingService;
-
         }
 
         public bool Upload(string flightCSVPath)
@@ -40,44 +39,40 @@ namespace ATB.Logic.Handlers.Command
 
         public User? ManagerLogIn(string[] productInfo, User? loggedInUser)
         {
-            if (productInfo.Length >= 3)
-            {
-                string username = productInfo[1];
-                string password = productInfo[2];
+            if (productInfo.Length < 3)
+                return null;
+            string username = productInfo[1];
+            string password = productInfo[2];
 
-                var user = _userService.Authenticate(username, password);
-
-                if (user != null && user.UserType == UserType.Manager)
-                    return user;
-            }
-            return null;
+            var user = _userService.Authenticate(username, password);
+            if (user == null || user.UserType != UserType.Manager)
+                return null;
+            return user;
         }
 
         public bool ManagerSignUp(string[] productInfo)
         {
             if (productInfo.Length < 3)
                 return false;
-            else
+            try
             {
-                try
+                var user = new User
                 {
-                    var user = new User
-                    {
-                        UserId = new Random().Next(100000, 999999),
-                        Name = productInfo[1],
-                        Password = productInfo[2],
-                        UserType = UserType.Manager
-                    };
+                    UserId = new Random().Next(100000, 999999),
+                    Name = productInfo[1],
+                    Password = productInfo[2],
+                    UserType = UserType.Manager
+                };
 
-                    if (_userService.GetUserByName(user.Name) != null)
-                        return false;
-                    else return _userService.CreateUser(user);
-                }
-                catch
-                {
+                if (_userService.GetUserByName(user.Name) != null)
                     return false;
-                }
+                return _userService.CreateUser(user);
             }
+            catch
+            {
+                return false;
+            }
+            
         }
     }
 

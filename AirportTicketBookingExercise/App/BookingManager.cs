@@ -30,7 +30,33 @@ namespace ATB.App
 
         public void executeManagerCommand(string[] productInfo, ManagerCommand command)
         {
-            if (loggedInUser != null)
+            if (loggedInUser == null || loggedInUser.UserType != UserType.Manager)
+            {
+                switch (command)
+                {
+                    case ManagerCommand.ManagerSignUp:
+                        bool isSignUpSuccessful = _managerCommandHandler.ManagerSignUp(productInfo);
+                        if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
+                        else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                        break;
+                    case ManagerCommand.ManagerLogIn:
+                        User? loggingInUser = _managerCommandHandler.ManagerLogIn(productInfo, loggedInUser);
+                        if (loggingInUser != null)
+                        {
+                            loggedInUser = loggingInUser;
+                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                        }
+                        else Console.WriteLine("Please sign up as a manager first before trying to log in, then enter your username and password");
+                        break;
+                    case ManagerCommand.None:
+                        Console.WriteLine("\n Manager, please enter an appropriate action");
+                        break;
+                    default:
+                        Console.WriteLine("You must log in to use this command");
+                        break;
+                }
+            }
+            else
             {
                 switch (command)
                 {
@@ -50,9 +76,11 @@ namespace ATB.App
                             break;
                         }
                         bool isUploadSuccess = _managerCommandHandler.Upload(productInfo[1]);
-                        if (isUploadSuccess) Console.WriteLine("Flight Data has been imported successfully");
-                        else Console.WriteLine("The CSV is not in the correct format. " +
+                        if (!isUploadSuccess)
+                            Console.WriteLine("The CSV is not in the correct format. " +
                             "Please use the 'Validate' command to check which fields must be changed.");
+                        else
+                            Console.WriteLine("Flight Data has been imported successfully");
                         break;
                     case ManagerCommand.Validate:
                         Console.WriteLine($"\n Validating... \n");
@@ -84,36 +112,40 @@ namespace ATB.App
                         break;
                 }
             }
-            else
-            {
-                switch (command)
-                {
-                    case ManagerCommand.ManagerSignUp:
-                        bool isSignUpSuccessful = _managerCommandHandler.ManagerSignUp(productInfo);
-                        if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
-                        else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
-                        break;
-                    case ManagerCommand.ManagerLogIn:
-                        User? loggingInUser = _managerCommandHandler.ManagerLogIn(productInfo, loggedInUser);
-                        if (loggingInUser != null)
-                        {
-                            loggedInUser = loggingInUser;
-                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
-                        }
-                        else Console.WriteLine("Please sign up as a manager first before trying to log in, then enter your username and password");
-                        break;
-                    case ManagerCommand.None:
-                        Console.WriteLine("\n Manager, please enter an appropriate action");
-                        break;
-                    default:
-                        Console.WriteLine("You must log in to use this command");
-                        break;
-                }
-            }
         }
         public void ExecutePassengerCommand(string[] productInfo, PassengerCommand command)
         {
-            if (loggedInUser != null)
+            if (loggedInUser == null || loggedInUser.UserType != UserType.Passenger)
+            {
+                switch (command)
+                {
+                    case PassengerCommand.SignUp:
+                        bool isSuccessful = _passengerCommandHandler.PassengerSignUp(productInfo);
+                        if (isSuccessful)
+                            Console.WriteLine("\nNew Passenger has been created");
+                        else
+                            Console.WriteLine("\nPlease make sure the username is not taken and that" +
+                                " you have placed your username and password");
+                        break;
+                    case PassengerCommand.LogIn:
+                        User? loggingInUser = _passengerCommandHandler.PassengerLogIn(productInfo, loggedInUser);
+                        if (loggingInUser == null)
+                            Console.WriteLine("\nPlease make sure that you signed up as a passenger first");
+                        else
+                        {
+                            loggedInUser = loggingInUser;
+                            Console.WriteLine($"\nWelcome back, {loggedInUser.Name}");
+                        }
+                        break;
+                    case PassengerCommand.None:
+                        Console.WriteLine("\nPassenger, please enter an appropriate action.");
+                        break;
+                    default:
+                        Console.WriteLine("\nYou must log in to use this command.");
+                        break;
+                }
+            }
+            else
             {
                 switch (command)
                 {
@@ -160,36 +192,6 @@ namespace ATB.App
                         break;
                     case PassengerCommand.None:
                         Console.WriteLine("\nPlease enter an appropriate action.");
-                        break;
-                }
-            }
-            else
-            {
-                switch (command)
-                {
-                    case PassengerCommand.SignUp:
-                        bool isSuccessful = _passengerCommandHandler.PassengerSignUp(productInfo);
-                        if (isSuccessful)
-                            Console.WriteLine("\nNew Passenger has been created");
-                        else
-                            Console.WriteLine("\nPlease make sure the username is not taken and that" +
-                                " you have placed your username and password");
-                        break;
-                    case PassengerCommand.LogIn:
-                        User? loggingInUser = _passengerCommandHandler.PassengerLogIn(productInfo, loggedInUser);
-                        if (loggingInUser == null)
-                            Console.WriteLine("\nPlease make sure that you signed up as a passenger first");
-                        else
-                        {
-                            loggedInUser = loggingInUser;
-                            Console.WriteLine($"\nWelcome back, {loggedInUser.Name}");
-                        }
-                        break;
-                    case PassengerCommand.None:
-                        Console.WriteLine("\nPassenger, please enter an appropriate action.");
-                        break;
-                    default:
-                        Console.WriteLine("\nYou must log in to use this command.");
                         break;
                 }
             }
