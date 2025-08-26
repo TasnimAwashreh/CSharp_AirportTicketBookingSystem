@@ -362,3 +362,5 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /AirportTicketBookingExercise/Data/Db/BookingDb.db
+/AirportTicketBookingExercise/Data/Db/bookings.csv
+/AirportTicketBookingExercise/Data/Db/users.csv
