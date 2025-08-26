@@ -30,18 +30,21 @@ namespace ATB.Logic.Service
 
         public User? GetUser(int userId)
         {
-
-           return _userRepository.GetUser(userId);
+            return _userRepository.GetAllUsers()
+                 .FirstOrDefault(u => u.UserId == userId);
         }
 
         public User? GetUserByName(string username)
         {
-            return _userRepository.GetUserByName(username);
+            return _userRepository.GetAllUsers()
+                .FirstOrDefault(u => u.Name.Equals(username, StringComparison.OrdinalIgnoreCase));
         }
 
         public List<User> GetUserByType(UserType type)
         {
-            return _userRepository.GetUserByType(type);
+            return _userRepository.GetAllUsers()
+                        .Where(u => u.UserType == type)
+                        .ToList();
         }
 
         public bool UpdateUser(User user)

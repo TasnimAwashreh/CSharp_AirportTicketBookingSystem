@@ -28,9 +28,10 @@ namespace ATB.Logic.Service
             return _flightRepo.GetFlights();
         }
 
-        public Flight? GetFlight(int flightid)
+        public Flight? GetFlight(int flightId)
         {
-            return _flightRepo.GetFlight(flightid);
+            return _flightRepo.GetFlights()
+                        .Find(flight => flight.FlightId == flightId);
         }
 
         public void AddPassengerToSeat(Flight flight)

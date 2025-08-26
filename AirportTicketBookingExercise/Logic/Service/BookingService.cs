@@ -29,12 +29,15 @@ namespace ATB.Logic.Service
 
         public bool IsBookingValidById(int bookingId, int passengerId)
         {
-            return _bookingRepository.IsPassengerBookingValid(bookingId, passengerId);
+            return _bookingRepository.GetAllBookings()
+                .Any(b => b.BookingId == bookingId && b.PassengerId == passengerId);
         }
 
         public List<Booking> GetBookings(int passengerId)
         {
-            return _bookingRepository.GetBookings(passengerId);
+            return _bookingRepository.GetAllBookings()
+                .Where(b => b.PassengerId == passengerId)
+                .ToList();
         }
 
         public bool RemoveBookingById(int bookingId)

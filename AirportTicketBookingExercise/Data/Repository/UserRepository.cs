@@ -42,26 +42,13 @@ namespace ATB.Data.Repository
                 return false;
             }
         }
-        public User? GetUser(int userId)
-        {
-            return GetAllUsers()
-                .FirstOrDefault(u => u.UserId == userId);
-        }
-
-        public User? GetUserByName(string username)
-        {
-            return GetAllUsers()
-                .FirstOrDefault(u => u.Name.Equals(username, StringComparison.OrdinalIgnoreCase));
-        }
-
-        public List<User> GetUserByType(UserType type)
-        {
-            return GetAllUsers()
-                .Where(u => u.UserType == type)
-                .ToList();
-        }
 
         public bool UpdateUser(User User)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool RemoveUser(User User)
         {
             throw new NotImplementedException();
         }

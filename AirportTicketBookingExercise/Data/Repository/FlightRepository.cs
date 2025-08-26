@@ -20,16 +20,6 @@ namespace ATB.Data.Repository
 
         public List<Flight> GetFlights() { return _flights; }
 
-        public Flight? GetFlight(int flightId)
-        {
-            return _flights.Find(flight => flight.FlightId == flightId);
-        }
-
-        public Flight GetFlight(string? name)
-        {
-            return _flights.Find(flight => flight.FlightName.ToLowerInvariant() == name.ToLowerInvariant());
-        }
-
         public void AddPassengerToSeat(Flight flight)
         {
             flight.SeatsAvailable++;

@@ -45,19 +45,6 @@ namespace ATB.Data.Repository
             }
         }
 
-        public List<Booking> GetBookings(int passengerId)
-        {
-            return GetAllBookings()
-                .Where(b => b.PassengerId == passengerId)
-                .ToList();
-        }
-
-        public bool IsPassengerBookingValid(int bookingId, int passengerId)
-        {
-            return GetAllBookings()
-                .Any(b => b.BookingId == bookingId && b.PassengerId == passengerId);
-        }
-
         public bool DeleteBooking(int bookingId)
         {
             try
