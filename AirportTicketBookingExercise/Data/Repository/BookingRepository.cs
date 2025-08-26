@@ -2,7 +2,6 @@
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 using CsvHelper;
-using Microsoft.Data.Sqlite;
 using System.Globalization;
 
 namespace ATB.Data.Repository
@@ -11,22 +10,12 @@ namespace ATB.Data.Repository
     {
         private readonly string _bookingPath;
 
-        public BookingRepository(string bookingPath) 
+        public BookingRepository(string bookingPath)
         {
             _bookingPath = bookingPath;
         }
 
-        private Booking MapBooking(SqliteDataReader reader)
-        {
-            return new Booking
-            {
-                BookingId = reader.GetInt32(0),
-                FlightId = reader.GetInt32(1),
-                PassengerId = reader.GetInt32(2),
-                BookingClass = reader.GetString(3).ParseBookingClass()
-            };
-        }
-         
+
         public List<Booking> GetAllBookings()
         {
             using (var reader = new StreamReader(_bookingPath))

@@ -1,41 +1,42 @@
-﻿using ATB.Logic.Enums;
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
+using ATB.Logic.Enums;
 using ATB.Logic.Service;
-using ATB.Logic;
 
 
 namespace ATB.Logic.Handlers.Command
 {
     public class ManagerCommandHandler
     {
-       
+
         private readonly IFlightservice _flightService;
         private readonly IUserService _userService;
         private readonly IBookingService _bookingService;
 
-        public ManagerCommandHandler(IFlightservice flightService,IUserService userService, IBookingService bookingService)
+        public ManagerCommandHandler(IFlightservice flightService, IUserService userService, IBookingService bookingService)
         {
             _flightService = flightService;
             _userService = userService;
             _bookingService = bookingService;
-              
+
         }
 
         public bool Upload()
         {
             return _flightService.ImportFlightData();
         }
+
         public string Validate()
         {
             Console.WriteLine($"\n Validating... \n");
             return _flightService.ValidateFlightData();
         }
+
         public List<Booking> Filter(string[] input)
         {
             BookingFilter Filter = BookingFilters.Parse(input.Skip(1).ToArray());
             List<Booking> bookingResults = new List<Booking>();
             bookingResults = _bookingService.FilterBookings(Filter);
-            return bookingResults;  
+            return bookingResults;
         }
 
         public User? ManagerLogIn(string[] productInfo, User? loggedInUser)

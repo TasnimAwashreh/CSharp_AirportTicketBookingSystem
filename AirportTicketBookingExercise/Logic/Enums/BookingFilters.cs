@@ -3,7 +3,6 @@ using System.Globalization;
 
 namespace ATB.Logic.Enums
 {
-
     public enum FilterParam
     {
         None = 0,
@@ -17,6 +16,7 @@ namespace ATB.Logic.Enums
         FlightClass = 8,
         Passenger = 9,
     }
+
     public static class BookingFilters
     {
         public static FilterParam ParseFilterParam(this string command)
@@ -45,10 +45,10 @@ namespace ATB.Logic.Enums
                     return FilterParam.None;
             }
         }
+
         public static BookingFilter Parse(string[] parts)
         {
             var query = new BookingFilter();
-
             foreach (var part in parts)
             {
                 var keyValue = part.Split('=');
@@ -58,7 +58,6 @@ namespace ATB.Logic.Enums
                 var value = keyValue[1].Trim();
 
                 var Filter = key.ParseFilterParam();
-
                 switch (Filter)
                 {
                     case FilterParam.Flight:
@@ -95,7 +94,6 @@ namespace ATB.Logic.Enums
                         break;
                 }
             }
-
             return query;
         }
     }

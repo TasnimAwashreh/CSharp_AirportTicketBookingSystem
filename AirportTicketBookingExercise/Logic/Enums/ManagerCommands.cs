@@ -34,6 +34,5 @@
                     return ManagerCommand.None;
             }
         }
-
     }
 }

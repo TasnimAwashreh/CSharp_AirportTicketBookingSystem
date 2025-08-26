@@ -49,7 +49,7 @@ namespace ATB.Data.Models
 
         [Required(ErrorMessage = "Seat Capacity is missing")]
         public int SeatCapacity { get; set; }
-        
+
         public int SeatsAvailable { get; set; }
 
         public override string ToString()
@@ -60,6 +60,5 @@ namespace ATB.Data.Models
                 (this.BuisnessPrice != 0 ? (" Business Class Price: " + this.BuisnessPrice.ToString()) : "") +
                 (this.FirstClassPrice != 0 ? (" First Class Price: " + this.FirstClassPrice.ToString()) : "");
         }
-
     }
 }

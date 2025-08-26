@@ -1,20 +1,16 @@
-﻿using ATB.Logic.Handlers.Command;
+﻿using ATB.Data.Models;
 using ATB.Logic.Enums;
-using ATB.Logic.Handlers;
-using ATB.Data.Models;
-using ATB.Logic.Service;
+using ATB.Logic.Handlers.Command;
 
 namespace ATB.App
 {
     public class BookingManager
     {
-
         private PassengerCommandHandler _passengerCommandHandler;
         private ManagerCommandHandler _managerCommandHandler;
         private User? loggedInUser;
 
-        public BookingManager(
-            ManagerCommandHandler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
+        public BookingManager(ManagerCommandHandler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
         {
             _passengerCommandHandler = passengerCommandHandler;
             _managerCommandHandler = managerCommndHandler;
@@ -147,7 +143,7 @@ namespace ATB.App
                         else Console.WriteLine(_passengerCommandHandler.FlightsToString(getFlights));
                         break;
                     case PassengerCommand.Bookings:
-                        List<Booking> bookings =  _passengerCommandHandler.Bookings(loggedInUser);
+                        List<Booking> bookings = _passengerCommandHandler.Bookings(loggedInUser);
                         if (!bookings.Any()) Console.WriteLine("You currently have not booked any flights yet!");
                         Console.WriteLine(_passengerCommandHandler.BookingsToString(bookings));
                         break;

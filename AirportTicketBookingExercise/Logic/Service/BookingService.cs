@@ -1,7 +1,6 @@
-﻿using ATB.Data.Repository;
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
+using ATB.Data.Repository;
 using ATB.Logic.Enums;
-using ATB.Logic;
 
 namespace ATB.Logic.Service
 {
@@ -10,7 +9,8 @@ namespace ATB.Logic.Service
         private readonly IBookingRepository _bookingRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFlightRepository _flightRepository;
-        public BookingService(IBookingRepository BookingRepository,IFlightRepository flightRepository, IUserRepository userRepository)
+
+        public BookingService(IBookingRepository BookingRepository, IFlightRepository flightRepository, IUserRepository userRepository)
         {
             this._bookingRepository = BookingRepository;
             this._userRepository = userRepository;
@@ -112,6 +112,5 @@ namespace ATB.Logic.Service
 
             return Filtered;
         }
-
     }
 }

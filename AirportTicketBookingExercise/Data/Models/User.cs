@@ -9,6 +9,7 @@ namespace ATB.Data.Models
         Manager,
         Passenger
     }
+
     public class User
     {
         public int UserId { get; set; }
@@ -19,6 +20,7 @@ namespace ATB.Data.Models
         public UserType UserType { get; set; }
 
     }
+
     public sealed class UserMap : ClassMap<User>
     {
         public UserMap()

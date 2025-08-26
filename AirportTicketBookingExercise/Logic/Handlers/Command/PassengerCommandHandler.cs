@@ -231,7 +231,5 @@ namespace ATB.Logic.Handlers.Command
             }
             return stringBuilder.ToString();
         }
-
-
     }
 }

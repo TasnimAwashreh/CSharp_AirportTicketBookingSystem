@@ -1,9 +1,6 @@
 ﻿
 using ATB.Data.Models;
 using CsvHelper;
-using CsvHelper.Configuration;
-using Microsoft.Data.Sqlite;
-using System;
 using System.Globalization;
 
 
@@ -13,7 +10,8 @@ namespace ATB.Data.Repository
     {
         private readonly string _usersPath;
 
-        public UserRepository(string usersPath) {
+        public UserRepository(string usersPath)
+        {
             _usersPath = usersPath;
         }
 
@@ -27,12 +25,12 @@ namespace ATB.Data.Repository
                 return records;
             }
         }
-        
+
         public bool CreateUser(User user)
         {
             try
             {
-                using (var writer = new StreamWriter(_usersPath, append:true))
+                using (var writer = new StreamWriter(_usersPath, append: true))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
                     csv.Context.RegisterClassMap<UserMap>();

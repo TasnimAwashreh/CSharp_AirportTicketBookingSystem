@@ -13,8 +13,9 @@ namespace ATB.Logic.Enums
         Modify = 7,
         Flights = 8,
         Bookings = 9,
-        
+
     }
+
     public static class PassengerCommands
     {
         public static PassengerCommand ParsePassengerCommand(this string command)

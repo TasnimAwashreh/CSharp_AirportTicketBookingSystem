@@ -1,18 +1,16 @@
-﻿using ATB.Configuration;
-using Microsoft.Extensions.DependencyInjection;
+﻿using ATB.App;
+using ATB.Configuration;
 using ATB.Data.Db;
-using ATB.App;
+using Microsoft.Extensions.DependencyInjection;
 
 class Program
 {
-
     public static void StartLoop(IServiceProvider serviceProvider)
     {
         using var scope = serviceProvider.CreateScope();
         var databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
         databaseManager.CreateDatabase();
         var BookingManager = scope.ServiceProvider.GetRequiredService<BookingManager>();
-
 
         while (true)
         {

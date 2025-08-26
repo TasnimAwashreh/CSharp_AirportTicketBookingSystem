@@ -16,9 +16,9 @@ namespace ATB.Data.Db
             _usersPath = usersPath;
             _bookingsPath = bookingsPath;
         }
+
         public void CreateDatabase()
         {
-
             if (!File.Exists(_usersPath))
             {
                 using (var writer = new StreamWriter(_usersPath))

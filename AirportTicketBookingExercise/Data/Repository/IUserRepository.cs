@@ -4,7 +4,6 @@ namespace ATB.Data.Repository
 {
     public interface IUserRepository
     {
-
         public bool CreateUser(User User);
         public bool UpdateUser(User User);
         public User? GetUser(int id);
@@ -12,5 +11,4 @@ namespace ATB.Data.Repository
         public List<User> GetUserByType(UserType type);
         public List<User> GetAllUsers();
     }
-
 }

@@ -11,11 +11,10 @@ namespace ATB.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            const string bookingFile = "BookingDb.db";
-            const string userFile = "BookingDb.db";
+            const string bookingFile = "bookings.csv";
+            const string userFile = "users.csv";
             string bookingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", bookingFile);
             string usersPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", userFile);
 

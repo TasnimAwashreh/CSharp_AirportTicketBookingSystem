@@ -1,14 +1,13 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using ATB.Data.Models;
+using Microsoft.VisualBasic.FileIO;
+using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
-using ATB.Data.Models;
-using Microsoft.VisualBasic.FileIO;
-
 
 namespace ATB.Data.Repository
 {
-    public class FlightRepository: IFlightRepository
+    public class FlightRepository : IFlightRepository
     {
         private readonly string _flightsCSVPath;
         private List<Flight> _flights;
@@ -41,7 +40,7 @@ namespace ATB.Data.Repository
             flight.SeatsAvailable--;
         }
 
-        private void ValidateField<T>(string fieldName, string fieldInput, 
+        private void ValidateField<T>(string fieldName, string fieldInput,
             Func<string, T> parseValue, StringBuilder strBuilder, int rowCount)
         {
             PropertyInfo property = typeof(Flight).GetProperty(fieldName);
@@ -59,7 +58,8 @@ namespace ATB.Data.Repository
                         strBuilder.Append($"Row {rowCount}: {attr.ErrorMessage} \n");
                 }
             }
-            catch (Exception e) {
+            catch (Exception e)
+            {
                 strBuilder.Append($"Error at row {rowCount}: Wrong Format for field {fieldName} \n");
             }
         }
@@ -133,11 +133,5 @@ namespace ATB.Data.Repository
                 }
             }
         }
-
-
-
-
-
-
     }
 }
