@@ -6,8 +6,8 @@ namespace ATB.Data.Models
 {
     public enum UserType
     {
-        Manager,
-        Passenger
+        Manager = 0,
+        Passenger = 1
     }
 
     public class User

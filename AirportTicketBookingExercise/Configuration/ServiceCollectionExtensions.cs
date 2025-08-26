@@ -48,6 +48,7 @@ namespace ATB.Configuration
 
             return services;
         }
+
         public static IServiceCollection AddManager(this IServiceCollection services)
         {
             services.AddScoped<BookingManager>();

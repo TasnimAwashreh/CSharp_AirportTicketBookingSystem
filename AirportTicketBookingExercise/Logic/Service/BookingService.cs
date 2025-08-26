@@ -108,7 +108,8 @@ namespace ATB.Logic.Service
                 }
 
                 return true;
-            }).ToList();
+            }
+            ).ToList();
 
             return Filtered;
         }

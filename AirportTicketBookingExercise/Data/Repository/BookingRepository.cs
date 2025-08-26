@@ -15,7 +15,6 @@ namespace ATB.Data.Repository
             _bookingPath = bookingPath;
         }
 
-
         public List<Booking> GetAllBookings()
         {
             using (var reader = new StreamReader(_bookingPath))

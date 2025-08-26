@@ -36,6 +36,7 @@ class Program
             """;
         return controls;
     }
+
     public static void Main(string[] args)
     {
         var serviceCollection = new ServiceCollection();

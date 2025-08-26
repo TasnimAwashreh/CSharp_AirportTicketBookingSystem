@@ -1,8 +1,6 @@
-﻿
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;
-
 
 namespace ATB.Data.Repository
 {

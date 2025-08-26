@@ -1,7 +1,5 @@
 ﻿using ATB.Data.Models;
 using CsvHelper;
-using Microsoft.Data.Sqlite;
-using System.Formats.Asn1;
 using System.Globalization;
 
 namespace ATB.Data.Db
@@ -29,6 +27,7 @@ namespace ATB.Data.Db
                     csv.NextRecord();
                 }
             }
+
             if (!File.Exists(_bookingsPath))
             {
                 using (var writer = new StreamWriter(_bookingsPath))

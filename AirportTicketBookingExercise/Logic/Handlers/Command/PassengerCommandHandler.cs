@@ -136,6 +136,7 @@ namespace ATB.Logic.Handlers.Command
             }
 
         }
+
         public List<Booking> Bookings(User loggedInUser)
         {
             List<Booking> bookings = new List<Booking>();
@@ -184,7 +185,6 @@ namespace ATB.Logic.Handlers.Command
                     return false;
                 }
             }
-
         }
 
         public User? PassengerLogIn(string[] productInfo, User? loggedInUser)
