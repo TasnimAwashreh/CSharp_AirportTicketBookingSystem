@@ -39,9 +39,13 @@ namespace ATB.App
                 switch (command)
                 {
                     case ManagerCommand.ManagerLogOut:
-                        bool isLoggedOut = _managerCommandHandler.ManagerSignOut(loggedInUser);
-                        if (isLoggedOut) Console.WriteLine("Logged out successfully! See you soon, manager!");
-                        else Console.WriteLine("You did not log in as a manager to log out");
+                        if (loggedInUser == null || loggedInUser.UserType != UserType.Manager)
+                            Console.WriteLine("You did not log in as a manager to log out");
+                        else
+                        {
+                            loggedInUser = null;
+                            Console.WriteLine("Logged out successfully! See you soon, manager!");
+                        }
                         break;
                     case ManagerCommand.Upload:
                         bool isUploadSuccess = _managerCommandHandler.Upload();
@@ -83,8 +87,12 @@ namespace ATB.App
                         else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
                         break;
                     case ManagerCommand.ManagerLogIn:
-                        bool isLoginSuccessful = _managerCommandHandler.ManagerLogIn(productInfo, loggedInUser);
-                        if (isLoginSuccessful) Console.WriteLine("Welcome back, manager!");
+                        User? loggingInUser = _managerCommandHandler.ManagerLogIn(productInfo, loggedInUser);
+                        if (loggingInUser != null)
+                        {
+                            loggedInUser = loggingInUser;
+                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                        }
                         else Console.WriteLine("Please sign up as a manager first before trying to log in, then enter your username and password");
                         break;
                     case ManagerCommand.None:
@@ -120,17 +128,28 @@ namespace ATB.App
                         Console.WriteLine(_passengerCommandHandler.FlightsToString(searchFlights));
                         break;
                     case PassengerCommand.Cancel:
-                        _passengerCommandHandler.Cancel(productInfo, loggedInUser);
+                        bool isCancelSuccessful = _passengerCommandHandler.Cancel(productInfo, loggedInUser);
+                        if (!isCancelSuccessful)
+                            Console.WriteLine("Please make sure to cancel with the booking id");
+                        else
+                            Console.WriteLine("Booking has been successfully cancelled");
                         break;
                     case PassengerCommand.Modify:
-                        Console.WriteLine("Modify functionality not yet implemented."); 
+                        bool isModifySuccessful = _passengerCommandHandler.Modify(productInfo, loggedInUser);
+                        if (!isModifySuccessful)
+                            Console.WriteLine("Please make sure the booking exists and please enter the class");
+                        else
+                            Console.WriteLine("Booking changed successfully!");
                         break;
                     case PassengerCommand.Flights:
                         List<Flight> getFlights = _passengerCommandHandler.Flights();
-                        Console.WriteLine(_passengerCommandHandler.FlightsToString(getFlights));
+                        if (!getFlights.Any()) Console.WriteLine("There are currently no flights");
+                        else Console.WriteLine(_passengerCommandHandler.FlightsToString(getFlights));
                         break;
                     case PassengerCommand.Bookings:
-                        _passengerCommandHandler.Bookings(loggedInUser);
+                        List<Booking> bookings =  _passengerCommandHandler.Bookings(loggedInUser);
+                        if (!bookings.Any()) Console.WriteLine("You currently have not booked any flights yet!");
+                        Console.WriteLine(_passengerCommandHandler.BookingsToString(bookings));
                         break;
                     case PassengerCommand.None:
                         Console.WriteLine("\nPlease enter an appropriate action.");
@@ -150,11 +169,14 @@ namespace ATB.App
                                 " you have placed your username and password");
                         break;
                     case PassengerCommand.LogIn:
-                        bool isSuccessfulLogin = _passengerCommandHandler.PassengerLogIn(productInfo, loggedInUser);
-                        if (isSuccessfulLogin)
-                            Console.WriteLine("Welcome back, passenger");
-                        else
+                        User? loggingInUser = _passengerCommandHandler.PassengerLogIn(productInfo, loggedInUser);
+                        if (loggingInUser == null)
                             Console.WriteLine("\nPlease make sure that you signed up as a passenger first");
+                        else
+                        {
+                            loggedInUser = loggingInUser;
+                            Console.WriteLine($"\nWelcome back, {loggedInUser.Name}");
+                        }
                         break;
                     case PassengerCommand.None:
                         Console.WriteLine("\nPassenger, please enter an appropriate action.");

@@ -1,4 +1,5 @@
 ﻿using ATB.Logic.Enums;
+using CsvHelper.Configuration;
 
 namespace ATB.Data.Models
 {
@@ -15,5 +16,17 @@ namespace ATB.Data.Models
         }
 
     }
+
+    public sealed class BookingMap : ClassMap<Booking>
+    {
+        public BookingMap()
+        {
+            Map(m => m.BookingId).Name("BookingId");
+            Map(m => m.FlightId).Name("FlightId");
+            Map(m => m.PassengerId).Name("PassengerId");
+            Map(m => m.BookingClass).Name("BookingClass");
+        }
+    }
+
 
 }

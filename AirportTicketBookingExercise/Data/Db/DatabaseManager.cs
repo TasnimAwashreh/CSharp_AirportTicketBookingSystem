@@ -1,37 +1,42 @@
-﻿using Microsoft.Data.Sqlite;
+﻿using ATB.Data.Models;
+using CsvHelper;
+using Microsoft.Data.Sqlite;
+using System.Formats.Asn1;
+using System.Globalization;
 
 namespace ATB.Data.Db
 {
     public class DatabaseManager
     {
-        private string _connString;
+        private string _usersPath;
+        private string _bookingsPath;
 
-        public DatabaseManager(string connString)
+        public DatabaseManager(string usersPath, string bookingsPath)
         {
-            _connString = connString;
+            _usersPath = usersPath;
+            _bookingsPath = bookingsPath;
         }
         public void CreateDatabase()
         {
-            using (var conn = new SqliteConnection($"Data Source={_connString}"))
-            {
-                conn.Open();
-                var createManagerTable = @"CREATE TABLE IF NOT EXISTS User (
-                                            UserId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            Name TEXT NOT NULL,
-                                            Password TEXT NOT NULL,
-                                            Type TEXT NOT NULL
-                                        );
 
-                                            CREATE TABLE IF NOT EXISTS Booking (
-                                            BookingId INTEGER PRIMARY KEY AUTOINCREMENT,
-                                            FlightId INTEGER NOT NULL,
-                                            PassengerId INTEGER NOT NULL,
-                                            BookingClass TEXT NOT NULL
-                                        );";
-                using (var cmd = conn.CreateCommand())
+            if (!File.Exists(_usersPath))
+            {
+                using (var writer = new StreamWriter(_usersPath))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    cmd.CommandText = createManagerTable;
-                    cmd.ExecuteNonQuery();
+                    csv.Context.RegisterClassMap<UserMap>();
+                    csv.WriteHeader<User>();
+                    csv.NextRecord();
+                }
+            }
+            if (!File.Exists(_bookingsPath))
+            {
+                using (var writer = new StreamWriter(_bookingsPath))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<BookingMap>();
+                    csv.WriteHeader<Booking>();
+                    csv.NextRecord();
                 }
             }
         }

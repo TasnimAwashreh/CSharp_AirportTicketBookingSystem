@@ -1,17 +1,19 @@
 ﻿
 using ATB.Data.Models;
 using ATB.Logic.Enums;
+using CsvHelper;
 using Microsoft.Data.Sqlite;
+using System.Globalization;
 
 namespace ATB.Data.Repository
 {
     public class BookingRepository : IBookingRepository
     {
-        private readonly string _connectionString;
+        private readonly string _bookingPath;
 
-        public BookingRepository(string connectionString) 
+        public BookingRepository(string bookingPath) 
         {
-            _connectionString = connectionString;
+            _bookingPath = bookingPath;
         }
 
         private Booking MapBooking(SqliteDataReader reader)
@@ -24,23 +26,32 @@ namespace ATB.Data.Repository
                 BookingClass = reader.GetString(3).ParseBookingClass()
             };
         }
+         
+        public List<Booking> GetAllBookings()
+        {
+            using (var reader = new StreamReader(_bookingPath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<BookingMap>();
+                var records = csv.GetRecords<Booking>().ToList();
+                return records;
+            }
+        }
 
         public bool CreateBooking(Booking booking)
         {
             try
             {
-                using var conn = new SqliteConnection($"Data Source={_connectionString}");
-                conn.Open();
-                using var cmd = conn.CreateCommand();
-                cmd.CommandText = "INSERT INTO Booking (FlightId, PassengerId, BookingClass) VALUES ($flight, $passenger, $class)";
-                cmd.Parameters.AddWithValue("$flight", booking.FlightId);
-                cmd.Parameters.AddWithValue("$passenger", booking.PassengerId);
-                cmd.Parameters.AddWithValue("$class", booking.BookingClass.ToString());
-                cmd.ExecuteNonQuery();
-                conn.Close();
-                return true;
+                using (var writer = new StreamWriter(_bookingPath, append: true))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<BookingMap>();
+                    csv.WriteRecord<Booking>(booking);
+                    csv.NextRecord();
+                    return true;
+                }
             }
-            catch (Exception ex)
+            catch
             {
                 return false;
             }
@@ -48,75 +59,66 @@ namespace ATB.Data.Repository
 
         public List<Booking> GetBookings(int passengerId)
         {
-            var list = new List<Booking>();
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Booking WHERE PassengerId = $userId";
-            cmd.Parameters.AddWithValue("$userId", passengerId);
-            using (var reader = cmd.ExecuteReader())
-            {
-                while (reader.Read())
-                {
-                    list.Add(MapBooking(reader));
-                }
-            }
-            return list;
-        }
-
-        public List<Booking> GetAllBookings()
-        {
-            var list = new List<Booking>();
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT * FROM Booking";
-            using var reader = cmd.ExecuteReader();
-            while (reader.Read())
-            {
-                list.Add(MapBooking(reader));
-            }
-            conn.Close();
-            return list;
+            return GetAllBookings()
+                .Where(b => b.PassengerId == passengerId)
+                .ToList();
         }
 
         public bool IsPassengerBookingValid(int bookingId, int passengerId)
         {
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "SELECT 1 FROM Booking WHERE BookingId = $BookingId AND PassengerId = $passengerId";
-            cmd.Parameters.AddWithValue("$BookingId", bookingId);
-            cmd.Parameters.AddWithValue("$passengerId", passengerId);
-            var reader = cmd.ExecuteReader();
-            conn.Close();
-            return reader.Read();
+            return GetAllBookings()
+                .Any(b => b.BookingId == bookingId && b.PassengerId == passengerId);
         }
 
         public bool DeleteBooking(int bookingId)
         {
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            bool res = false;
-            conn.Open();
-            using (var cmd = conn.CreateCommand())
+            try
             {
-                cmd.CommandText = "DELETE FROM Booking WHERE BookingId = $BookingId";
-                cmd.Parameters.AddWithValue("$BookingId", bookingId);
-                res = cmd.ExecuteNonQuery() > 0;
+                var bookings = GetAllBookings();
+                var updatedBookings = bookings
+                    .Where(b => b.BookingId != bookingId)
+                    .ToList();
+                if (updatedBookings.Count == bookings.Count)
+                    return false;
+
+                using (var writer = new StreamWriter(_bookingPath))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<BookingMap>();
+                    csv.WriteRecords(updatedBookings);
+                }
+
+                return true;
             }
-            return res;
+            catch
+            {
+                return false;
+            }
         }
 
-        public void UpdateBookingClass(int BookingId, string newClass)
+        public bool UpdateBookingClass(int bookingId, BookingClass newClass)
         {
-            using var conn = new SqliteConnection($"Data Source={_connectionString}");
-            conn.Open();
-            using var cmd = conn.CreateCommand();
-            cmd.CommandText = "UPDATE Booking SET BookingClass = $class WHERE BookingId = $id";
-            cmd.Parameters.AddWithValue("$class", newClass);
-            cmd.Parameters.AddWithValue("$id", BookingId);
-            cmd.ExecuteNonQuery();
-            conn.Close();
+            try
+            {
+                var bookings = GetAllBookings();
+                var target = bookings.FirstOrDefault(b => b.BookingId == bookingId);
+                if (target == null)
+                    return false;
+                target.BookingClass = newClass;
+                using (var writer = new StreamWriter(_bookingPath))
+                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<BookingMap>();
+                    csv.WriteRecords(bookings);
+                    csv.NextRecord();
+                }
+
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
     }

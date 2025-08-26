@@ -38,7 +38,7 @@ namespace ATB.Logic.Handlers.Command
             return bookingResults;  
         }
 
-        public bool ManagerLogIn(string[] productInfo, User? loggedInUser)
+        public User? ManagerLogIn(string[] productInfo, User? loggedInUser)
         {
             if (productInfo.Length >= 3)
             {
@@ -48,24 +48,9 @@ namespace ATB.Logic.Handlers.Command
                 var user = _userService.Authenticate(username, password);
 
                 if (user != null && user.UserType == UserType.Manager)
-                {
-                    loggedInUser = user;
-                    return true;
-                }
-                else return false;
+                    return user;
             }
-            else return false;
-        }
-
-        public bool ManagerSignOut(User? loggedInUser)
-        {
-            if (loggedInUser == null || loggedInUser.UserType != UserType.Manager)
-                return false;
-            else
-            {
-                loggedInUser = null;
-                return true;
-            }
+            return null;
         }
 
         public bool ManagerSignUp(string[] productInfo)
@@ -78,6 +63,7 @@ namespace ATB.Logic.Handlers.Command
                 {
                     var user = new User
                     {
+                        UserId = new Random().Next(100000, 999999),
                         Name = productInfo[1],
                         Password = productInfo[2],
                         UserType = UserType.Manager

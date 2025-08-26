@@ -44,6 +44,7 @@ namespace ATB.Logic.Handlers.Command
                     {
                         var Booking = new Booking
                         {
+                            BookingId = new Random().Next(100000, 999999),
                             FlightId = flightId,
                             PassengerId = loggedInUser.UserId,
                             BookingClass = BookingClass
@@ -66,29 +67,27 @@ namespace ATB.Logic.Handlers.Command
         {
             List<Flight> filteredFlights = new List<Flight>();
             if (productInfo.Length < 3)
-            {
                 return _flightService.GetFlights();
-            }
             else
             {
-                    FilterParam SearchParam = productInfo[1].ParseFilterParam();
-                    string input = productInfo[2];
+                FilterParam SearchParam = productInfo[1].ParseFilterParam();
+                string input = productInfo[2];
 
-                    var flights = _flightService.GetFlights();
-                filteredFlights = SearchParam switch
-                    {
-                        FilterParam.Flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
-                        FilterParam.Price => flights.Where(f =>
-                            f.BuisnessPrice == decimal.Parse(input) ||
-                            f.EconomyPrice == decimal.Parse(input) ||
-                            f.FirstClassPrice == decimal.Parse(input)).ToList(),
-                        FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
-                        FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
-                        FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
-                        FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
-                        FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
-                        _ => []
-                    };
+                var flights = _flightService.GetFlights();
+            filteredFlights = SearchParam switch
+                {
+                    FilterParam.Flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
+                    FilterParam.Price => flights.Where(f =>
+                        f.BuisnessPrice == decimal.Parse(input) ||
+                        f.EconomyPrice == decimal.Parse(input) ||
+                        f.FirstClassPrice == decimal.Parse(input)).ToList(),
+                    FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
+                    FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
+                    FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
+                    FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
+                    FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
+                    _ => []
+                };
             }
             return filteredFlights;
         }
@@ -97,12 +96,12 @@ namespace ATB.Logic.Handlers.Command
         {
             try
             {
-                int BookingId = int.Parse(productInfo[1]);
-                if (!_bookingService.IsBookingValidById(BookingId, loggedInUser.UserId))
+                int bookingId = int.Parse(productInfo[1]);
+                if (!_bookingService.IsBookingValidById(bookingId, loggedInUser.UserId))
                     return false;
                 else
                 {
-                    bool isSuccess = _bookingService.RemoveBookingById(BookingId);
+                    bool isSuccess = _bookingService.RemoveBookingById(bookingId);
                     if (!isSuccess)
                         return false;
                     else return true;
@@ -114,10 +113,33 @@ namespace ATB.Logic.Handlers.Command
             }
         }
 
+        public bool Modify(string[] productInfo, User loggedInUser)
+        {
+            if (productInfo.Length < 3)
+                return false;
+            else
+            {
+                try
+                {
+                    int bookingId = int.Parse(productInfo[1]);
+                    BookingClass bookingClass = productInfo[2].ParseBookingClass();
+
+                    if (!_bookingService.IsBookingValidById(bookingId, loggedInUser.UserId))
+                        return false;
+                    else
+                    {
+                        _bookingService.UpdateBookingClass(bookingId, bookingClass);
+                        return true;
+                    }
+                }
+                catch { return false; }
+            }
+
+        }
         public List<Booking> Bookings(User loggedInUser)
         {
             List<Booking> bookings = new List<Booking>();
-            if (loggedInUser == null)
+            if (loggedInUser != null)
                 bookings = _bookingService.GetBookings(loggedInUser.UserId);
             return bookings;
         }
@@ -140,6 +162,7 @@ namespace ATB.Logic.Handlers.Command
                 {
                     var user = new User
                     {
+                        UserId = new Random().Next(100000, 999999),
                         Name = productInfo[1],
                         Password = productInfo[2],
                         UserType = UserType.Passenger
@@ -164,25 +187,19 @@ namespace ATB.Logic.Handlers.Command
 
         }
 
-        public bool PassengerLogIn(string[] productInfo, User? loggedInUser)
+        public User? PassengerLogIn(string[] productInfo, User? loggedInUser)
         {
-            if (productInfo.Length < 3)
-                return false;
-            else
+            if (productInfo.Length >= 3)
             {
                 string username = productInfo[1];
                 string password = productInfo[2];
 
                 var user = _userService.Authenticate(username, password);
 
-                if (user == null || user.UserType != UserType.Passenger)
-                    return false;
-                else
-                {
-                    loggedInUser = user;
-                    return true;
-                }
+                if (user != null && user.UserType == UserType.Passenger)
+                    return user;
             }
+            return null;
         }
 
         public bool PassengerSignOut(User? loggedInUser)
@@ -214,5 +231,7 @@ namespace ATB.Logic.Handlers.Command
             }
             return stringBuilder.ToString();
         }
+
+
     }
 }

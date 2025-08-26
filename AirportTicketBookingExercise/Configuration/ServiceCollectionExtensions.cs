@@ -14,16 +14,18 @@ namespace ATB.Configuration
 
         public static IServiceCollection AddRepositories(this IServiceCollection services)
         {
-            const string DbFile = "BookingDb.db";
-            string connectionString = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", DbFile);
+            const string bookingFile = "BookingDb.db";
+            const string userFile = "BookingDb.db";
+            string bookingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", bookingFile);
+            string usersPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", userFile);
 
             const string csvFile = "Flights.csv";
             string filghtsFilePath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "..", csvFile);
 
             services
-                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(connectionString))
-                    .AddScoped<IUserRepository>(_ => new UserRepository(connectionString))
-                    .AddScoped<IBookingRepository>(_ => new BookingRepository(connectionString))
+                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(usersPath, bookingsPath))
+                    .AddScoped<IUserRepository>(_ => new UserRepository(usersPath))
+                    .AddScoped<IBookingRepository>(_ => new BookingRepository(bookingsPath))
                     .AddScoped<IFlightRepository>(_ => new FlightRepository(filghtsFilePath));
                     
 

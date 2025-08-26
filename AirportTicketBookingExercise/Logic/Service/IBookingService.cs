@@ -1,5 +1,6 @@
 ﻿using ATB.Logic;
 using ATB.Data.Models;
+using ATB.Logic.Enums;
 
 namespace ATB.Logic.Service
 {
@@ -11,5 +12,6 @@ namespace ATB.Logic.Service
         bool RemoveBookingById(int BookingId);
         bool IsBookingValidById(int BookingId, int passengerId);
         List<Booking> FilterBookings(BookingFilter query);
+        public bool UpdateBookingClass(int bookingId, BookingClass newClass);
     }
 }

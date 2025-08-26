@@ -17,9 +17,9 @@ namespace ATB.Logic.Service
             this._flightRepository = flightRepository;
         }
 
-        public bool CreateBooking(Booking Booking)
+        public bool CreateBooking(Booking booking)
         {
-            return _bookingRepository.CreateBooking(Booking);
+            return _bookingRepository.CreateBooking(booking);
         }
 
         public List<Booking> GetAllBookings()
@@ -27,9 +27,9 @@ namespace ATB.Logic.Service
             return _bookingRepository.GetAllBookings();
         }
 
-        public bool IsBookingValidById(int BookingId, int passengerId)
+        public bool IsBookingValidById(int bookingId, int passengerId)
         {
-            return _bookingRepository.IsPassengerBookingValid(BookingId, passengerId);
+            return _bookingRepository.IsPassengerBookingValid(bookingId, passengerId);
         }
 
         public List<Booking> GetBookings(int passengerId)
@@ -37,9 +37,14 @@ namespace ATB.Logic.Service
             return _bookingRepository.GetBookings(passengerId);
         }
 
-        public bool RemoveBookingById(int BookingId)
+        public bool RemoveBookingById(int bookingId)
         {
-            return _bookingRepository.DeleteBooking(BookingId);
+            return _bookingRepository.DeleteBooking(bookingId);
+        }
+
+        public bool UpdateBookingClass(int bookingId, BookingClass newClass)
+        {
+            return _bookingRepository.UpdateBookingClass(bookingId, newClass);
         }
 
         public List<Booking> FilterBookings(BookingFilter query)
