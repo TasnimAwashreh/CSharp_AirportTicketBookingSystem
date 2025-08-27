@@ -1,5 +1,6 @@
 ﻿using ATB.Data.Models;
 using CsvHelper;
+using CsvHelper.Configuration;
 using System.Globalization;
 
 namespace ATB.Data.Db
@@ -21,42 +22,26 @@ namespace ATB.Data.Db
         {
             try
             {
-                if (!File.Exists(_usersPath))
-                {
-                    using (var writer = new StreamWriter(_usersPath))
-                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                    {
-                        csv.Context.RegisterClassMap<UserMap>();
-                        csv.WriteHeader<User>();
-                        csv.NextRecord();
-                    }
-                }
-
-                if (!File.Exists(_bookingsPath))
-                {
-                    using (var writer = new StreamWriter(_bookingsPath))
-                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                    {
-                        csv.Context.RegisterClassMap<BookingMap>();
-                        csv.WriteHeader<Booking>();
-                        csv.NextRecord();
-                    }
-                }
-
-                if (!File.Exists(_flightsPath))
-                {
-                    using (var writer = new StreamWriter(_flightsPath))
-                    using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                    {
-                        csv.Context.RegisterClassMap<FlightMap>();
-                        csv.WriteHeader<Flight>();
-                        csv.NextRecord();
-                    }
-                }
+                CreateCSVFile<User, UserMap>(_usersPath);
+                CreateCSVFile<Booking, BookingMap>(_bookingsPath);
+                CreateCSVFile<Flight, FlightMap>(_flightsPath);
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"Error in Database Manager: {ex.ToString()}");
+                Console.WriteLine($"Please fix Create Database error (below) and restart the system. \nError: {ex}");
+                return;
+            }
+        }
+
+        private void CreateCSVFile<TModel, TMap>(string path)
+            where TMap : ClassMap<TModel>
+        {
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<TMap>();
+                csv.WriteHeader<TModel>();
+                csv.NextRecord();
             }
         }
     }

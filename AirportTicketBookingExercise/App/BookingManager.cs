@@ -124,7 +124,7 @@ namespace ATB.App
                         Console.WriteLine("Please log out first to sign up");
                         break;
                     case ManagerCommand.ManagerLogIn:
-                        Console.WriteLine($"You are already logged in, {loggedInUser}!");
+                        Console.WriteLine($"You are already logged in, {loggedInUser.Name}!");
                         break;
                     case ManagerCommand.None:
                         Console.WriteLine("\n Manager, please enter an appropriate action");
@@ -187,6 +187,10 @@ namespace ATB.App
                     case PassengerCommand.Book:
                         try
                         {
+                            if(productInfo.Length < 3)
+                            {
+                                Console.WriteLine("Please enter the flight Id you want to book and the class");
+                            }
                             int flightId = int.Parse(productInfo[1]);
                             BookingClass bookingClass = productInfo[2].ParseBookingClass();
                             bool isBookingSuccessful = _passengerCommandHandler.PassengerBookFlight(flightId, bookingClass, loggedInUser);
