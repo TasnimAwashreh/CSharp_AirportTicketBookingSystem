@@ -23,7 +23,7 @@ class Program
         }
     }
 
-    public static string introduction()
+    public static string Introduction()
     {
         string controls =
             $"""
@@ -46,7 +46,7 @@ class Program
             .AddCommandHandlers()
             .AddManager();
 
-        Console.WriteLine(introduction());
+        Console.WriteLine(Introduction());
         var serviceProvider = serviceCollection.BuildServiceProvider();
         StartLoop(serviceProvider);
     }

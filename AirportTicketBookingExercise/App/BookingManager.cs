@@ -18,17 +18,28 @@ namespace ATB.App
 
         public void ProcessInput(string input)
         {
-            string[] line = input.Split(' ');
-            ManagerCommand managerCommand = line[0].ParseManagerCommand();
-            PassengerCommand passengerCommand = line[0].ParsePassengerCommand();
-            if (passengerCommand != PassengerCommand.None)
-                ExecutePassengerCommand(line, passengerCommand);
-            else if (managerCommand != ManagerCommand.None)
-                executeManagerCommand(line, managerCommand);
-            else Console.WriteLine("\n Please enter an appropriate action");
+            try
+            {
+                string[] line = input.Split(' ');
+                ManagerCommand managerCommand = line[0].ParseManagerCommand();
+                PassengerCommand passengerCommand = line[0].ParsePassengerCommand();
+                if (passengerCommand != PassengerCommand.None)
+                    ExecutePassengerCommand(line, passengerCommand);
+                else if (managerCommand != ManagerCommand.None)
+                    ExecuteManagerCommand(line, managerCommand);
+                else Console.WriteLine("\n Please enter an appropriate action");
+            }
+            catch (NullReferenceException)
+            {
+                Console.WriteLine("You forgot to enter a command! Please try again");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error processing your input: {ex.Message}");
+            }
         }
 
-        public void executeManagerCommand(string[] productInfo, ManagerCommand command)
+        public void ExecuteManagerCommand(string[] productInfo, ManagerCommand command)
         {
             if (loggedInUser == null)
             {

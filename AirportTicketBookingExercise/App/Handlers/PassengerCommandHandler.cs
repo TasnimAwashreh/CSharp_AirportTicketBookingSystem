@@ -23,7 +23,6 @@ namespace ATB.App.Handlers
         {
             try
             { 
-
                 Flight? flight = _flightService.GetFlight(flightId);
                 if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
                     return false;
