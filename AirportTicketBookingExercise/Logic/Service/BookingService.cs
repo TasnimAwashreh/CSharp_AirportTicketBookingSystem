@@ -52,13 +52,13 @@ namespace ATB.Logic.Service
 
         public List<Booking> FilterBookings(BookingFilter query)
         {
-            var Bookings = _bookingRepository.GetAllBookings();
-            var Flights = _flightRepository.GetFlights();
+            var bookings = _bookingRepository.GetAllBookings();
+            var flights = _flightRepository.GetFlights();
             var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passenger).ToList();
 
-            var Filtered = Bookings.Where(b =>
+            var filteredBookings = bookings.Where(b =>
             {
-                var flight = Flights.FirstOrDefault(f => f.FlightId == b.FlightId);
+                var flight = flights.FirstOrDefault(f => f.FlightId == b.FlightId);
                 var passenger = passengers.FirstOrDefault(p => p.UserId == b.PassengerId);
 
                 if (flight == null)
@@ -106,15 +106,16 @@ namespace ATB.Logic.Service
 
                 if (!string.IsNullOrEmpty(query.BookingClass))
                 {
-                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var BookingClass) || b.BookingClass != BookingClass)
+                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass) || b.BookingClass != bookingClass)
                         return false;
                 }
 
                 return true;
             }
-            ).ToList();
+            )
+            .ToList();
 
-            return Filtered;
+            return filteredBookings;
         }
     }
 }

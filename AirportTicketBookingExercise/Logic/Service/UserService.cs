@@ -6,7 +6,8 @@ namespace ATB.Logic.Service
     public class UserService : IUserService
     {
         private readonly IUserRepository _userRepository;
-        public UserService(IUserRepository userRepository) { 
+        public UserService(IUserRepository userRepository)
+        { 
         
             _userRepository = userRepository;
         }
@@ -14,7 +15,8 @@ namespace ATB.Logic.Service
         public User? Authenticate(string username, string password)
         {
             var user = GetUserByName(username);
-            if (user != null && user.Password.Equals(password)) {
+            if (user != null && user.Password.Equals(password)) 
+            {
                 return user;
             }
             return null;

@@ -184,8 +184,14 @@ namespace ATB.App
                             else
                                 Console.WriteLine("Booking successful! Please enjoy your flight");
                         }
-                        catch (FormatException) { Console.WriteLine("Please enter the id of the flight you want to book and the class (first, economy, business)"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                        catch (FormatException) 
+                        { 
+                            Console.WriteLine("Please enter the id of the flight you want to book and the class (first, economy, business)"); 
+                        }
+                        catch (Exception ex) 
+                        { 
+                            Console.WriteLine(ex.ToString()); 
+                        }
                         break;
                     case PassengerCommand.Search:
                         List<Flight> searchFlights = _passengerCommandHandler.Search(productInfo);
@@ -199,8 +205,14 @@ namespace ATB.App
                             if (!isCancelSuccessful) Console.WriteLine("Please make sure to cancel with the booking id");
                             else Console.WriteLine("Booking has been successfully cancelled");
                         }
-                        catch (FormatException) { Console.WriteLine("Please enter the id of the booking you wish to cancel"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                        catch (FormatException) 
+                        { 
+                            Console.WriteLine("Please enter the id of the booking you wish to cancel"); 
+                        }
+                        catch (Exception ex) 
+                        { 
+                            Console.WriteLine(ex.ToString()); 
+                        }
                         break;
                     case PassengerCommand.Modify:
                         try
@@ -211,9 +223,18 @@ namespace ATB.App
                             if (!isModifySuccessful) Console.WriteLine("Please make sure the booking exists and please enter the class");
                             else Console.WriteLine("Booking changed successfully!");
                         }
-                        catch (IndexOutOfRangeException) { Console.WriteLine("Please enter the id of the booking you wish to modify, and the and the class (first, economy, business)"); }
-                        catch (FormatException) { Console.WriteLine("Please enter the booking id and class in the correct format"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
+                        catch (IndexOutOfRangeException) 
+                        { 
+                            Console.WriteLine("Please enter the id of the booking you wish to modify, and the and the class (first, economy, business)"); 
+                        }
+                        catch (FormatException) 
+                        { 
+                            Console.WriteLine("Please enter the booking id and class in the correct format");
+                        }
+                        catch (Exception ex) 
+                        { 
+                            Console.WriteLine(ex.ToString()); 
+                        }
                         break;
                     case PassengerCommand.Flights:
                         List<Flight> getFlights = _passengerCommandHandler.Flights();
