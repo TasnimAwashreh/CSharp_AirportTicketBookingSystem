@@ -1,5 +1,5 @@
-﻿using ATB.App;
-using ATB.Configuration;
+﻿using ATB.App.Configuration;
+using ATB.App;
 using ATB.Data.Db;
 using Microsoft.Extensions.DependencyInjection;
 

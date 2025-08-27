@@ -1,9 +1,10 @@
 ﻿using ATB.Data.Models;
+using ATB.Logic;
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
 
 
-namespace ATB.Logic.Handlers.Command
+namespace ATB.App.Handlers
 {
     public class ManagerCommandHandler
     {
@@ -21,28 +22,30 @@ namespace ATB.Logic.Handlers.Command
 
         public bool Upload(string flightCSVPath)
         {
+            if (!File.Exists(flightCSVPath))
+                return false;
             return _flightService.ImportFlightData(flightCSVPath);
         }
 
         public string Validate(string flightCSVPath)
         {
+            if (!File.Exists(flightCSVPath))
+                return "No file exists in this path";
             return _flightService.ValidateFlightData(flightCSVPath);
         }
 
-        public List<Booking> Filter(string[] input)
+        public List<Booking> Filter(string[] filterInput)
         {
-            BookingFilter Filter = BookingFilters.Parse(input.Skip(1).ToArray());
+            BookingFilter Filter = BookingFilters.Parse(filterInput.Skip(1).ToArray());
             List<Booking> bookingResults = new List<Booking>();
             bookingResults = _bookingService.FilterBookings(Filter);
             return bookingResults;
         }
 
-        public User? ManagerLogIn(string[] productInfo, User? loggedInUser)
+        public User? ManagerLogIn(string name, string pass)
         {
-            if (productInfo.Length < 3)
-                return null;
-            string username = productInfo[1];
-            string password = productInfo[2];
+            string username = name;
+            string password = pass;
 
             var user = _userService.Authenticate(username, password);
             if (user == null || user.UserType != UserType.Manager)
@@ -50,29 +53,27 @@ namespace ATB.Logic.Handlers.Command
             return user;
         }
 
-        public bool ManagerSignUp(string[] productInfo)
+        public bool ManagerSignUp(string name, string password)
         {
-            if (productInfo.Length < 3)
-                return false;
             try
             {
                 var user = new User
                 {
                     UserId = new Random().Next(100000, 999999),
-                    Name = productInfo[1],
-                    Password = productInfo[2],
+                    Name = name,
+                    Password = password,
                     UserType = UserType.Manager
                 };
-
                 if (_userService.GetUserByName(user.Name) != null)
                     return false;
                 return _userService.CreateUser(user);
             }
-            catch
+            catch (Exception ex)
             {
+                Console.WriteLine($"\nError when creating a new Manager: {ex.ToString()}");
                 return false;
             }
-            
+
         }
     }
 

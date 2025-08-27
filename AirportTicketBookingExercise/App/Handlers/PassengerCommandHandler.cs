@@ -4,7 +4,7 @@ using ATB.Logic.Service;
 using System.Text;
 
 
-namespace ATB.Logic.Handlers.Command
+namespace ATB.App.Handlers
 {
     public class PassengerCommandHandler
     {
@@ -19,17 +19,15 @@ namespace ATB.Logic.Handlers.Command
             _flightService = flightService;
         }
 
-        public bool PassengerBookFlight(string[] productInfo, User loggedInUser)
+        public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)
         {
             try
-            {
-                int flightId = int.Parse(productInfo[1]);
-                BookingClass BookingClass = productInfo[2].ParseBookingClass();
+            { 
 
                 Flight? flight = _flightService.GetFlight(flightId);
                 if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
                     return false;
-                decimal price = BookingClass switch
+                decimal price = bookingClass switch
                 {
                     BookingClass.First => flight.FirstClassPrice,
                     BookingClass.Business => flight.BuisnessPrice,
@@ -43,27 +41,28 @@ namespace ATB.Logic.Handlers.Command
                     BookingId = new Random().Next(100000, 999999),
                     FlightId = flightId,
                     PassengerId = loggedInUser.UserId,
-                    BookingClass = BookingClass
+                    BookingClass = bookingClass
                 };
                 _bookingService.CreateBooking(Booking);
                 _flightService.AddPassengerToSeat(flight);
 
                 return true;
             }
-            catch
+            catch(Exception ex) 
             {
+                Console.WriteLine($"Error while booking: {ex.ToString()}");
                 return false;
             }
         }
 
-        public List<Flight> Search(string[] productInfo)
+        public List<Flight> Search(string[] filterInfo)
         {
             List<Flight> filteredFlights = new List<Flight>();
-            if (productInfo.Length < 3)
+            if (filterInfo.Length < 3)
                 return _flightService.GetFlights();
 
-            FilterParam SearchParam = productInfo[1].ParseFilterParam();
-            string input = productInfo[2];
+            FilterParam SearchParam = filterInfo[1].ParseFilterParam();
+            string input = filterInfo[2];
 
             var flights = _flightService.GetFlights();
             filteredFlights = SearchParam switch
@@ -83,11 +82,10 @@ namespace ATB.Logic.Handlers.Command
             return filteredFlights;
         }
 
-        public bool Cancel(string[] productInfo, User loggedInUser)
+        public bool Cancel(int bookingId, User loggedInUser)
         {
             try
             {
-                int bookingId = int.Parse(productInfo[1]);
                 if (!_bookingService.IsBookingValidById(bookingId, loggedInUser.UserId))
                     return false;
                 bool isSuccess = _bookingService.RemoveBookingById(bookingId);
@@ -101,24 +99,12 @@ namespace ATB.Logic.Handlers.Command
             }
         }
 
-        public bool Modify(string[] productInfo, User loggedInUser)
+        public bool Modify(int bookingId, BookingClass bookingClass, User loggedInUser)
         {
-            if (productInfo.Length < 3)
+            if (!_bookingService.IsBookingValidById(bookingId, loggedInUser.UserId))
                 return false;
-            try
-            {
-                int bookingId = int.Parse(productInfo[1]);
-                BookingClass bookingClass = productInfo[2].ParseBookingClass();
-
-                if (!_bookingService.IsBookingValidById(bookingId, loggedInUser.UserId))
-                    return false;
-                else
-                {
-                    _bookingService.UpdateBookingClass(bookingId, bookingClass);
-                    return true;
-                }
-            }
-            catch { return false; }
+            _bookingService.UpdateBookingClass(bookingId, bookingClass);
+            return true;
         }
 
         public List<Booking> Bookings(User loggedInUser)
@@ -134,20 +120,18 @@ namespace ATB.Logic.Handlers.Command
             List<Flight> flights = new List<Flight>();
             flights = _flightService.GetFlights();
             return flights;
-            
+
         }
 
-        public bool PassengerSignUp(string[] productInfo)
+        public bool PassengerSignUp(string name, string password)
         {
-            if (productInfo.Length < 3)
-                return false;
             try
             {
                 var user = new User
                 {
                     UserId = new Random().Next(100000, 999999),
-                    Name = productInfo[1],
-                    Password = productInfo[2],
+                    Name = name,
+                    Password = password,
                     UserType = UserType.Passenger
                 };
 
@@ -168,27 +152,12 @@ namespace ATB.Logic.Handlers.Command
             }
         }
 
-        public User? PassengerLogIn(string[] productInfo, User? loggedInUser)
+        public User? PassengerLogIn(string name, string pass)
         {
-            if (productInfo.Length >= 3)
-            {
-                string username = productInfo[1];
-                string password = productInfo[2];
-
-                var user = _userService.Authenticate(username, password);
-                if (user != null && user.UserType == UserType.Passenger)
-                    return user;
-            }
-            return null;
-        }
-
-        public bool PassengerSignOut(User? loggedInUser)
-        {
-            if (loggedInUser == null)
-                return false;
-            loggedInUser = null;
-            return true;
-            
+            var user = _userService.Authenticate(name, pass);
+            if (user == null || user.UserType != UserType.Passenger)
+                return null;
+            return user;
         }
 
         public string FlightsToString(List<Flight> Flights)
@@ -198,7 +167,7 @@ namespace ATB.Logic.Handlers.Command
             {
                 stringBuilder.AppendLine(flight.ToString());
             }
-            return stringBuilder.ToString();    
+            return stringBuilder.ToString();
         }
         public string BookingsToString(List<Booking> BookingList)
         {

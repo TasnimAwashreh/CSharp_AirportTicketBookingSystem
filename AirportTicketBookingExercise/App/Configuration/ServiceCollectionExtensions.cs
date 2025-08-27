@@ -1,13 +1,13 @@
 ﻿using ATB.Data.Repository;
-using ATB.Logic.Handlers.Command;
 using ATB.Logic.Service;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
 using ATB.App;
+using ATB.App.Handlers;
 
 
 
-namespace ATB.Configuration
+namespace ATB.App.Configuration
 {
     public static class ServiceCollectionExtensions
     {
@@ -21,7 +21,7 @@ namespace ATB.Configuration
             string flightsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", flightsFile);
 
             services
-                    .AddSingleton<DatabaseManager>(_ => new DatabaseManager(usersPath, bookingsPath, flightsPath))
+                    .AddSingleton(_ => new DatabaseManager(usersPath, bookingsPath, flightsPath))
                     .AddScoped<IUserRepository>(_ => new UserRepository(usersPath))
                     .AddScoped<IBookingRepository>(_ => new BookingRepository(bookingsPath))
                     .AddScoped<IFlightRepository>(_ => new FlightRepository(flightsPath));
