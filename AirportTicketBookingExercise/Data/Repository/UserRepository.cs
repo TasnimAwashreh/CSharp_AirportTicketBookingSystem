@@ -1,4 +1,5 @@
 ﻿using ATB.Data.Models;
+using ATB.Logic.Extensions;
 using CsvHelper;
 using System.Globalization;
 
@@ -26,6 +27,7 @@ namespace ATB.Data.Repository
 
         public bool CreateUser(User user)
         {
+            user.GenerateUserId();
             try
             {
                 using (var writer = new StreamWriter(_usersPath, append: true))

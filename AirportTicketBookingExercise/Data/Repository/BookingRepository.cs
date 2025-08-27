@@ -1,6 +1,7 @@
 ﻿
 using ATB.Data.Models;
 using ATB.Logic.Enums;
+using ATB.Logic.Extensions;
 using CsvHelper;
 using System.Globalization;
 
@@ -36,6 +37,7 @@ namespace ATB.Data.Repository
 
         public bool CreateBooking(Booking booking)
         {
+            booking.GenerateBookingId();
             try
             {
                 using (var writer = new StreamWriter(_bookingPath, append: true))

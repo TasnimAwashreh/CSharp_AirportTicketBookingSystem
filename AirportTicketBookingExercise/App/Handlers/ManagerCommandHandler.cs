@@ -59,7 +59,6 @@ namespace ATB.App.Handlers
             {
                 var user = new User
                 {
-                    UserId = new Random().Next(100000, 999999),
                     Name = name,
                     Password = password,
                     UserType = UserType.Manager
