@@ -1,6 +1,4 @@
-﻿
-
-namespace ATB.Logic.Enums
+﻿namespace ATB.Logic.Enums
 {
     public enum BookingClass
     {

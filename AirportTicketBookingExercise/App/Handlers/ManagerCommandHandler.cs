@@ -3,7 +3,6 @@ using ATB.Logic;
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
 
-
 namespace ATB.App.Handlers
 {
     public class ManagerCommandHandler
@@ -72,8 +71,6 @@ namespace ATB.App.Handlers
                 Console.WriteLine($"\nError when creating a new Manager: {ex.ToString()}");
                 return false;
             }
-
         }
     }
-
 }

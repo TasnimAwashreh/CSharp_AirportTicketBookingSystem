@@ -1,5 +1,4 @@
-﻿
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
 using ATB.Logic.Enums;
 using ATB.Logic.Extensions;
 using CsvHelper;
@@ -108,6 +107,5 @@ namespace ATB.Data.Repository
                 return false;
             }
         }
-
     }
 }

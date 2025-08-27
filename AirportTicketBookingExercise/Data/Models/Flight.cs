@@ -1,5 +1,4 @@
-﻿
-using ATB.Data.Attributes;
+﻿using ATB.Data.Attributes;
 using CsvHelper.Configuration;
 using System.ComponentModel.DataAnnotations;
 

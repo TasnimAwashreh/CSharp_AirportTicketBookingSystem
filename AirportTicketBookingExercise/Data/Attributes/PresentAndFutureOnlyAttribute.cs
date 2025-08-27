@@ -1,5 +1,4 @@
-﻿
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 
 namespace ATB.Data.Attributes
@@ -27,7 +26,6 @@ namespace ATB.Data.Attributes
             {
                 return false;
             }
-
         }
     }
 }

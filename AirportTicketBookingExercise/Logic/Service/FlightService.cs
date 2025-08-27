@@ -1,5 +1,4 @@
-﻿
-using ATB.Data.Repository;
+﻿using ATB.Data.Repository;
 using ATB.Data.Models;
 using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel.DataAnnotations;

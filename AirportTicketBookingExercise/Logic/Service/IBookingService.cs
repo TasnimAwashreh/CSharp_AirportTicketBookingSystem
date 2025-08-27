@@ -1,5 +1,4 @@
-﻿using ATB.Logic;
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
 using ATB.Logic.Enums;
 
 namespace ATB.Logic.Service

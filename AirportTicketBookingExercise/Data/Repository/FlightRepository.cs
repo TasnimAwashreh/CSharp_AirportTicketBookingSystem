@@ -1,15 +1,12 @@
 ﻿using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;
-using System.Reflection;
-using System.Text;
 
 namespace ATB.Data.Repository
 {
     public class FlightRepository : IFlightRepository
     {
         private readonly string _flightsCSVPath;
-        private List<Flight> _flights;
 
         public FlightRepository(string flightsCSVPath)
         {

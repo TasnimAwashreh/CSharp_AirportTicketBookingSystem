@@ -85,36 +85,27 @@ namespace ATB.Logic.Service
                     if (price > query.Price.Value)
                         return false;
                 }
-
                 if (!string.IsNullOrEmpty(query.DepartureCountry) && (flight.DepartureCountry == null || !flight.DepartureCountry.Contains(query.DepartureCountry)))
                     return false;
-
                 if (!string.IsNullOrEmpty(query.DestinationCountry) && (flight.DestinationCountry == null || !flight.DestinationCountry.Contains(query.DestinationCountry)))
                     return false;
-
                 if (query.DepartureDate.HasValue && (flight.DepartureDate.Date != query.DepartureDate.Value.Date))
                     return false;
-
                 if (!string.IsNullOrEmpty(query.DepartureAirport) && (flight.DepartureAirport == null || !flight.DepartureAirport.Contains(query.DepartureAirport)))
                     return false;
-
                 if (!string.IsNullOrEmpty(query.ArrivalAirport) && (flight.ArrivalAirport == null || !flight.ArrivalAirport.Contains(query.ArrivalAirport)))
                     return false;
-
                 if (!string.IsNullOrEmpty(query.PassengerName) && (passenger == null || passenger.Name == null || !passenger.Name.Contains(query.PassengerName)))
                     return false;
-
                 if (!string.IsNullOrEmpty(query.BookingClass))
                 {
                     if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass) || b.BookingClass != bookingClass)
                         return false;
                 }
-
                 return true;
             }
             )
             .ToList();
-
             return filteredBookings;
         }
     }

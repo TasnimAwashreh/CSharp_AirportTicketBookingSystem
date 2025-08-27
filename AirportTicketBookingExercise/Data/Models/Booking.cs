@@ -26,6 +26,4 @@ namespace ATB.Data.Models
             Map(m => m.BookingClass).Name("BookingClass");
         }
     }
-
-
 }

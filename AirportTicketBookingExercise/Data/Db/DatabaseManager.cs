@@ -58,8 +58,6 @@ namespace ATB.Data.Db
             {
                 Console.WriteLine($"Error in Database Manager: {ex.ToString()}");
             }
-
         }
-
     }
 }

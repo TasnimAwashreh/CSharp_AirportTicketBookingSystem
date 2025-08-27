@@ -3,7 +3,6 @@ using ATB.Data.Models;
 using ATB.Logic.Service;
 using System.Text;
 
-
 namespace ATB.App.Handlers
 {
     public class PassengerCommandHandler

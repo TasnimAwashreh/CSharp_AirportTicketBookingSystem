@@ -1,5 +1,4 @@
-﻿using ATB.Logic;
-using System.Globalization;
+﻿using System.Globalization;
 
 namespace ATB.Logic.Enums
 {
@@ -97,5 +96,4 @@ namespace ATB.Logic.Enums
             return query;
         }
     }
- 
 }

@@ -1,10 +1,4 @@
 ﻿using ATB.Data.Models;
-using ATB.Logic.Enums;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace ATB.Logic.Extensions
 {

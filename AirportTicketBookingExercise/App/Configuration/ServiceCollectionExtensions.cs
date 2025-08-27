@@ -2,10 +2,7 @@
 using ATB.Logic.Service;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
-using ATB.App;
 using ATB.App.Handlers;
-
-
 
 namespace ATB.App.Configuration
 {
@@ -51,6 +48,5 @@ namespace ATB.App.Configuration
             services.AddScoped<BookingManager>();
             return services;
         }
-
     }
 }
