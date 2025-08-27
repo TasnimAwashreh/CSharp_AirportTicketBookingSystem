@@ -68,7 +68,7 @@ namespace ATB.App
                 }
             }
             else if (loggedInUser.UserType == UserType.Passenger)
-                Console.WriteLine("Only managers can use these commands!");
+                Console.WriteLine("Only managers can use these commands! Please log out as a passenger and log back in as a manager");
             else
             {
                 switch (command)
@@ -163,8 +163,8 @@ namespace ATB.App
                         break;
                 }
             }
-            else if (loggedInUser.UserType == UserType.Passenger)
-                Console.WriteLine("Only passengers can use these commands!");
+            else if (loggedInUser.UserType == UserType.Manager)
+                Console.WriteLine("Only passengers can use these commands! Please log out as a manager and log back in as a passenger");
             else
             {
                 switch (command)

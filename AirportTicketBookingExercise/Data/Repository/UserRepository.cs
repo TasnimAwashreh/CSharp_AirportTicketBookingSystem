@@ -37,8 +37,9 @@ namespace ATB.Data.Repository
                     return true;
                 }
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error while trying to create User: {ex.ToString()}");
                 return false;
             }
         }

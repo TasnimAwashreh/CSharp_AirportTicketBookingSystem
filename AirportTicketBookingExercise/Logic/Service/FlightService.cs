@@ -126,8 +126,9 @@ namespace ATB.Logic.Service
                     _flightRepo.AddFlights(importedFlightData);
                     return true;
                 }
-                catch
+                catch (Exception ex) 
                 {
+                    Console.WriteLine($"Error while importing flight data: {ex.ToString()}");
                     return false;
                 }
             }

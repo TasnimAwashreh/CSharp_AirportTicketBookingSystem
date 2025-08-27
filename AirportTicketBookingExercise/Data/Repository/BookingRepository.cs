@@ -47,8 +47,9 @@ namespace ATB.Data.Repository
                     return true;
                 }
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error when trying to create booking: {ex.ToString()}");
                 return false;
             }
         }
@@ -73,8 +74,9 @@ namespace ATB.Data.Repository
 
                 return true;
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error while trying to delete booking: {ex.ToString()}");
                 return false;
             }
         }
@@ -98,8 +100,9 @@ namespace ATB.Data.Repository
 
                 return true;
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error when trying to update booking class: {ex.ToString()}");
                 return false;
             }
         }

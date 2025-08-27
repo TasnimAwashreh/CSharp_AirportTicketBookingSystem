@@ -146,8 +146,9 @@ namespace ATB.App.Handlers
                         return false;
                 }
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error while signing up passenger: {ex}");
                 return false;
             }
         }

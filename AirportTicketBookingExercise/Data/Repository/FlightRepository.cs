@@ -49,8 +49,9 @@ namespace ATB.Data.Repository
                     return true;
                 }
             }
-            catch
+            catch (Exception ex) 
             {
+                Console.WriteLine($"Error while trying to add flights: {ex.ToString()}");
                 return false;
             }
         }
