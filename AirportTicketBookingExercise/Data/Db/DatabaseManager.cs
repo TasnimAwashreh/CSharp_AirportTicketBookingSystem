@@ -36,6 +36,9 @@ namespace ATB.Data.Db
         private void CreateCSVFile<TModel, TMap>(string path)
             where TMap : ClassMap<TModel>
         {
+            if (File.Exists(path))
+                return;
+
             using (var writer = new StreamWriter(path))
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {

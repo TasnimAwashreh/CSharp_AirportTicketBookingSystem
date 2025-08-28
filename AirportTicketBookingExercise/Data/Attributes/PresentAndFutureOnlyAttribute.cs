@@ -15,12 +15,11 @@ namespace ATB.Data.Attributes
         {
             try
             {
-                DateTime datetime = DateTime.ParseExact(value.ToString(), "dd/MM/yy", CultureInfo.InvariantCulture);
-                if (datetime == null)
-                    return false;
-                else if (datetime is DateTime date)
+                if (DateTime.TryParse(value.ToString(), out var date))
+                {
                     return date.Date >= DateTime.Today;
-                else return false;
+                }
+                return false;
             }
             catch
             {

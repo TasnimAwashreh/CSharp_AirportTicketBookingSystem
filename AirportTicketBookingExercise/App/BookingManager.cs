@@ -94,12 +94,8 @@ namespace ATB.App
                             Console.WriteLine("Please enter a valid CSV file path");
                             break;
                         }
-                        bool isUploadSuccess = _managerCommandHandler.Upload(productInfo[1]);
-                        if (!isUploadSuccess)
-                            Console.WriteLine("The CSV is not in the correct format. " +
-                            "Please use the 'Validate' command to check which fields must be changed.");
-                        else
-                            Console.WriteLine("Flight Data has been imported successfully");
+                        string result = _managerCommandHandler.Upload(productInfo[1]);
+                        Console.WriteLine(result);
                         break;
                     case ManagerCommand.Validate:
                         Console.WriteLine($"\n Validating... \n");

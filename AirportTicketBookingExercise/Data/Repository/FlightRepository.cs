@@ -41,7 +41,7 @@ namespace ATB.Data.Repository
                 using (var writer = new StreamWriter(_flightsCSVPath))
                 using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
                 {
-                    csv.Context.RegisterClassMap<BookingMap>();
+                    csv.Context.RegisterClassMap<FlightMap>();
                     csv.WriteRecords(flights);
                     return true;
                 }

@@ -19,11 +19,14 @@ namespace ATB.App.Handlers
             _bookingService = bookingService;
         }
 
-        public bool Upload(string flightCSVPath)
+        public string Upload(string flightCSVPath)
         {
             if (!File.Exists(flightCSVPath))
-                return false;
-            return _flightService.ImportFlightData(flightCSVPath);
+                return "This file does not exist";
+            bool isSuccessful = _flightService.ImportFlightData(flightCSVPath);
+            if (!isSuccessful)
+                return "Please use the Validate command before importing as this file contains invalid fields";
+            else return "Imported successfully";
         }
 
         public string Validate(string flightCSVPath)
