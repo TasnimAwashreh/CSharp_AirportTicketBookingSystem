@@ -7,6 +7,8 @@ namespace ATB.Data.Repository
     {
         public bool CreateBooking(Booking booking);
         public List<Booking> GetAllBookings();
+        public List<Booking> GetBookings(int passengerId);
+        public bool IsBookingValidById(int bookingId, int passengerId);
         public bool DeleteBooking(int BookingId);
         public bool UpdateBookingClass(int bookingId, BookingClass newClass);
 

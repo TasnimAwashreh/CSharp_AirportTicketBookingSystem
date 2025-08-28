@@ -25,6 +25,12 @@ namespace ATB.Data.Repository
             }
         }
 
+        public List<User> GetUsersByType(UserType type)
+        {
+            return GetAllUsers()
+                .Where(u => u.UserType == type).ToList();
+        }
+
         public bool CreateUser(User user)
         {
             user.GenerateUserId();

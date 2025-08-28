@@ -9,6 +9,7 @@ namespace ATB.Data.Repository
         public bool UpdateUser(User User);
 
         public List<User> GetAllUsers();
+        public List<User> GetUsersByType(UserType type);
 
         public bool RemoveUser(User User);
     }

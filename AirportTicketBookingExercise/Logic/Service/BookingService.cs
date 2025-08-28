@@ -29,15 +29,12 @@ namespace ATB.Logic.Service
 
         public bool IsBookingValidById(int bookingId, int passengerId)
         {
-            return _bookingRepository.GetAllBookings()
-                .Any(b => b.BookingId == bookingId && b.PassengerId == passengerId);
+            return _bookingRepository.IsBookingValidById(bookingId, passengerId);
         }
 
         public List<Booking> GetBookings(int passengerId)
         {
-            return _bookingRepository.GetAllBookings()
-                .Where(b => b.PassengerId == passengerId)
-                .ToList();
+            return _bookingRepository.GetBookings(passengerId);
         }
 
         public bool RemoveBookingById(int bookingId)
@@ -53,59 +50,54 @@ namespace ATB.Logic.Service
         public List<Booking> FilterBookings(BookingFilter query)
         {
             var bookings = _bookingRepository.GetAllBookings();
-            var flights = _flightRepository.GetFlights();
-            var passengers = _userRepository.GetAllUsers().Where(u => u.UserType == UserType.Passenger).ToList();
+            var flights = _flightRepository.GetFlights().ToDictionary(f => f.FlightId);
+            var passengers = _userRepository.GetUsersByType(UserType.Passenger).ToDictionary(u => u.UserId);
 
             var filteredBookings = bookings.Where(b =>
             {
-                var flight = flights.FirstOrDefault(f => f.FlightId == b.FlightId);
-                var passenger = passengers.FirstOrDefault(p => p.UserId == b.PassengerId);
-
-                if (flight == null)
+                if (!flights.TryGetValue(b.FlightId, out var flight))
                     return false;
-
-                if (!string.IsNullOrEmpty(query.FlightName) && (flight.FlightName == null || !flight.FlightName.Contains(query.FlightName)))
+                passengers.TryGetValue(b.PassengerId, out var passenger);
+                if (!string.IsNullOrEmpty(query.FlightName) &&
+                    (flight.FlightName == null || !flight.FlightName.Contains(query.FlightName)))
                     return false;
-
                 if (query.Price.HasValue)
                 {
-                    decimal price = 0;
-                    switch (b.BookingClass)
+                    decimal price = b.BookingClass switch
                     {
-                        case BookingClass.Economy:
-                            price = flight.EconomyPrice;
-                            break;
-                        case BookingClass.Business:
-                            price = flight.BuisnessPrice;
-                            break;
-                        case BookingClass.First:
-                            price = flight.FirstClassPrice;
-                            break;
-                    }
+                        BookingClass.Economy => flight.EconomyPrice,
+                        BookingClass.Business => flight.BuisnessPrice,
+                        BookingClass.First => flight.FirstClassPrice,
+                        _ => 0
+                    };
                     if (price > query.Price.Value)
                         return false;
                 }
-                if (!string.IsNullOrEmpty(query.DepartureCountry) && (flight.DepartureCountry == null || !flight.DepartureCountry.Contains(query.DepartureCountry)))
+                if (!string.IsNullOrEmpty(query.DepartureCountry) &&
+                    (flight.DepartureCountry == null || !flight.DepartureCountry.Contains(query.DepartureCountry)))
                     return false;
-                if (!string.IsNullOrEmpty(query.DestinationCountry) && (flight.DestinationCountry == null || !flight.DestinationCountry.Contains(query.DestinationCountry)))
+                if (!string.IsNullOrEmpty(query.DestinationCountry) &&
+                    (flight.DestinationCountry == null || !flight.DestinationCountry.Contains(query.DestinationCountry)))
                     return false;
-                if (query.DepartureDate.HasValue && (flight.DepartureDate.Date != query.DepartureDate.Value.Date))
+                if (query.DepartureDate.HasValue && flight.DepartureDate.Date != query.DepartureDate.Value.Date)
                     return false;
-                if (!string.IsNullOrEmpty(query.DepartureAirport) && (flight.DepartureAirport == null || !flight.DepartureAirport.Contains(query.DepartureAirport)))
+                if (!string.IsNullOrEmpty(query.DepartureAirport) &&
+                    (flight.DepartureAirport == null || !flight.DepartureAirport.Contains(query.DepartureAirport)))
                     return false;
-                if (!string.IsNullOrEmpty(query.ArrivalAirport) && (flight.ArrivalAirport == null || !flight.ArrivalAirport.Contains(query.ArrivalAirport)))
+                if (!string.IsNullOrEmpty(query.ArrivalAirport) &&
+                    (flight.ArrivalAirport == null || !flight.ArrivalAirport.Contains(query.ArrivalAirport)))
                     return false;
-                if (!string.IsNullOrEmpty(query.PassengerName) && (passenger == null || passenger.Name == null || !passenger.Name.Contains(query.PassengerName)))
+                if (!string.IsNullOrEmpty(query.PassengerName) &&
+                    (passenger == null || passenger.Name == null || !passenger.Name.Contains(query.PassengerName)))
                     return false;
                 if (!string.IsNullOrEmpty(query.BookingClass))
                 {
-                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass) || b.BookingClass != bookingClass)
+                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass)
+                        || b.BookingClass != bookingClass)
                         return false;
                 }
                 return true;
-            }
-            )
-            .ToList();
+            }).ToList();
             return filteredBookings;
         }
     }
