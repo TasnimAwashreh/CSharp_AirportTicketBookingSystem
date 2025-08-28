@@ -1,5 +1,6 @@
 ﻿using ATB.Data.Repository;
 using ATB.Data.Models;
+using System.Xml.Linq;
 
 namespace ATB.Logic.Service
 {
@@ -12,38 +13,51 @@ namespace ATB.Logic.Service
             _userRepository = userRepository;
         }
 
-        public User? Authenticate(string username, string password)
+        public User? Authenticate(string username, string password, UserType usertype)
         {
             var user = GetUserByName(username);
-            if (user != null && user.Password.Equals(password)) 
+            if (user != null && user.Password.Equals(password) && user.UserType == usertype) 
             {
                 return user;
             }
             return null;
         }
 
-        public bool CreateUser(User user)
+        public bool CreateUser(string name, string password, UserType usertype)
         {
-            return _userRepository.CreateUser(user);
+            try
+            {
+                var user = new User
+                {
+                    Name = name,
+                    Password = password,
+                    UserType = usertype
+                };
+                if (_userRepository.GetUser(name) != null)
+                    return false;
+                return _userRepository.CreateUser(user);
+            }
+            catch (Exception ex) 
+            {
+                Console.WriteLine($"Error creating a user: {ex}");
+                return false;
+            }
+            
         }
 
         public User? GetUser(int userId)
         {
-            return _userRepository.GetAllUsers()
-                 .FirstOrDefault(u => u.UserId == userId);
+            return _userRepository.GetUser(userId);
         }
 
         public User? GetUserByName(string username)
         {
-            return _userRepository.GetAllUsers()
-                .FirstOrDefault(u => u.Name.Equals(username, StringComparison.OrdinalIgnoreCase));
+            return _userRepository.GetUser(username);
         }
 
         public List<User> GetUserByType(UserType type)
         {
-            return _userRepository.GetAllUsers()
-                        .Where(u => u.UserType == type)
-                        .ToList();
+            return _userRepository.GetUsersByType(type);
         }
 
         public bool UpdateUser(User user)

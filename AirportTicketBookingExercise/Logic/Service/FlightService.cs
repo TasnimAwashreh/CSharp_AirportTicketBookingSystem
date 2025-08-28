@@ -5,6 +5,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Reflection;
 using System.Text;
+using ATB.Logic.Enums;
 
 namespace ATB.Logic.Service
 {
@@ -19,23 +20,9 @@ namespace ATB.Logic.Service
 
         public List<Flight> GetFlights()
         {
-            return _flightRepo.GetFlights();
-        }
-
-        public Flight? GetFlight(int flightId)
-        {
-            return _flightRepo.GetFlights()
-                        .Find(flight => flight.FlightId == flightId);
-        }
-
-        public void AddPassengerToSeat(Flight flight)
-        {
-            _flightRepo.AddPassengerToSeat(flight);
-        }
-
-        public void RemovePassengerToSeat(Flight flight)
-        {
-            _flightRepo.RemovePassengerFromSeat(flight);
+            List<Flight> flights = new List<Flight>();
+            flights = _flightRepo.GetFlights();
+            return flights;
         }
 
         public string ValidateFlightData(string importPath)
@@ -106,7 +93,7 @@ namespace ATB.Logic.Service
             }
         }
 
-        private Flight AddFlight(string[] fields)
+        private Flight? AddFlight(string[] fields)
         {
             try
             {
@@ -135,6 +122,43 @@ namespace ATB.Logic.Service
                 return null;
             }
 
+        }
+
+        public List<Flight> Search(string[] filterInfo)
+        {
+            List<Flight> filteredFlights = new List<Flight>();
+            if (filterInfo.Length < 3)
+                return _flightRepo.GetFlights();
+
+            FilterParam SearchParam = filterInfo[1].ParseFilterParam();
+            string input = filterInfo[2];
+
+            var flights = _flightRepo.GetFlights();
+            filteredFlights = SearchParam switch
+            {
+                FilterParam.Flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
+                FilterParam.Price => flights.Where(f =>
+                    f.BuisnessPrice == decimal.Parse(input) ||
+                    f.EconomyPrice == decimal.Parse(input) ||
+                    f.FirstClassPrice == decimal.Parse(input)).ToList(),
+                FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
+                FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
+                FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
+                FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
+                FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
+                _ => []
+            };
+            return filteredFlights;
+        }
+
+        public string FlightsToString(List<Flight> Flights)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var flight in Flights)
+            {
+                stringBuilder.AppendLine(flight.ToString());
+            }
+            return stringBuilder.ToString();
         }
     }
 }

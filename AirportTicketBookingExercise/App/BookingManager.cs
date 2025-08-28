@@ -1,19 +1,26 @@
-﻿using ATB.App.Handlers;
-using ATB.Data.Models;
+﻿using ATB.Data.Models;
 using ATB.Logic.Enums;
+using ATB.Logic.Service;
 
 namespace ATB.App
 {
     public class BookingManager
     {
-        private PassengerCommandHandler _passengerCommandHandler;
-        private ManagerCommandHandler _managerCommandHandler;
+        private readonly IFlightservice _flightService;
+        private readonly IUserService _userService;
+        private readonly IBookingService _bookingService;
+
         private User? loggedInUser;
 
-        public BookingManager(ManagerCommandHandler managerCommndHandler, PassengerCommandHandler passengerCommandHandler)
+        public BookingManager()
         {
-            _passengerCommandHandler = passengerCommandHandler;
-            _managerCommandHandler = managerCommndHandler;
+        }
+
+        public BookingManager(IFlightservice flightService, IUserService userService, IBookingService bookingService)
+        {
+            _flightService = flightService;
+            _userService = userService;
+            _bookingService = bookingService;
         }
 
         public void ProcessInput(string input)
@@ -51,7 +58,7 @@ namespace ATB.App
                             Console.WriteLine("Please enter a username and password");
                             break;
                         }
-                        bool isSignUpSuccessful = _managerCommandHandler.ManagerSignUp(productInfo[1], productInfo[2]);
+                        bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
                         if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
                         else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
                         break;
@@ -61,7 +68,7 @@ namespace ATB.App
                             Console.WriteLine("Please enter your username and password to login, manager!");
                             break;
                         }
-                        User? loggingInUser = _managerCommandHandler.ManagerLogIn(productInfo[1], productInfo[2]);
+                        User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Manager);
                         if (loggingInUser == null)
                             Console.WriteLine("Incorrect username or password, please try again");
                         else
@@ -94,19 +101,34 @@ namespace ATB.App
                             Console.WriteLine("Please enter a valid CSV file path");
                             break;
                         }
-                        string result = _managerCommandHandler.Upload(productInfo[1]);
-                        Console.WriteLine(result);
+                        if (!File.Exists(productInfo[1]))
+                        {
+                            Console.WriteLine("This file does not exist");
+                            break;
+                        }
+                        bool isSuccessful = _flightService.ImportFlightData(productInfo[1]);
+                        if (!isSuccessful) Console.WriteLine("Please use the Validate command before importing as this file contains invalid fields");
+                        else Console.WriteLine("Imported successfully");
                         break;
                     case ManagerCommand.Validate:
                         Console.WriteLine($"\n Validating... \n");
-                        string errorStr = _managerCommandHandler.Validate(productInfo[1]);
-                        if (errorStr != "")
-                            Console.WriteLine(errorStr);
+                        if (productInfo.Length < 2)
+                        {
+                            Console.WriteLine("Please enter a valid CSV file path");
+                            break;
+                        }
+                        if (!File.Exists(productInfo[1]))
+                        {
+                            Console.WriteLine("This file does not exist");
+                            break;
+                        }
+                        string errorStr = _flightService.ValidateFlightData(productInfo[1]);
+                        if (errorStr != "") Console.WriteLine(errorStr);
                         else Console.WriteLine("No fields are in need of fixing!");
                         break;
                     case ManagerCommand.Filter:
                         Console.WriteLine($"\n Filter: \n");
-                        List<Booking> bookingResults = _managerCommandHandler.Filter(productInfo);
+                        List<Booking> bookingResults = _bookingService.FilterBookings(productInfo);
                         if (bookingResults.Count > 0)
                         {
                             Console.WriteLine("\nFilter Results: \n");
@@ -137,29 +159,26 @@ namespace ATB.App
                     case PassengerCommand.SignUp:
                         if (productInfo.Length < 3)
                         {
-                            Console.WriteLine("Please enter a username and password to signup, passenger");
+                            Console.WriteLine("Please enter a username and password");
                             break;
                         }
-                        bool isSuccessful = _passengerCommandHandler.PassengerSignUp(productInfo[1], productInfo[2]);
-                        if (!isSuccessful)
-                            Console.WriteLine("\nPlease make sure the username is not taken and that" +
-                                    " you have placed your username and password");
-                        else
-                            Console.WriteLine("\nNew Passenger has been created");
+                        bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
+                        if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, passenger");
+                        else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
                         break;
                     case PassengerCommand.LogIn:
                         if (productInfo.Length < 3)
                         {
-                            Console.WriteLine("Please enter your username and password to log in");
+                            Console.WriteLine("Please enter your username and password to login, manager!");
                             break;
                         }
-                        User? loggingInUser = _passengerCommandHandler.PassengerLogIn(productInfo[1], productInfo[2]);
+                        User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
                         if (loggingInUser == null)
-                            Console.WriteLine("\nPlease make sure that you signed up as a passenger first");
+                            Console.WriteLine("Incorrect username or password, please try again");
                         else
                         {
                             loggedInUser = loggingInUser;
-                            Console.WriteLine($"\nWelcome back, {loggedInUser.Name}");
+                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
                         }
                         break;
                     case PassengerCommand.None:
@@ -189,7 +208,7 @@ namespace ATB.App
                             }
                             int flightId = int.Parse(productInfo[1]);
                             BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                            bool isBookingSuccessful = _passengerCommandHandler.PassengerBookFlight(flightId, bookingClass, loggedInUser);
+                            bool isBookingSuccessful = _bookingService.PassengerBookFlight(flightId, bookingClass, loggedInUser);
                             if (!isBookingSuccessful)
                                 Console.WriteLine("Please make sure the flight and flight class is available when booking");
                             else
@@ -205,14 +224,14 @@ namespace ATB.App
                         }
                         break;
                     case PassengerCommand.Search:
-                        List<Flight> searchFlights = _passengerCommandHandler.Search(productInfo);
-                        Console.WriteLine(_passengerCommandHandler.FlightsToString(searchFlights));
+                        List<Flight> searchFlights = _flightService.Search(productInfo);
+                        Console.WriteLine(_flightService.FlightsToString(searchFlights));
                         break;
                     case PassengerCommand.Cancel:
                         try
                         {
                             int bookingId = int.Parse(productInfo[1]);
-                            bool isCancelSuccessful = _passengerCommandHandler.Cancel(bookingId, loggedInUser);
+                            bool isCancelSuccessful = _bookingService.Cancel(bookingId, loggedInUser);
                             if (!isCancelSuccessful) Console.WriteLine("Please make sure to cancel with the booking id");
                             else Console.WriteLine("Booking has been successfully cancelled");
                         }
@@ -230,7 +249,7 @@ namespace ATB.App
                         {
                             int bookingId = int.Parse(productInfo[1]);
                             BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                            bool isModifySuccessful = _passengerCommandHandler.Modify(bookingId, bookingClass, loggedInUser);
+                            bool isModifySuccessful = _bookingService.Modify(bookingId, bookingClass, loggedInUser);
                             if (!isModifySuccessful) Console.WriteLine("Please make sure the booking exists and please enter the class");
                             else Console.WriteLine("Booking changed successfully!");
                         }
@@ -248,14 +267,14 @@ namespace ATB.App
                         }
                         break;
                     case PassengerCommand.Flights:
-                        List<Flight> getFlights = _passengerCommandHandler.Flights();
+                        List<Flight> getFlights = _flightService.GetFlights();
                         if (!getFlights.Any()) Console.WriteLine("There are currently no flights");
-                        else Console.WriteLine(_passengerCommandHandler.FlightsToString(getFlights));
+                        else Console.WriteLine(_flightService.FlightsToString(getFlights));
                         break;
                     case PassengerCommand.Bookings:
-                        List<Booking> bookings = _passengerCommandHandler.Bookings(loggedInUser);
+                        List<Booking> bookings = _bookingService.GetBookings(loggedInUser);
                         if (!bookings.Any()) Console.WriteLine("You currently have not booked any flights yet!");
-                        Console.WriteLine(_passengerCommandHandler.BookingsToString(bookings));
+                        Console.WriteLine(_bookingService.BookingsToString(bookings));
                         break;
                     case PassengerCommand.None:
                         Console.WriteLine("\nPlease enter an appropriate action.");

@@ -2,7 +2,6 @@
 using ATB.Logic.Service;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
-using ATB.App.Handlers;
 
 namespace ATB.App.Configuration
 {
@@ -31,15 +30,6 @@ namespace ATB.App.Configuration
                 .AddScoped<IUserService, UserService>()
                 .AddScoped<IFlightservice, Flightservice>()
                 .AddScoped<IBookingService, BookingService>();
-            return services;
-        }
-
-        public static IServiceCollection AddCommandHandlers(this IServiceCollection services)
-        {
-            services
-                .AddScoped<PassengerCommandHandler>()
-                .AddScoped<ManagerCommandHandler>();
-
             return services;
         }
 

@@ -1,6 +1,7 @@
 ﻿using ATB.Data.Models;
 using ATB.Data.Repository;
 using ATB.Logic.Enums;
+using System.Text;
 
 namespace ATB.Logic.Service
 {
@@ -17,11 +18,6 @@ namespace ATB.Logic.Service
             this._flightRepository = flightRepository;
         }
 
-        public bool CreateBooking(Booking booking)
-        {
-            return _bookingRepository.CreateBooking(booking);
-        }
-
         public List<Booking> GetAllBookings()
         {
             return _bookingRepository.GetAllBookings();
@@ -32,9 +28,12 @@ namespace ATB.Logic.Service
             return _bookingRepository.IsBookingValidById(bookingId, passengerId);
         }
 
-        public List<Booking> GetBookings(int passengerId)
+        public List<Booking> GetBookings(User loggedInUser)
         {
-            return _bookingRepository.GetBookings(passengerId);
+            List<Booking> bookings = new List<Booking>();
+            if (loggedInUser != null)
+                bookings = _bookingRepository.GetBookings(loggedInUser.UserId);
+            return bookings;
         }
 
         public bool RemoveBookingById(int bookingId)
@@ -47,13 +46,74 @@ namespace ATB.Logic.Service
             return _bookingRepository.UpdateBookingClass(bookingId, newClass);
         }
 
-        public List<Booking> FilterBookings(BookingFilter query)
+        public bool Cancel(int bookingId, User loggedInUser)
         {
+            try
+            {
+                if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
+                    return false;
+                bool isSuccess = _bookingRepository.DeleteBooking(bookingId);
+                if (!isSuccess)
+                    return false;
+                else return true;
+            }
+            catch
+            {
+                return false;
+            }
+        }
+
+        public bool Modify(int bookingId, BookingClass bookingClass, User loggedInUser)
+        {
+            if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
+                return false;
+            _bookingRepository.UpdateBookingClass(bookingId, bookingClass);
+            return true;
+        }
+
+        public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)
+        {
+            try
+            {
+                Flight? flight = _flightRepository.GetFlight(flightId);
+                if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
+                    return false;
+                decimal price = bookingClass switch
+                {
+                    BookingClass.First => flight.FirstClassPrice,
+                    BookingClass.Business => flight.BuisnessPrice,
+                    BookingClass.Economy => flight.EconomyPrice,
+                    _ => 0
+                };
+                if (price == 0)
+                    return false;
+                var Booking = new Booking
+                {
+                    FlightId = flightId,
+                    PassengerId = loggedInUser.UserId,
+                    BookingClass = bookingClass
+                };
+                _bookingRepository.CreateBooking(Booking);
+                _flightRepository.AddPassengerToSeat(flight);
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error while booking: {ex.ToString()}");
+                return false;
+            }
+        }
+
+        public List<Booking> FilterBookings(string[] filterInput)
+        {
+            BookingFilter query = BookingFilters.Parse(filterInput.Skip(1).ToArray());
+            List<Booking> bookingResults = new List<Booking>();
+
             var bookings = _bookingRepository.GetAllBookings();
             var flights = _flightRepository.GetFlights().ToDictionary(f => f.FlightId);
             var passengers = _userRepository.GetUsersByType(UserType.Passenger).ToDictionary(u => u.UserId);
 
-            var filteredBookings = bookings.Where(b =>
+            bookingResults = bookings.Where(b =>
             {
                 if (!flights.TryGetValue(b.FlightId, out var flight))
                     return false;
@@ -98,7 +158,17 @@ namespace ATB.Logic.Service
                 }
                 return true;
             }).ToList();
-            return filteredBookings;
+            return bookingResults;
+        }
+
+        public string BookingsToString(List<Booking> BookingList)
+        {
+            StringBuilder stringBuilder = new StringBuilder();
+            foreach (var Booking in BookingList)
+            {
+                stringBuilder.AppendLine(Booking.ToString());
+            }
+            return stringBuilder.ToString();
         }
     }
 }

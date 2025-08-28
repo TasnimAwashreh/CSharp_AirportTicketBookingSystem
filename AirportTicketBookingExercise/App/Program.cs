@@ -43,7 +43,6 @@ class Program
         serviceCollection
             .AddRepositories()
             .AddServices()
-            .AddCommandHandlers()
             .AddManager();
 
         Console.WriteLine(Introduction());

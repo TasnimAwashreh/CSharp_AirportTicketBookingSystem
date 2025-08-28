@@ -28,7 +28,19 @@ namespace ATB.Data.Repository
         public List<User> GetUsersByType(UserType type)
         {
             return GetAllUsers()
-                .Where(u => u.UserType == type).ToList();
+                    .Where(u => u.UserType == type).ToList();
+        }
+
+        public User? GetUser(string username)
+        {
+            return GetAllUsers()
+                    .FirstOrDefault(u => u.Name.Equals(username, StringComparison.OrdinalIgnoreCase));
+        }
+
+        public User? GetUser(int userId)
+        {
+            return GetAllUsers()
+                    .FirstOrDefault(u => u.UserId == userId);
         }
 
         public bool CreateUser(User user)

@@ -24,6 +24,12 @@ namespace ATB.Data.Repository
             }
         }
 
+        public Flight? GetFlight(int flightId)
+        {
+            return GetFlights()
+                    .Find(flight => flight.FlightId == flightId);
+        }
+
         public void AddPassengerToSeat(Flight flight)
         {
             flight.SeatsAvailable++;
