@@ -1,6 +1,6 @@
 ﻿using ATB.Data.Models;
 
-namespace ATB.Logic.Extensions
+namespace ATB.Data.Extensions
 {
     public static class IdGenerator
     {

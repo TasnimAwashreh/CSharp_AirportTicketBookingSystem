@@ -1,4 +1,4 @@
-﻿namespace ATB.Logic.Enums
+﻿namespace ATB.App.Commands
 {
     public enum PassengerCommand
     {

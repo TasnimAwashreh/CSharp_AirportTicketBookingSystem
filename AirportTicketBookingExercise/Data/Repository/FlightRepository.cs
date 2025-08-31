@@ -40,22 +40,13 @@ namespace ATB.Data.Repository
             flight.SeatsAvailable--;
         }
 
-        public bool AddFlights(List<Flight> flights)
+        public void AddFlights(List<Flight> flights)
         {
-            try
+            using (var writer = new StreamWriter(_flightsCSVPath))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                using (var writer = new StreamWriter(_flightsCSVPath))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<FlightMap>();
-                    csv.WriteRecords(flights);
-                    return true;
-                }
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine($"Error while trying to add flights: {ex.ToString()}");
-                return false;
+                csv.Context.RegisterClassMap<FlightMap>();
+                csv.WriteRecords(flights);
             }
         }
     }

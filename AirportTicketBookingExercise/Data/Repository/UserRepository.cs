@@ -1,5 +1,5 @@
-﻿using ATB.Data.Models;
-using ATB.Logic.Extensions;
+﻿using ATB.Data.Extensions;
+using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;
 
@@ -43,24 +43,15 @@ namespace ATB.Data.Repository
                     .FirstOrDefault(u => u.UserId == userId);
         }
 
-        public bool CreateUser(User user)
+        public void CreateUser(User user)
         {
             user.GenerateUserId();
-            try
+            using (var writer = new StreamWriter(_usersPath, append: true))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
-                using (var writer = new StreamWriter(_usersPath, append: true))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<UserMap>();
-                    csv.WriteRecord<User>(user);
-                    csv.NextRecord();
-                    return true;
-                }
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine($"Error while trying to create User: {ex.ToString()}");
-                return false;
+                csv.Context.RegisterClassMap<UserMap>();
+                csv.WriteRecord<User>(user);
+                csv.NextRecord();
             }
         }
 

@@ -1,15 +1,15 @@
-﻿namespace ATB.Logic.Enums
+﻿namespace ATB.App.Commands
 {
     public enum ManagerCommand
     {
-        None = 0, 
+        None = 0,
         ManagerLogIn = 1,
         ManagerSignUp = 2,
         ManagerLogOut = 3,
         Validate = 4,
         Upload = 5,
         Filter = 6,
-        
+
     }
 
     public static class ManagerCommands
