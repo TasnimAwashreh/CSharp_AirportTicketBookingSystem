@@ -1,4 +1,5 @@
-﻿using ATB.Data.Models;
+﻿using AirportTicketBookingExercise.App.Utils;
+using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;
 
@@ -15,13 +16,7 @@ namespace ATB.Data.Repository
 
         public List<Flight> GetFlights()
         {
-            using (var reader = new StreamReader(_flightsCSVPath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<FlightMap>();
-                var records = csv.GetRecords<Flight>().ToList();
-                return records;
-            }
+            return CsvActionsHelper.GetAllRecords<Flight, FlightMap>(_flightsCSVPath);
         }
 
         public Flight? GetFlight(int flightId)
@@ -42,12 +37,7 @@ namespace ATB.Data.Repository
 
         public void AddFlights(List<Flight> flights)
         {
-            using (var writer = new StreamWriter(_flightsCSVPath))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<FlightMap>();
-                csv.WriteRecords(flights);
-            }
+            CsvActionsHelper.CreateRecords<Flight, FlightMap>(_flightsCSVPath, flights);
         }
     }
 }

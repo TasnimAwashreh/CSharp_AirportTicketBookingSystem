@@ -5,7 +5,7 @@ namespace ATB.Data.Repository
 {
     public interface IBookingRepository
     {
-        public bool CreateBooking(Booking booking);
+        public void CreateBooking(Booking booking);
         public List<Booking> GetAllBookings();
         public List<Booking> GetBookings(int passengerId);
         public bool IsBookingValidById(int bookingId, int passengerId);

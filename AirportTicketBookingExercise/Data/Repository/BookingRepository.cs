@@ -3,6 +3,7 @@ using ATB.Data.Models;
 using ATB.Logic.Enums;
 using CsvHelper;
 using System.Globalization;
+using AirportTicketBookingExercise.App.Utils;
 
 namespace ATB.Data.Repository
 {
@@ -17,14 +18,7 @@ namespace ATB.Data.Repository
 
         public List<Booking> GetAllBookings()
         {
-            List<Booking> records = new List<Booking>();
-            using (var reader = new StreamReader(_bookingPath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<BookingMap>();
-                records = csv.GetRecords<Booking>().ToList();
-            }
-            return records;
+            return CsvActionsHelper.GetAllRecords<Booking, BookingMap>(_bookingPath);
         }
 
         public List<Booking> GetBookings(int passengerId)
@@ -40,17 +34,10 @@ namespace ATB.Data.Repository
                 .Any(b => b.BookingId == bookingId && b.PassengerId == passengerId);
         }
 
-        public bool CreateBooking(Booking booking)
+        public void CreateBooking(Booking booking)
         {
             booking.GenerateBookingId();
-            using (var writer = new StreamWriter(_bookingPath, append: true))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<BookingMap>();
-                csv.WriteRecord<Booking>(booking);
-                csv.NextRecord();
-                return true;
-            }
+            CsvActionsHelper.CreateRecord<Booking, BookingMap>(_bookingPath, booking);
         }
 
         public bool DeleteBooking(int bookingId)
@@ -61,31 +48,17 @@ namespace ATB.Data.Repository
                 .ToList();
             if (updatedBookings.Count == bookings.Count)
                 return false;
-
-            using (var writer = new StreamWriter(_bookingPath))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<BookingMap>();
-                csv.WriteRecords(updatedBookings);
-            }
-            return true;
+            return CsvActionsHelper.UpdateRecords<Booking, BookingMap>(_bookingPath, updatedBookings);
         }
 
         public bool UpdateBookingClass(int bookingId, BookingClass newClass)
         {
-                var bookings = GetAllBookings();
-                var target = bookings.FirstOrDefault(b => b.BookingId == bookingId);
-                if (target == null)
-                    return false;
-                target.BookingClass = newClass;
-                using (var writer = new StreamWriter(_bookingPath))
-                using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<BookingMap>();
-                    csv.WriteRecords(bookings);
-                    csv.NextRecord();
-                }
-                return true;
+            var bookings = GetAllBookings();
+            var target = bookings.FirstOrDefault(b => b.BookingId == bookingId);
+            if (target == null)
+                return false;
+            target.BookingClass = newClass;
+            return CsvActionsHelper.UpdateRecords<Booking, BookingMap>(_bookingPath, bookings);
         }
     }
 }

@@ -35,7 +35,8 @@ namespace ATB.Logic.Service
                 };
                 if (_userRepository.GetUser(name) != null)
                     return false;
-                return _userRepository.CreateUser(user);
+                _userRepository.CreateUser(user);
+                return true;
             }
             catch (Exception ex) 
             {

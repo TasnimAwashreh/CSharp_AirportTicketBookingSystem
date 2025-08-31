@@ -1,4 +1,5 @@
-﻿using ATB.Data.Extensions;
+﻿using AirportTicketBookingExercise.App.Utils;
+using ATB.Data.Extensions;
 using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;
@@ -14,15 +15,11 @@ namespace ATB.Data.Repository
             _usersPath = usersPath;
         }
 
+
+
         public List<User> GetAllUsers()
         {
-            using (var reader = new StreamReader(_usersPath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<UserMap>();
-                var records = csv.GetRecords<User>().ToList();
-                return records;
-            }
+            return CsvActionsHelper.GetAllRecords<User, UserMap>(_usersPath);
         }
 
         public List<User> GetUsersByType(UserType type)
@@ -46,13 +43,8 @@ namespace ATB.Data.Repository
         public void CreateUser(User user)
         {
             user.GenerateUserId();
-            using (var writer = new StreamWriter(_usersPath, append: true))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<UserMap>();
-                csv.WriteRecord<User>(user);
-                csv.NextRecord();
-            }
+            CsvActionsHelper.CreateRecord<User, UserMap>(_usersPath, user);
+            
         }
 
         public bool UpdateUser(User User)
