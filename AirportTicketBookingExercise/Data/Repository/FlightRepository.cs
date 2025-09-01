@@ -1,4 +1,4 @@
-﻿using AirportTicketBookingExercise.App.Utils;
+﻿using AirportTicketBookingExercise.Logic.Utils;
 using ATB.Data.Models;
 using CsvHelper;
 using System.Globalization;

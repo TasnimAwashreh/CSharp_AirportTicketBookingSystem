@@ -3,7 +3,7 @@ using ATB.Data.Models;
 using ATB.Logic.Enums;
 using CsvHelper;
 using System.Globalization;
-using AirportTicketBookingExercise.App.Utils;
+using AirportTicketBookingExercise.Logic.Utils;
 
 namespace ATB.Data.Repository
 {

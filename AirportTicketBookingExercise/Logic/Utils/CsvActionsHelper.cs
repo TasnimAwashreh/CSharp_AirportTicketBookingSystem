@@ -5,10 +5,25 @@ using CsvHelper.Configuration;
 using System.Globalization;
 using System.Xml.Schema;
 
-namespace AirportTicketBookingExercise.App.Utils
+namespace AirportTicketBookingExercise.Logic.Utils
 {
     public class CsvActionsHelper
     {
+        public static void CreateCSVFile<TModel, TMap>(string path)
+            where TMap : ClassMap<TModel>
+        {
+            if (File.Exists(path))
+                return;
+
+            using (var writer = new StreamWriter(path))
+            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
+            {
+                csv.Context.RegisterClassMap<TMap>();
+                csv.WriteHeader<TModel>();
+                csv.NextRecord();
+            }
+        }
+
         public static List<T> GetAllRecords<T, TMap>(string csvPath)
             where TMap : ClassMap<T>
         {
@@ -20,8 +35,6 @@ namespace AirportTicketBookingExercise.App.Utils
                 var records = csv.GetRecords<T>();
                 if (records.Count() > 0)
                     recordList = records.ToList();
-
-
             }
             return recordList;
         }
@@ -33,7 +46,7 @@ namespace AirportTicketBookingExercise.App.Utils
             using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
             {
                 csv.Context.RegisterClassMap<TMap>();
-                csv.WriteRecord<T>(record);
+                csv.WriteRecord(record);
                 csv.NextRecord();
             }
         }

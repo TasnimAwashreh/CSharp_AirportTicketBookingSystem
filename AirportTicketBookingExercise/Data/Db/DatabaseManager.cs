@@ -1,7 +1,5 @@
-﻿using ATB.Data.Models;
-using CsvHelper;
-using CsvHelper.Configuration;
-using System.Globalization;
+﻿using AirportTicketBookingExercise.Logic.Utils;
+using ATB.Data.Models;
 
 namespace ATB.Data.Db
 {
@@ -20,32 +18,10 @@ namespace ATB.Data.Db
 
         public void CreateDatabase()
         {
-            try
-            {
-                CreateCSVFile<User, UserMap>(_usersPath);
-                CreateCSVFile<Booking, BookingMap>(_bookingsPath);
-                CreateCSVFile<Flight, FlightMap>(_flightsPath);
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Please fix Create Database error (below) and restart the system. \nError: {ex}");
-                return;
-            }
-        }
-
-        private void CreateCSVFile<TModel, TMap>(string path)
-            where TMap : ClassMap<TModel>
-        {
-            if (File.Exists(path))
-                return;
-
-            using (var writer = new StreamWriter(path))
-            using (var csv = new CsvWriter(writer, CultureInfo.InvariantCulture))
-            {
-                csv.Context.RegisterClassMap<TMap>();
-                csv.WriteHeader<TModel>();
-                csv.NextRecord();
-            }
+            CsvActionsHelper.CreateCSVFile<User, UserMap>(_usersPath);
+            CsvActionsHelper.CreateCSVFile<Booking, BookingMap>(_bookingsPath);
+            CsvActionsHelper.CreateCSVFile<Flight, FlightMap>(_flightsPath);
+            
         }
     }
 }

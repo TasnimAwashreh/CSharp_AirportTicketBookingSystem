@@ -28,6 +28,10 @@ namespace ATB.App
         {
             try
             {
+                if (input == "")
+                {
+                    Console.WriteLine("Empty Input, please enter a command");
+                }
                 string[] line = input.Split(' ');
                 ManagerCommand managerCommand = line[0].ParseManagerCommand();
                 PassengerCommand passengerCommand = line[0].ParsePassengerCommand();

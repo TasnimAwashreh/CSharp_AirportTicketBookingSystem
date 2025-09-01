@@ -1,4 +1,4 @@
-﻿using AirportTicketBookingExercise.App.Utils;
+﻿using AirportTicketBookingExercise.Logic.Utils;
 using ATB.Data.Extensions;
 using ATB.Data.Models;
 using CsvHelper;
@@ -14,8 +14,6 @@ namespace ATB.Data.Repository
         {
             _usersPath = usersPath;
         }
-
-
 
         public List<User> GetAllUsers()
         {
