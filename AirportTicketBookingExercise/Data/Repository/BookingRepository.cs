@@ -4,6 +4,7 @@ using ATB.Logic.Enums;
 using CsvHelper;
 using System.Globalization;
 using AirportTicketBookingExercise.Logic.Utils;
+using ATB.Logic;
 
 namespace ATB.Data.Repository
 {
@@ -59,6 +60,17 @@ namespace ATB.Data.Repository
                 return false;
             target.BookingClass = newClass;
             return CsvActionsHelper.UpdateRecords<Booking, BookingMap>(_bookingPath, bookings);
+        }
+
+        public List<Booking> FilterBooking(BookingFilter filter)
+        {
+            var bookings = GetAllBookings();
+            var query = 
+                from booking in bookings
+                where 
+                    (filter.BookingClass == null || (booking.BookingClass.ToString() == filter.BookingClass))
+                select booking;
+            return query.ToList();
         }
     }
 }

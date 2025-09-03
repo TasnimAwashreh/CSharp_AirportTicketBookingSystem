@@ -27,16 +27,20 @@ namespace AirportTicketBookingExercise.Logic.Utils
         public static List<T> GetAllRecords<T, TMap>(string csvPath)
             where TMap : ClassMap<T>
         {
-            List<T> recordList = new List<T>();
-            using (var reader = new StreamReader(csvPath))
-            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+            try
             {
-                csv.Context.RegisterClassMap<TMap>();
-                var records = csv.GetRecords<T>();
-                if (records.Count() > 0)
-                    recordList = records.ToList();
+                List<T> recordList = new List<T>();
+                using (var reader = new StreamReader(csvPath))
+                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
+                {
+                    csv.Context.RegisterClassMap<TMap>();
+                    var records = csv.GetRecords<T>();
+                    if (records.Any())
+                        recordList = records.ToList();
+                }
+                return recordList;
             }
-            return recordList;
+            catch (Exception ex) { Console.WriteLine(ex); return null; }
         }
 
         public static void CreateRecord<T, TMap>(string csvPath, T record)

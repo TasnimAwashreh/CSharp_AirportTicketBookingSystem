@@ -1,5 +1,6 @@
 ﻿using AirportTicketBookingExercise.Logic.Utils;
 using ATB.Data.Models;
+using ATB.Logic;
 using CsvHelper;
 using System.Globalization;
 
@@ -38,6 +39,23 @@ namespace ATB.Data.Repository
         public void AddFlights(List<Flight> flights)
         {
             CsvActionsHelper.CreateRecords<Flight, FlightMap>(_flightsCSVPath, flights);
+        }
+
+        public List<Flight> FilterFlights (BookingFilter filter)
+        {
+            var flights = GetFlights();
+            var query =
+                from flight in flights
+                where
+                    (filter.FlightName == null || flight.FlightName.Contains(filter.FlightName)) &&
+                    (filter.DepartureCountry == null || flight.DepartureCountry == filter.DepartureCountry) &&
+                    (filter.DestinationCountry == null || flight.DestinationCountry == filter.DestinationCountry) &&
+                    (filter.DepartureDate == null || flight.DepartureDate.Date == filter.DepartureDate.Value.Date) &&
+                    (filter.DepartureAirport == null || flight.DepartureAirport == filter.DepartureAirport) &&
+                    (filter.ArrivalAirport == null || flight.ArrivalAirport == filter.ArrivalAirport)
+                select flight;
+
+            return query.ToList();
         }
     }
 }

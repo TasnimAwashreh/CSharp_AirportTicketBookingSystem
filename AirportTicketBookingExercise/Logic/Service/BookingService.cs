@@ -109,55 +109,18 @@ namespace ATB.Logic.Service
             BookingFilter query = BookingFilters.Parse(filterInput.Skip(1).ToArray());
             List<Booking> bookingResults = new List<Booking>();
 
-            var bookings = _bookingRepository.GetAllBookings();
-            var flights = _flightRepository.GetFlights().ToDictionary(f => f.FlightId);
-            var passengers = _userRepository.GetUsersByType(UserType.Passenger).ToDictionary(u => u.UserId);
+            User? passenger = _userRepository.GetUser(query.PassengerName);
+            List<Flight> flights = _flightRepository.FilterFlights(query);
+            List<Booking> bookings = _bookingRepository.FilterBooking(query);
 
-            bookingResults = bookings.Where(b =>
-            {
-                if (!flights.TryGetValue(b.FlightId, out var flight))
-                    return false;
-                passengers.TryGetValue(b.PassengerId, out var passenger);
-                if (!string.IsNullOrEmpty(query.FlightName) &&
-                    (flight.FlightName == null || !flight.FlightName.Contains(query.FlightName)))
-                    return false;
-                if (query.Price.HasValue)
-                {
-                    decimal price = b.BookingClass switch
-                    {
-                        BookingClass.Economy => flight.EconomyPrice,
-                        BookingClass.Business => flight.BuisnessPrice,
-                        BookingClass.First => flight.FirstClassPrice,
-                        _ => 0
-                    };
-                    if (price > query.Price.Value)
-                        return false;
-                }
-                if (!string.IsNullOrEmpty(query.DepartureCountry) &&
-                    (flight.DepartureCountry == null || !flight.DepartureCountry.Contains(query.DepartureCountry)))
-                    return false;
-                if (!string.IsNullOrEmpty(query.DestinationCountry) &&
-                    (flight.DestinationCountry == null || !flight.DestinationCountry.Contains(query.DestinationCountry)))
-                    return false;
-                if (query.DepartureDate.HasValue && flight.DepartureDate.Date != query.DepartureDate.Value.Date)
-                    return false;
-                if (!string.IsNullOrEmpty(query.DepartureAirport) &&
-                    (flight.DepartureAirport == null || !flight.DepartureAirport.Contains(query.DepartureAirport)))
-                    return false;
-                if (!string.IsNullOrEmpty(query.ArrivalAirport) &&
-                    (flight.ArrivalAirport == null || !flight.ArrivalAirport.Contains(query.ArrivalAirport)))
-                    return false;
-                if (!string.IsNullOrEmpty(query.PassengerName) &&
-                    (passenger == null || passenger.Name == null || !passenger.Name.Contains(query.PassengerName)))
-                    return false;
-                if (!string.IsNullOrEmpty(query.BookingClass))
-                {
-                    if (!Enum.TryParse<BookingClass>(query.BookingClass, true, out var bookingClass)
-                        || b.BookingClass != bookingClass)
-                        return false;
-                }
-                return true;
-            }).ToList();
+            bookingResults =
+                (
+                 from b in bookings
+                    join f in flights on b.FlightId equals f.FlightId
+                    where (passenger == null || b.PassengerId == passenger.UserId)
+                 select b
+                 ).ToList();
+
             return bookingResults;
         }
 
