@@ -48,19 +48,12 @@ namespace ATB.Logic.Service
 
         public bool Cancel(int bookingId, User loggedInUser)
         {
-            try
-            {
-                if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
-                    return false;
-                bool isSuccess = _bookingRepository.DeleteBooking(bookingId);
-                if (!isSuccess)
-                    return false;
-                else return true;
-            }
-            catch
-            {
+            if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
                 return false;
-            }
+            bool isSuccess = _bookingRepository.DeleteBooking(bookingId);
+            if (!isSuccess)
+                return false;
+            return true;
         }
 
         public bool Modify(int bookingId, BookingClass bookingClass, User loggedInUser)
@@ -73,35 +66,27 @@ namespace ATB.Logic.Service
 
         public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)
         {
-            try
-            {
-                Flight? flight = _flightRepository.GetFlight(flightId);
-                if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
-                    return false;
-                decimal price = bookingClass switch
-                {
-                    BookingClass.First => flight.FirstClassPrice,
-                    BookingClass.Business => flight.BuisnessPrice,
-                    BookingClass.Economy => flight.EconomyPrice,
-                    _ => 0
-                };
-                if (price == 0)
-                    return false;
-                var Booking = new Booking
-                {
-                    FlightId = flightId,
-                    PassengerId = loggedInUser.UserId,
-                    BookingClass = bookingClass
-                };
-                _bookingRepository.CreateBooking(Booking);
-                _flightRepository.AddPassengerToSeat(flight);
-                return true;
-            }
-            catch (Exception ex)
-            {
-                Console.WriteLine($"Error while booking: {ex.ToString()}");
+            Flight? flight = _flightRepository.GetFlight(flightId);
+            if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
                 return false;
-            }
+            decimal price = bookingClass switch
+            {
+                BookingClass.First => flight.FirstClassPrice,
+                BookingClass.Business => flight.BuisnessPrice,
+                BookingClass.Economy => flight.EconomyPrice,
+                _ => 0
+            };
+            if (price == 0)
+                return false;
+            var Booking = new Booking
+            {
+                FlightId = flightId,
+                PassengerId = loggedInUser.UserId,
+                BookingClass = bookingClass
+            };
+            _bookingRepository.CreateBooking(Booking);
+            _flightRepository.AddPassengerToSeat(flight);
+            return true;
         }
 
         public List<Booking> FilterBookings(string[] filterInput)

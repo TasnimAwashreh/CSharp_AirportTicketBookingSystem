@@ -3,7 +3,6 @@ using ATB.Data.Models;
 using Microsoft.VisualBasic.FileIO;
 using System.ComponentModel.DataAnnotations;
 using System.Globalization;
-using System.Reflection;
 using System.Text;
 using ATB.Logic.Enums;
 
@@ -70,85 +69,48 @@ namespace ATB.Logic.Service
                 csvParser.SetDelimiters(new string[] { "," });
                 csvParser.HasFieldsEnclosedInQuotes = true;
                 csvParser.ReadLine();
-                try
+
+                while (!csvParser.EndOfData)
                 {
-                    while (!csvParser.EndOfData)
+                    string[] fields = csvParser.ReadFields();
+                    Flight flight = AddFlight(fields);
+                    if (flight == null)
                     {
-                        string[] fields = csvParser.ReadFields();
-                        Flight flight = AddFlight(fields);
-                        if (flight == null)
-                        {
-                            return false;
-                        }
-                        importedFlightData.Add(flight);
+                        return false;
                     }
-                    _flightRepo.AddFlights(importedFlightData);
-                    return true;
+                    importedFlightData.Add(flight);
                 }
-                catch (Exception ex)
-                {
-                    Console.WriteLine($"Error while importing flight data: {ex.ToString()}");
-                    return false;
-                }
+                _flightRepo.AddFlights(importedFlightData);
+                return true;
             }
         }
 
         private Flight? AddFlight(string[] fields)
         {
-            try
+            var flight = new Flight
             {
-                var flight = new Flight
-                {
-                    FlightId = int.Parse(fields[0]),
-                    FlightName = fields[1],
-                    DepartureCountry = fields[2],
-                    DestinationCountry = fields[3],
-                    DepartureAirport = fields[4],
-                    ArrivalAirport = fields[5],
-                    DepartureDate = DateTime.ParseExact(
-                                        fields[6],
-                                        new[] { "MM/dd/yyyy", "M/d/yyyy", "M/dd/yyyy", "MM/d/yyyy" },
-                                        CultureInfo.InvariantCulture,
-                                        DateTimeStyles.None),
-                    EconomyPrice = Decimal.Parse(fields[7]),
-                    BuisnessPrice = Decimal.Parse(fields[8]),
-                    FirstClassPrice = Decimal.Parse(fields[9]),
-                    SeatCapacity = int.Parse(fields[10])
-                };
-                return flight;
-            }
-            catch
-            {
-                return null;
-            }
-
+                FlightId = int.Parse(fields[0]),
+                FlightName = fields[1],
+                DepartureCountry = fields[2],
+                DestinationCountry = fields[3],
+                DepartureAirport = fields[4],
+                ArrivalAirport = fields[5],
+                DepartureDate = DateTime.ParseExact(
+                                    fields[6],
+                                    new[] { "MM/dd/yyyy", "M/d/yyyy", "M/dd/yyyy", "MM/d/yyyy" },
+                                    CultureInfo.InvariantCulture,
+                                    DateTimeStyles.None),
+                EconomyPrice = Decimal.Parse(fields[7]),
+                BuisnessPrice = Decimal.Parse(fields[8]),
+                FirstClassPrice = Decimal.Parse(fields[9]),
+                SeatCapacity = int.Parse(fields[10])
+            };
+            return flight;
         }
 
-        public List<Flight> Search(string[] filterInfo)
+        public List<Flight> Search(FilterParam searchParam, string valueParam)
         {
-            List<Flight> filteredFlights = new List<Flight>();
-            if (filterInfo.Length < 3)
-                return _flightRepo.GetFlights();
-
-            FilterParam SearchParam = filterInfo[1].ParseFilterParam();
-            string input = filterInfo[2];
-
-            var flights = _flightRepo.GetFlights();
-            filteredFlights = SearchParam switch
-            {
-                FilterParam.Flight => flights.Where(f => f.FlightName.Equals(input)).ToList(),
-                FilterParam.Price => flights.Where(f =>
-                    f.BuisnessPrice == decimal.Parse(input) ||
-                    f.EconomyPrice == decimal.Parse(input) ||
-                    f.FirstClassPrice == decimal.Parse(input)).ToList(),
-                FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(input)).ToList(),
-                FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(input)).ToList(),
-                FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(input)).ToList(),
-                FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(input)).ToList(),
-                FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(input)).ToList(),
-                _ => []
-            };
-            return filteredFlights;
+            return _flightRepo.Search(searchParam, valueParam);
         }
 
         public string FlightsToString(List<Flight> Flights)

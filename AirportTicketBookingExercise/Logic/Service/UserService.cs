@@ -1,6 +1,5 @@
 ﻿using ATB.Data.Repository;
 using ATB.Data.Models;
-using System.Xml.Linq;
 
 namespace ATB.Logic.Service
 {
@@ -25,25 +24,16 @@ namespace ATB.Logic.Service
 
         public bool CreateUser(string name, string password, UserType usertype)
         {
-            try
+            var user = new User
             {
-                var user = new User
-                {
-                    Name = name,
-                    Password = password,
-                    UserType = usertype
-                };
-                if (_userRepository.GetUser(name) != null)
-                    return false;
-                _userRepository.CreateUser(user);
-                return true;
-            }
-            catch (Exception ex) 
-            {
-                Console.WriteLine($"Error creating a user: {ex}");
+                Name = name,
+                Password = password,
+                UserType = usertype
+            };
+            if (_userRepository.GetUser(name) != null)
                 return false;
-            }
-            
+            _userRepository.CreateUser(user);
+            return true;
         }
 
         public User? GetUser(int userId)

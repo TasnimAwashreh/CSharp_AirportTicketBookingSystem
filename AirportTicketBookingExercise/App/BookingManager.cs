@@ -2,6 +2,7 @@
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
+using System.IO;
 
 namespace ATB.App
 {
@@ -229,8 +230,15 @@ namespace ATB.App
                         }
                         break;
                     case PassengerCommand.Search:
-                        List<Flight> searchFlights = _flightService.Search(productInfo);
-                        Console.WriteLine(_flightService.FlightsToString(searchFlights));
+                        if (productInfo.Length < 3)
+                            _flightService.GetFlights();
+                        else
+                        {
+                            FilterParam searchParam = productInfo[1].ParseFilterParam();
+                            string searchValue = productInfo[2];
+                            List<Flight> searchFlights = _flightService.Search(searchParam, searchValue);
+                            Console.WriteLine(_flightService.FlightsToString(searchFlights));
+                        }
                         break;
                     case PassengerCommand.Cancel:
                         try

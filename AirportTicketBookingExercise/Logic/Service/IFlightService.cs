@@ -1,4 +1,5 @@
 ﻿using ATB.Data.Models;
+using ATB.Logic.Enums;
 
 namespace ATB.Logic.Service
 {
@@ -7,7 +8,7 @@ namespace ATB.Logic.Service
         List<Flight> GetFlights();
         public string ValidateFlightData(string importPath);
         public bool ImportFlightData(string importPath);
-        public List<Flight> Search(string[] filterInfo);
+        public List<Flight> Search(FilterParam searchParam, string valueParam);
         public string FlightsToString(List<Flight> Flights);
 
     }

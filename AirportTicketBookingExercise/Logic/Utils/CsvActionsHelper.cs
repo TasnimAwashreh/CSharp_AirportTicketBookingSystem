@@ -1,9 +1,6 @@
-﻿using ATB.Data.Extensions;
-using ATB.Data.Models;
-using CsvHelper;
+﻿using CsvHelper;
 using CsvHelper.Configuration;
 using System.Globalization;
-using System.Xml.Schema;
 
 namespace AirportTicketBookingExercise.Logic.Utils
 {
@@ -27,20 +24,16 @@ namespace AirportTicketBookingExercise.Logic.Utils
         public static List<T> GetAllRecords<T, TMap>(string csvPath)
             where TMap : ClassMap<T>
         {
-            try
+            List<T> recordList = new List<T>();
+            using (var reader = new StreamReader(csvPath))
+            using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
-                List<T> recordList = new List<T>();
-                using (var reader = new StreamReader(csvPath))
-                using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
-                {
-                    csv.Context.RegisterClassMap<TMap>();
-                    var records = csv.GetRecords<T>();
-                    if (records.Any())
-                        recordList = records.ToList();
-                }
-                return recordList;
+                csv.Context.RegisterClassMap<TMap>();
+                var records = csv.GetRecords<T>();
+                if (records.Any())
+                    recordList = records.ToList();
             }
-            catch (Exception ex) { Console.WriteLine(ex); return null; }
+            return recordList;
         }
 
         public static void CreateRecord<T, TMap>(string csvPath, T record)

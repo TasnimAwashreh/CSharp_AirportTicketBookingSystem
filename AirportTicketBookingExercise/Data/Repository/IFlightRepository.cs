@@ -1,5 +1,6 @@
 ﻿using ATB.Data.Models;
 using ATB.Logic;
+using ATB.Logic.Enums;
 
 namespace ATB.Data.Repository
 {
@@ -10,6 +11,7 @@ namespace ATB.Data.Repository
         public void AddPassengerToSeat(Flight flight);
         public void RemovePassengerFromSeat(Flight flight);
         public void AddFlights(List<Flight> flights);
+        public List<Flight> Search(FilterParam searchParam, string valueParam);
         public List<Flight> FilterFlights(BookingFilter filter);
     }
 }
