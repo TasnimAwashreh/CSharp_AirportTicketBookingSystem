@@ -2,6 +2,7 @@
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
+using System.ComponentModel.DataAnnotations;
 using System.IO;
 
 namespace ATB.App
@@ -64,9 +65,15 @@ namespace ATB.App
                             Console.WriteLine("Please enter a username and password");
                             break;
                         }
-                        bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
-                        if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
-                        else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+
+                        try
+                        {
+                            bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
+                            if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
+                            else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                        }
+                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case ManagerCommand.ManagerLogIn:
                         if (productInfo.Length < 3)
@@ -74,14 +81,20 @@ namespace ATB.App
                             Console.WriteLine("Please enter your username and password to login, manager!");
                             break;
                         }
-                        User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Manager);
-                        if (loggingInUser == null)
-                            Console.WriteLine("Incorrect username or password, please try again");
-                        else
+
+                        try
                         {
-                            loggedInUser = loggingInUser;
-                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                            User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Manager);
+                            if (loggingInUser == null)
+                                Console.WriteLine("Incorrect username or password, please try again");
+                            else
+                            {
+                                loggedInUser = loggingInUser;
+                                Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                            }
                         }
+                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case ManagerCommand.None:
                         Console.WriteLine("\n Manager, please enter an appropriate action");
@@ -168,9 +181,14 @@ namespace ATB.App
                             Console.WriteLine("Please enter a username and password");
                             break;
                         }
-                        bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
-                        if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, passenger");
-                        else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                        try
+                        {
+                            bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
+                            if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, passenger");
+                            else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                        }
+                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case PassengerCommand.LogIn:
                         if (productInfo.Length < 3)
@@ -178,14 +196,20 @@ namespace ATB.App
                             Console.WriteLine("Please enter your username and password to login, manager!");
                             break;
                         }
-                        User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
-                        if (loggingInUser == null)
-                            Console.WriteLine("Incorrect username or password, please try again");
-                        else
+
+                        try
                         {
-                            loggedInUser = loggingInUser;
-                            Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                            User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
+                            if (loggingInUser == null)
+                                Console.WriteLine("Incorrect username or password, please try again");
+                            else
+                            {
+                                loggedInUser = loggingInUser;
+                                Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
+                            }
                         }
+                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
+                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
                         break;
                     case PassengerCommand.None:
                         Console.WriteLine("\nPassenger, please enter an appropriate action.");

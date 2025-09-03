@@ -13,8 +13,12 @@ namespace ATB.Data.Models
     {
         public int UserId { get; set; }
         [Required]
+        [MaxLength(12)]
+        [MinLength(3)]
         public string Name { get; set; }
         [Required]
+        [MaxLength(12)]
+        [MinLength(3)]
         public string Password { get; set; }
         public UserType UserType { get; set; }
 

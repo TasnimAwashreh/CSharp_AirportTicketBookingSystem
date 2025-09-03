@@ -1,5 +1,6 @@
 ﻿using ATB.Data.Repository;
 using ATB.Data.Models;
+using System.ComponentModel.DataAnnotations;
 
 namespace ATB.Logic.Service
 {
@@ -30,6 +31,15 @@ namespace ATB.Logic.Service
                 Password = password,
                 UserType = usertype
             };
+
+            var context = new ValidationContext(user, null, null);
+            var validationResults = new List<ValidationResult>();
+            bool isFieldValid = Validator.TryValidateObject(user, context, validationResults, true);
+            if (!isFieldValid)
+            {
+                throw new ValidationException();
+            }
+
             if (_userRepository.GetUser(name) != null)
                 return false;
             _userRepository.CreateUser(user);
