@@ -5,6 +5,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Globalization;
 using System.Text;
 using ATB.Logic.Enums;
+using CsvHelper;
+using AirportTicketBookingExercise.Logic.Utils;
 
 namespace ATB.Logic.Service
 {
@@ -29,60 +31,41 @@ namespace ATB.Logic.Service
             var strBuilder = new StringBuilder("");
             int rowCount = 1;
             var flights = new List<Flight>();
-            using (TextFieldParser csvParser = new TextFieldParser(importPath))
-            {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
+            flights = CsvActionsHelper.GetAllRecords<Flight, FlightMap>(importPath);
 
-                csvParser.ReadLine();
-                while (!csvParser.EndOfData)
+                foreach (var flight in flights)
                 {
-                    string[] fields = csvParser.ReadFields();
-                    Flight flight = AddFlight(fields);
-                    if (flight == null)
-                        strBuilder.AppendLine($"Row {rowCount}: Please fix the fields formats");
-                    else
-                    {
-                        var context = new ValidationContext(flight, null, null);
-                        var validationResults = new List<ValidationResult>();
-                        bool isFieldValid = Validator.TryValidateObject(flight, context, validationResults, true);
+                    var context = new ValidationContext(flight, null, null);
+                    var validationResults = new List<ValidationResult>();
+                    bool isFieldValid = Validator.TryValidateObject(flight, context, validationResults, true);
 
-                        if (!isFieldValid)
-                        {
-                            foreach (var vr in validationResults)
-                                strBuilder.AppendLine($"Row {rowCount}: {vr.ErrorMessage}");
-                        }
+                    if (!isFieldValid)
+                    {
+                        foreach (var vr in validationResults)
+                            strBuilder.AppendLine($"Row {rowCount}: {vr.ErrorMessage}");
                     }
-                    rowCount++;
                 }
-            }
+
             return strBuilder.ToString();
         }
 
         public bool ImportFlightData(string importPath)
         {
             List<Flight> importedFlightData = new List<Flight>();
-            using (TextFieldParser csvParser = new TextFieldParser(importPath))
+            CsvActionsHelper.GetAllRecords<Flight, FlightMap>(importPath);
+            
+            foreach (var flight in importedFlightData)
             {
-                csvParser.CommentTokens = new string[] { "#" };
-                csvParser.SetDelimiters(new string[] { "," });
-                csvParser.HasFieldsEnclosedInQuotes = true;
-                csvParser.ReadLine();
+                var context = new ValidationContext(flight, null, null);
+                var validationResults = new List<ValidationResult>();
+                bool isFieldValid = Validator.TryValidateObject(flight, context, validationResults, true);
 
-                while (!csvParser.EndOfData)
-                {
-                    string[] fields = csvParser.ReadFields();
-                    Flight flight = AddFlight(fields);
-                    if (flight == null)
-                    {
-                        return false;
-                    }
-                    importedFlightData.Add(flight);
-                }
-                _flightRepo.AddFlights(importedFlightData);
-                return true;
+                if (!isFieldValid)
+                    return false;
             }
+
+            _flightRepo.AddFlights(importedFlightData);
+            return true;
         }
 
         private Flight? AddFlight(string[] fields)
