@@ -2,8 +2,10 @@
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
+using CsvHelper.Configuration.Attributes;
 using System.ComponentModel.DataAnnotations;
 using System.IO;
+using System.Reflection.Metadata.Ecma335;
 
 namespace ATB.App
 {
@@ -30,11 +32,12 @@ namespace ATB.App
         {
             try
             {
-                if (input == "")
-                {
-                    Console.WriteLine("Empty Input, please enter a command");
-                }
                 string[] line = input.Split(' ');
+                if (line.Length == 0 )
+                {
+                    Console.WriteLine("Please enter a command ");
+                    return;
+                }
                 ManagerCommand managerCommand = line[0].ParseManagerCommand();
                 PassengerCommand passengerCommand = line[0].ParsePassengerCommand();
                 if (passengerCommand != PassengerCommand.None)
@@ -42,10 +45,6 @@ namespace ATB.App
                 else if (managerCommand != ManagerCommand.None)
                     ExecuteManagerCommand(line, managerCommand);
                 else Console.WriteLine("\n Please enter an appropriate action");
-            }
-            catch (NullReferenceException)
-            {
-                Console.WriteLine("You forgot to enter a command! Please try again");
             }
             catch (Exception ex)
             {
@@ -68,9 +67,8 @@ namespace ATB.App
 
                         try
                         {
-                            bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
-                            if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, manager");
-                            else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                            _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
+                            Console.WriteLine("You have signed up successfully, manager");
                         }
                         catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
                         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
@@ -183,9 +181,8 @@ namespace ATB.App
                         }
                         try
                         {
-                            bool isSignUpSuccessful = _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
-                            if (isSignUpSuccessful) Console.WriteLine("You have signed up successfully, passenger");
-                            else Console.WriteLine("Username may be taken or you have not entered a valid username and password");
+                            _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
+                            Console.WriteLine("You have signed up successfully, passenger");
                         }
                         catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
                         catch (Exception ex) { Console.WriteLine(ex.ToString()); }
@@ -201,7 +198,10 @@ namespace ATB.App
                         {
                             User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
                             if (loggingInUser == null)
+                            {
                                 Console.WriteLine("Incorrect username or password, please try again");
+                                break;
+                            }
                             else
                             {
                                 loggedInUser = loggingInUser;
@@ -254,13 +254,11 @@ namespace ATB.App
                         }
                         break;
                     case PassengerCommand.Search:
-                        if (productInfo.Length < 3)
+                        if (productInfo.Length < 2)
                             _flightService.GetFlights();
                         else
                         {
-                            FilterParam searchParam = productInfo[1].ParseFilterParam();
-                            string searchValue = productInfo[2];
-                            List<Flight> searchFlights = _flightService.Search(searchParam, searchValue);
+                            List<Flight> searchFlights = _flightService.Search(productInfo);
                             Console.WriteLine(_flightService.FlightsToString(searchFlights));
                         }
                         break;

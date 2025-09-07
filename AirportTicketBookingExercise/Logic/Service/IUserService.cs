@@ -2,8 +2,8 @@
 
 public interface IUserService
 {
-    public bool CreateUser(string name, string password, UserType usertype);
-    public bool UpdateUser(User user);
+    public void CreateUser(string name, string password, UserType usertype);
+    public void UpdateUser(User user);
     public User? GetUser(int userId);
     public User? GetUserByName(string username);
     public User? Authenticate(string username, string password, UserType usertype);

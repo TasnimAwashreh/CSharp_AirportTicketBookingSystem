@@ -1,4 +1,5 @@
-﻿using ATB.Data.Models;
+﻿using AirportTicketBookingExercise.Data.Repository;
+using ATB.Data.Models;
 using ATB.Data.Repository;
 using ATB.Logic.Enums;
 using System.Text;
@@ -10,12 +11,14 @@ namespace ATB.Logic.Service
         private readonly IBookingRepository _bookingRepository;
         private readonly IUserRepository _userRepository;
         private readonly IFlightRepository _flightRepository;
+        private readonly IBookingsFilterRepository _bookingsFilterRepository;
 
-        public BookingService(IBookingRepository BookingRepository, IFlightRepository flightRepository, IUserRepository userRepository)
+        public BookingService(IBookingRepository bookingRepository, IUserRepository userRepository, IFlightRepository flightRepository, IBookingsFilterRepository bookingsFilterRepository)
         {
-            this._bookingRepository = BookingRepository;
-            this._userRepository = userRepository;
-            this._flightRepository = flightRepository;
+            _bookingRepository = bookingRepository;
+            _userRepository = userRepository;
+            _flightRepository = flightRepository;
+            _bookingsFilterRepository = bookingsFilterRepository;
         }
 
         public List<Booking> GetAllBookings()
@@ -91,22 +94,7 @@ namespace ATB.Logic.Service
 
         public List<Booking> FilterBookings(string[] filterInput)
         {
-            BookingFilter query = BookingFilters.Parse(filterInput.Skip(1).ToArray());
-            List<Booking> bookingResults = new List<Booking>();
-
-            User? passenger = _userRepository.GetUser(query.PassengerName);
-            List<Flight> flights = _flightRepository.FilterFlights(query);
-            List<Booking> bookings = _bookingRepository.FilterBooking(query);
-
-            bookingResults =
-                (
-                 from b in bookings
-                    join f in flights on b.FlightId equals f.FlightId
-                    where (passenger == null || b.PassengerId == passenger.UserId)
-                 select b
-                 ).ToList();
-
-            return bookingResults;
+            return _bookingsFilterRepository.FilterBookingsWithFlights(filterInput);
         }
 
         public string BookingsToString(List<Booking> BookingList)

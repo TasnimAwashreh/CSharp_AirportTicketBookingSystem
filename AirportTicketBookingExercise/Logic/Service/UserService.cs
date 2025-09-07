@@ -1,6 +1,8 @@
 ﻿using ATB.Data.Repository;
 using ATB.Data.Models;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
+using System.Security.Authentication;
 
 namespace ATB.Logic.Service
 {
@@ -16,14 +18,14 @@ namespace ATB.Logic.Service
         public User? Authenticate(string username, string password, UserType usertype)
         {
             var user = GetUserByName(username);
-            if (user != null && user.Password.Equals(password) && user.UserType == usertype) 
+            if (user == null || user.Password != password || user.UserType != usertype) 
             {
-                return user;
+                throw new AuthenticationException();
             }
-            return null;
+            return user;
         }
 
-        public bool CreateUser(string name, string password, UserType usertype)
+        public void CreateUser(string name, string password, UserType usertype)
         {
             var user = new User
             {
@@ -36,14 +38,11 @@ namespace ATB.Logic.Service
             var validationResults = new List<ValidationResult>();
             bool isFieldValid = Validator.TryValidateObject(user, context, validationResults, true);
             if (!isFieldValid)
-            {
                 throw new ValidationException();
-            }
 
             if (_userRepository.GetUser(name) != null)
-                return false;
+                throw new DuplicateNameException();
             _userRepository.CreateUser(user);
-            return true;
         }
 
         public User? GetUser(int userId)
@@ -61,9 +60,9 @@ namespace ATB.Logic.Service
             return _userRepository.GetUsersByType(type);
         }
 
-        public bool UpdateUser(User user)
+        public void UpdateUser(User user)
         {
-                return _userRepository.UpdateUser(user);
+            _userRepository.UpdateUser(user);
         }
     }
 }

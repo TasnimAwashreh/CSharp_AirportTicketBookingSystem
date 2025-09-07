@@ -7,6 +7,7 @@ using System.Text;
 using ATB.Logic.Enums;
 using CsvHelper;
 using AirportTicketBookingExercise.Logic.Utils;
+using System.Collections.Generic;
 
 namespace ATB.Logic.Service
 {
@@ -91,9 +92,10 @@ namespace ATB.Logic.Service
             return flight;
         }
 
-        public List<Flight> Search(FilterParam searchParam, string valueParam)
+        public List<Flight> Search(string[] searchInput)
         {
-            return _flightRepo.Search(searchParam, valueParam);
+            BookingFilter query = BookingFilters.Parse(searchInput.Skip(1).ToArray());
+            return _flightRepo.FilterFlights(query);
         }
 
         public string FlightsToString(List<Flight> Flights)

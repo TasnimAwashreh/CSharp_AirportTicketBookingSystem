@@ -42,39 +42,21 @@ namespace ATB.Data.Repository
             CsvActionsHelper.CreateRecords<Flight, FlightMap>(_flightsCSVPath, flights);
         }
 
-        public List<Flight> Search(FilterParam searchParam, string valueParam)
-        {
-            List<Flight> filteredFlights = new List<Flight>();
-            var flights = GetFlights();
-            filteredFlights = searchParam switch
-            {
-                FilterParam.Flight => flights.Where(f => f.FlightName.Equals(valueParam)).ToList(),
-                FilterParam.Price => flights.Where(f =>
-                    f.BuisnessPrice == decimal.Parse(valueParam) ||
-                    f.EconomyPrice == decimal.Parse(valueParam) ||
-                    f.FirstClassPrice == decimal.Parse(valueParam)).ToList(),
-                FilterParam.DepartureCountry => flights.Where(f => f.DepartureCountry.Equals(valueParam)).ToList(),
-                FilterParam.DestinationCountry => flights.Where(f => f.DestinationCountry.Equals(valueParam)).ToList(),
-                FilterParam.DepartureDate => flights.Where(f => f.DepartureDate.Equals(valueParam)).ToList(),
-                FilterParam.DepartureAirport => flights.Where(f => f.DepartureAirport.Equals(valueParam)).ToList(),
-                FilterParam.ArrivalAirport => flights.Where(f => f.ArrivalAirport.Equals(valueParam)).ToList(),
-                _ => []
-            };
-            return filteredFlights;
-        }
-
         public List<Flight> FilterFlights (BookingFilter filter)
         {
             var flights = GetFlights();
             var query =
                 from flight in flights
                 where
-                    (filter.FlightName == null || flight.FlightName.Contains(filter.FlightName)) &&
-                    (filter.DepartureCountry == null || flight.DepartureCountry == filter.DepartureCountry) &&
-                    (filter.DestinationCountry == null || flight.DestinationCountry == filter.DestinationCountry) &&
+                    (filter.FlightName == null || filter.FlightName.Equals(filter.FlightName, StringComparison.OrdinalIgnoreCase)) &&
+                    (filter.DepartureCountry == null || flight.DepartureCountry.Equals(filter.DepartureCountry, StringComparison.OrdinalIgnoreCase)) &&
+                    (filter.DestinationCountry == null || flight.DestinationCountry.Equals(filter.DestinationCountry, StringComparison.OrdinalIgnoreCase)) &&
                     (filter.DepartureDate == null || flight.DepartureDate.Date == filter.DepartureDate.Value.Date) &&
-                    (filter.DepartureAirport == null || flight.DepartureAirport == filter.DepartureAirport) &&
-                    (filter.ArrivalAirport == null || flight.ArrivalAirport == filter.ArrivalAirport)
+                    (filter.DepartureAirport == null || flight.DepartureAirport.Equals(filter.DepartureAirport, StringComparison.OrdinalIgnoreCase)) &&
+                    (filter.ArrivalAirport == null || flight.ArrivalAirport.Equals(filter.ArrivalAirport, StringComparison.OrdinalIgnoreCase)) &&
+                    (filter.Price == null || (flight.BuisnessPrice == filter.Price ||
+                        flight.EconomyPrice == filter.Price ||
+                        flight.FirstClassPrice == filter.Price))
                 select flight;
 
             return query.ToList();

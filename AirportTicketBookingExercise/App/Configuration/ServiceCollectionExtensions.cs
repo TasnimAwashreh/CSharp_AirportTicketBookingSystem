@@ -2,6 +2,7 @@
 using ATB.Logic.Service;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
+using AirportTicketBookingExercise.Data.Repository;
 
 namespace ATB.App.Configuration
 {
@@ -20,7 +21,9 @@ namespace ATB.App.Configuration
                     .AddSingleton(_ => new DatabaseManager(usersPath, bookingsPath, flightsPath))
                     .AddScoped<IUserRepository>(_ => new UserRepository(usersPath))
                     .AddScoped<IBookingRepository>(_ => new BookingRepository(bookingsPath))
-                    .AddScoped<IFlightRepository>(_ => new FlightRepository(flightsPath));
+                    .AddScoped<IFlightRepository>(_ => new FlightRepository(flightsPath))
+                    .AddScoped<IBookingsFilterRepository, BookingsFilterRepository>();
+            
             return services;
         }
 

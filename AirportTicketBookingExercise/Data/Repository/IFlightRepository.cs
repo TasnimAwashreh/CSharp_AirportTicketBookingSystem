@@ -11,7 +11,6 @@ namespace ATB.Data.Repository
         public void AddPassengerToSeat(Flight flight);
         public void RemovePassengerFromSeat(Flight flight);
         public void AddFlights(List<Flight> flights);
-        public List<Flight> Search(FilterParam searchParam, string valueParam);
         public List<Flight> FilterFlights(BookingFilter filter);
     }
 }

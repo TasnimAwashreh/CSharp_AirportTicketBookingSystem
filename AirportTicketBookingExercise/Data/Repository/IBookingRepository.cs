@@ -13,6 +13,5 @@ namespace ATB.Data.Repository
         public bool DeleteBooking(int BookingId);
         public bool UpdateBookingClass(int bookingId, BookingClass newClass);
         public List<Booking> FilterBooking(BookingFilter filter);
-
     }
 }
