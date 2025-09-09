@@ -1,320 +1,36 @@
-﻿using ATB.App.Commands;
+﻿using AirportTicketBookingExercise.App.Commands.CommandExecuter;
+using AirportTicketBookingExercise.App.Commands.Enums;
 using ATB.Data.Models;
-using ATB.Logic.Enums;
-using ATB.Logic.Service;
-using CsvHelper.Configuration.Attributes;
-using System.ComponentModel.DataAnnotations;
-using System.IO;
-using System.Reflection.Metadata.Ecma335;
 
 namespace ATB.App
 {
     public class BookingManager
     {
-        private readonly IFlightservice _flightService;
-        private readonly IUserService _userService;
-        private readonly IBookingService _bookingService;
+        private ICommandExecuter<ManagerCommand> _managerExecuter;
+        private ICommandExecuter<PassengerCommand> _passengerExecuter;
+        private User? _loggedInUser;
 
-        private User? loggedInUser;
-
-        public BookingManager()
+        public BookingManager(ICommandExecuter<ManagerCommand> managerExecuter, ICommandExecuter<PassengerCommand> passengerExecuter)
         {
+            _managerExecuter = managerExecuter;
+            _passengerExecuter = passengerExecuter;
         }
 
-        public BookingManager(IFlightservice flightService, IUserService userService, IBookingService bookingService)
-        {
-            _flightService = flightService;
-            _userService = userService;
-            _bookingService = bookingService;
-        }
-
-        public void ProcessInput(string input)
+        public void ProcessInput(string[] input)
         {
             try
             {
-                string[] line = input.Split(' ');
-                if (line.Length == 0 )
-                {
-                    Console.WriteLine("Please enter a command ");
-                    return;
-                }
-                ManagerCommand managerCommand = line[0].ParseManagerCommand();
-                PassengerCommand passengerCommand = line[0].ParsePassengerCommand();
+                ManagerCommand managerCommand = input[0].ParseManagerCommand();
+                PassengerCommand passengerCommand = input[0].ParsePassengerCommand();
                 if (passengerCommand != PassengerCommand.None)
-                    ExecutePassengerCommand(line, passengerCommand);
+                    _passengerExecuter.ExecuteCommand(_loggedInUser, input, passengerCommand);
                 else if (managerCommand != ManagerCommand.None)
-                    ExecuteManagerCommand(line, managerCommand);
+                    _managerExecuter.ExecuteCommand(_loggedInUser, input, managerCommand);
                 else Console.WriteLine("\n Please enter an appropriate action");
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error processing your input: {ex.Message}");
-            }
-        }
-
-        public void ExecuteManagerCommand(string[] productInfo, ManagerCommand command)
-        {
-            if (loggedInUser == null)
-            {
-                switch (command)
-                {
-                    case ManagerCommand.ManagerSignUp:
-                        if (productInfo.Length < 3)
-                        {
-                            Console.WriteLine("Please enter a username and password");
-                            break;
-                        }
-
-                        try
-                        {
-                            _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
-                            Console.WriteLine("You have signed up successfully, manager");
-                        }
-                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                        break;
-                    case ManagerCommand.ManagerLogIn:
-                        if (productInfo.Length < 3)
-                        {
-                            Console.WriteLine("Please enter your username and password to login, manager!");
-                            break;
-                        }
-
-                        try
-                        {
-                            User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Manager);
-                            if (loggingInUser == null)
-                                Console.WriteLine("Incorrect username or password, please try again");
-                            else
-                            {
-                                loggedInUser = loggingInUser;
-                                Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
-                            }
-                        }
-                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                        break;
-                    case ManagerCommand.None:
-                        Console.WriteLine("\n Manager, please enter an appropriate action");
-                        break;
-                    default:
-                        Console.WriteLine("Please enter an appropriate command.");
-                        break;
-                }
-            }
-            else if (loggedInUser.UserType == UserType.Passenger)
-                Console.WriteLine("Only managers can use these commands! Please log out as a passenger and log back in as a manager");
-            else
-            {
-                switch (command)
-                {
-                    case ManagerCommand.ManagerLogOut:
-                        loggedInUser = null;
-                        Console.WriteLine("Logged out successfully! See you soon, manager!");
-                        break;
-                    case ManagerCommand.Upload:
-                        if (productInfo.Length < 2)
-                        {
-                            Console.WriteLine("Please enter a valid CSV file path");
-                            break;
-                        }
-                        if (!File.Exists(productInfo[1]))
-                        {
-                            Console.WriteLine("This file does not exist");
-                            break;
-                        }
-                        bool isSuccessful = _flightService.ImportFlightData(productInfo[1]);
-                        if (!isSuccessful) Console.WriteLine("Please use the Validate command before importing as this file contains invalid fields");
-                        else Console.WriteLine("Imported successfully");
-                        break;
-                    case ManagerCommand.Validate:
-                        Console.WriteLine($"\n Validating... \n");
-                        if (productInfo.Length < 2)
-                        {
-                            Console.WriteLine("Please enter a valid CSV file path");
-                            break;
-                        }
-                        if (!File.Exists(productInfo[1]))
-                        {
-                            Console.WriteLine("This file does not exist");
-                            break;
-                        }
-                        string errorStr = _flightService.ValidateFlightData(productInfo[1]);
-                        if (errorStr != "") Console.WriteLine(errorStr);
-                        else Console.WriteLine("No fields are in need of fixing!");
-                        break;
-                    case ManagerCommand.Filter:
-                        Console.WriteLine($"\n Filter: \n");
-                        List<Booking> bookingResults = _bookingService.FilterBookings(productInfo);
-                        if (bookingResults.Count > 0)
-                        {
-                            Console.WriteLine("\nFilter Results: \n");
-                            foreach (Booking Booking in bookingResults)
-                            {
-                                Console.WriteLine(Booking.ToString() + $" Booked by passenger with Id ({Booking.PassengerId})");
-                            }
-                        }
-                        break;
-                    case ManagerCommand.ManagerSignUp:
-                        Console.WriteLine("Please log out first to sign up");
-                        break;
-                    case ManagerCommand.ManagerLogIn:
-                        Console.WriteLine($"You are already logged in, {loggedInUser.Name}!");
-                        break;
-                    case ManagerCommand.None:
-                        Console.WriteLine("\n Manager, please enter an appropriate action");
-                        break;
-                }
-            }   
-        }
-        public void ExecutePassengerCommand(string[] productInfo, PassengerCommand command)
-        {
-            if (loggedInUser == null)
-            {
-                switch (command)
-                {
-                    case PassengerCommand.SignUp:
-                        if (productInfo.Length < 3)
-                        {
-                            Console.WriteLine("Please enter a username and password");
-                            break;
-                        }
-                        try
-                        {
-                            _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
-                            Console.WriteLine("You have signed up successfully, passenger");
-                        }
-                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                        break;
-                    case PassengerCommand.LogIn:
-                        if (productInfo.Length < 3)
-                        {
-                            Console.WriteLine("Please enter your username and password to login, manager!");
-                            break;
-                        }
-
-                        try
-                        {
-                            User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
-                            if (loggingInUser == null)
-                            {
-                                Console.WriteLine("Incorrect username or password, please try again");
-                                break;
-                            }
-                            else
-                            {
-                                loggedInUser = loggingInUser;
-                                Console.WriteLine($"Welcome back, {loggedInUser.Name}!");
-                            }
-                        }
-                        catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
-                        catch (Exception ex) { Console.WriteLine(ex.ToString()); }
-                        break;
-                    case PassengerCommand.None:
-                        Console.WriteLine("\nPassenger, please enter an appropriate action.");
-                        break;
-                    default:
-                        Console.WriteLine("\nYou must log in to use this command.");
-                        break;
-                }
-            }
-            else if (loggedInUser.UserType == UserType.Manager)
-                Console.WriteLine("Only passengers can use these commands! Please log out as a manager and log back in as a passenger");
-            else
-            {
-                switch (command)
-                {
-                    case PassengerCommand.LogOut:
-                        loggedInUser = null;
-                        Console.WriteLine("Logged out successfully. We hope to see you soon!");
-                        break;
-                    case PassengerCommand.Book:
-                        try
-                        {
-                            if(productInfo.Length < 3)
-                            {
-                                Console.WriteLine("Please enter the flight Id you want to book and the class");
-                            }
-                            int flightId = int.Parse(productInfo[1]);
-                            BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                            bool isBookingSuccessful = _bookingService.PassengerBookFlight(flightId, bookingClass, loggedInUser);
-                            if (!isBookingSuccessful)
-                                Console.WriteLine("Please make sure the flight and flight class is available when booking");
-                            else
-                                Console.WriteLine("Booking successful! Please enjoy your flight");
-                        }
-                        catch (FormatException) 
-                        { 
-                            Console.WriteLine("Please enter the id of the flight you want to book and the class (first, economy, business)"); 
-                        }
-                        catch (Exception ex) 
-                        { 
-                            Console.WriteLine(ex.ToString()); 
-                        }
-                        break;
-                    case PassengerCommand.Search:
-                        if (productInfo.Length < 2)
-                            _flightService.GetFlights();
-                        else
-                        {
-                            List<Flight> searchFlights = _flightService.Search(productInfo);
-                            Console.WriteLine(_flightService.FlightsToString(searchFlights));
-                        }
-                        break;
-                    case PassengerCommand.Cancel:
-                        try
-                        {
-                            int bookingId = int.Parse(productInfo[1]);
-                            bool isCancelSuccessful = _bookingService.Cancel(bookingId, loggedInUser);
-                            if (!isCancelSuccessful) Console.WriteLine("Please make sure to cancel with the booking id");
-                            else Console.WriteLine("Booking has been successfully cancelled");
-                        }
-                        catch (FormatException) 
-                        { 
-                            Console.WriteLine("Please enter the id of the booking you wish to cancel"); 
-                        }
-                        catch (Exception ex) 
-                        { 
-                            Console.WriteLine(ex.ToString()); 
-                        }
-                        break;
-                    case PassengerCommand.Modify:
-                        try
-                        {
-                            int bookingId = int.Parse(productInfo[1]);
-                            BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                            bool isModifySuccessful = _bookingService.Modify(bookingId, bookingClass, loggedInUser);
-                            if (!isModifySuccessful) Console.WriteLine("Please make sure the booking exists and please enter the class");
-                            else Console.WriteLine("Booking changed successfully!");
-                        }
-                        catch (IndexOutOfRangeException) 
-                        { 
-                            Console.WriteLine("Please enter the id of the booking you wish to modify, and the and the class (first, economy, business)"); 
-                        }
-                        catch (FormatException) 
-                        { 
-                            Console.WriteLine("Please enter the booking id and class in the correct format");
-                        }
-                        catch (Exception ex) 
-                        { 
-                            Console.WriteLine(ex.ToString()); 
-                        }
-                        break;
-                    case PassengerCommand.Flights:
-                        List<Flight> getFlights = _flightService.GetFlights();
-                        if (!getFlights.Any()) Console.WriteLine("There are currently no flights");
-                        else Console.WriteLine(_flightService.FlightsToString(getFlights));
-                        break;
-                    case PassengerCommand.Bookings:
-                        List<Booking> bookings = _bookingService.GetBookings(loggedInUser);
-                        if (!bookings.Any()) Console.WriteLine("You currently have not booked any flights yet!");
-                        Console.WriteLine(_bookingService.BookingsToString(bookings));
-                        break;
-                    case PassengerCommand.None:
-                        Console.WriteLine("\nPlease enter an appropriate action.");
-                        break;
-                }
             }
         }
     }

@@ -1,4 +1,4 @@
-﻿namespace ATB.App.Commands
+﻿namespace AirportTicketBookingExercise.App.Commands.Enums
 {
     public enum PassengerCommand
     {

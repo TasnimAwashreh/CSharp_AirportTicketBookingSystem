@@ -3,6 +3,8 @@ using ATB.Logic.Service;
 using Microsoft.Extensions.DependencyInjection;
 using ATB.Data.Db;
 using AirportTicketBookingExercise.Data.Repository;
+using AirportTicketBookingExercise.App.Commands.CommandExecuter;
+using AirportTicketBookingExercise.App.Commands.Enums;
 
 namespace ATB.App.Configuration
 {
@@ -38,6 +40,8 @@ namespace ATB.App.Configuration
 
         public static IServiceCollection AddManager(this IServiceCollection services)
         {
+            services.AddScoped<ICommandExecuter<ManagerCommand>, ExecuteManagerCommands>();
+            services.AddScoped<ICommandExecuter<PassengerCommand>, ExecutePassengerCommands>();
             services.AddScoped<BookingManager>();
             return services;
         }

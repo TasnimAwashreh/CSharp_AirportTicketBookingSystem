@@ -19,7 +19,16 @@ class Program
             if (string.IsNullOrWhiteSpace(input))
                 Console.WriteLine("Empty input: Please try again");
             else
-                BookingManager.ProcessInput(input);
+            {
+                string[] lines = input.Split(' ');
+                if (lines.Length == 0)
+                {
+                    Console.WriteLine("Please enter a command ");
+                    continue;
+                }
+                BookingManager.ProcessInput(lines);
+            }
+            
         }
     }
 
@@ -39,14 +48,14 @@ class Program
 
     public static void Main(string[] args)
     {
-        var serviceCollection = new ServiceCollection();
-        serviceCollection
+        var services = new ServiceCollection();
+        services
             .AddRepositories()
             .AddServices()
             .AddManager();
 
         Console.WriteLine(Introduction());
-        var serviceProvider = serviceCollection.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
         StartLoop(serviceProvider);
     }
 }
