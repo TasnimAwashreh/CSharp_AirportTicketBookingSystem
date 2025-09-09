@@ -5,6 +5,7 @@ using ATB.Data.Db;
 using AirportTicketBookingExercise.Data.Repository;
 using AirportTicketBookingExercise.App.Commands.CommandExecuter;
 using AirportTicketBookingExercise.App.Commands.Enums;
+using AirportTicketBookingExercise.App.Commands.Helpers;
 
 namespace ATB.App.Configuration
 {
@@ -40,6 +41,8 @@ namespace ATB.App.Configuration
 
         public static IServiceCollection AddManager(this IServiceCollection services)
         {
+            services.AddScoped<ManagerHelper>();
+            services.AddScoped<PassengerHelper>();
             services.AddScoped<ICommandExecuter<ManagerCommand>, ExecuteManagerCommands>();
             services.AddScoped<ICommandExecuter<PassengerCommand>, ExecutePassengerCommands>();
             services.AddScoped<BookingManager>();

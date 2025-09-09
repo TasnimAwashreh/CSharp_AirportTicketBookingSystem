@@ -23,9 +23,9 @@ namespace ATB.App
                 ManagerCommand managerCommand = input[0].ParseManagerCommand();
                 PassengerCommand passengerCommand = input[0].ParsePassengerCommand();
                 if (passengerCommand != PassengerCommand.None)
-                    _passengerExecuter.ExecuteCommand(_loggedInUser, input, passengerCommand);
+                    _loggedInUser = _passengerExecuter.ExecuteCommand(_loggedInUser, input, passengerCommand);
                 else if (managerCommand != ManagerCommand.None)
-                    _managerExecuter.ExecuteCommand(_loggedInUser, input, managerCommand);
+                    _loggedInUser = _managerExecuter.ExecuteCommand(_loggedInUser, input, managerCommand);
                 else Console.WriteLine("\n Please enter an appropriate action");
             }
             catch (Exception ex)
