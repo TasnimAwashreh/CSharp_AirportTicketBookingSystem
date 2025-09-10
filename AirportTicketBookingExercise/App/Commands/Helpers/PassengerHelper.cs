@@ -108,9 +108,16 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
             try
             {
                 int bookingId = int.Parse(productInfo[1]);
-                bool isCancelSuccessful = _bookingService.Cancel(bookingId, loggedInUser);
-                if (!isCancelSuccessful) Console.WriteLine("Please make sure to cancel with the booking id");
-                else Console.WriteLine("Booking has been successfully cancelled");
+                _bookingService.Cancel(bookingId, loggedInUser);
+                Console.WriteLine("Booking has been successfully cancelled");
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("This booking was unable to cancel. Please try again another time");
+            }
+            catch (KeyNotFoundException)
+            {
+                Console.WriteLine("This booking does not exist. Please make sure the booking exists and please enter the class");
             }
             catch (FormatException)
             {
@@ -128,9 +135,13 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
             {
                 int bookingId = int.Parse(productInfo[1]);
                 BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                bool isModifySuccessful = _bookingService.Modify(bookingId, bookingClass, loggedInUser);
-                if (!isModifySuccessful) Console.WriteLine("Please make sure the booking exists and please enter the class");
-                else Console.WriteLine("Booking changed successfully!");
+                _bookingService.Modify(bookingId, bookingClass, loggedInUser);
+                
+                Console.WriteLine("Booking changed successfully!");
+            }
+            catch(KeyNotFoundException)
+            {
+                Console.WriteLine("This booking does not exist. Please make sure the booking exists and please enter the class");
             }
             catch (IndexOutOfRangeException)
             {

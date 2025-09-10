@@ -1,6 +1,6 @@
-﻿using AirportTicketBookingExercise.Logic.Utils;
+﻿using AirportTicketBookingExercise.Domain.Models;
+using AirportTicketBookingExercise.Logic.Utils;
 using ATB.Data.Models;
-using ATB.Logic;
 using ATB.Logic.Enums;
 using CsvHelper;
 using System.Globalization;

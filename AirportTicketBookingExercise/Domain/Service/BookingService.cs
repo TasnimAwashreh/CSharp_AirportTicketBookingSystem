@@ -49,22 +49,20 @@ namespace ATB.Logic.Service
             return _bookingRepository.UpdateBookingClass(bookingId, newClass);
         }
 
-        public bool Cancel(int bookingId, User loggedInUser)
+        public void Cancel(int bookingId, User loggedInUser)
         {
             if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
-                return false;
+                throw new KeyNotFoundException();
             bool isSuccess = _bookingRepository.DeleteBooking(bookingId);
             if (!isSuccess)
-                return false;
-            return true;
+                throw new InvalidOperationException();
         }
 
-        public bool Modify(int bookingId, BookingClass bookingClass, User loggedInUser)
+        public void Modify(int bookingId, BookingClass bookingClass, User loggedInUser)
         {
             if (!_bookingRepository.IsBookingValidById(bookingId, loggedInUser.UserId))
-                return false;
+                throw new KeyNotFoundException();
             _bookingRepository.UpdateBookingClass(bookingId, bookingClass);
-            return true;
         }
 
         public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)

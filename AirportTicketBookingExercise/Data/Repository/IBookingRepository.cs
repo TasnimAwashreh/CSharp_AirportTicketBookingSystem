@@ -1,5 +1,5 @@
-﻿using ATB.Data.Models;
-using ATB.Logic;
+﻿using AirportTicketBookingExercise.Domain.Models;
+using ATB.Data.Models;
 using ATB.Logic.Enums;
 
 namespace ATB.Data.Repository

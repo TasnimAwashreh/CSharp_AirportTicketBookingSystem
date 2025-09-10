@@ -1,12 +1,12 @@
 ﻿using ATB.Data.Models;
 using ATB.Logic.Enums;
-using ATB.Logic;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using ATB.Data.Repository;
+using AirportTicketBookingExercise.Domain.Models;
 
 namespace AirportTicketBookingExercise.Data.Repository
 {

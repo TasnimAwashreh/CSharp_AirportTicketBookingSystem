@@ -2,6 +2,7 @@
 using ATB.App;
 using ATB.Data.Db;
 using Microsoft.Extensions.DependencyInjection;
+using AirportTicketBookingExercise.App.Configuration;
 
 class Program
 {
@@ -50,7 +51,7 @@ class Program
     {
         var services = new ServiceCollection();
         services
-            .AddRepositories()
+            .AddRepositories(Constants.UsersPath, Constants.FlightsPath, Constants.BookingsPath)
             .AddServices()
             .AddManager();
 

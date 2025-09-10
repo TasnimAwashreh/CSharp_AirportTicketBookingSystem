@@ -17,26 +17,31 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
             _bookingService = bookingService;
         }
 
-        public void ManagerSignUp(string[] productInfo)
+        public User? ManagerSignUp(string[] productInfo)
         {
             if (productInfo.Length < 3)
             {
                 Console.WriteLine("Please enter a username and password");
-                return;
+                return null;
             }
 
             try
             {
                 _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
-                Console.WriteLine("You have signed up successfully, manager");
+                var newUser = _userService.GetUserByName(productInfo[1]);
+                if (newUser == null) Console.WriteLine("User has not been added, please try again another time");
+                else Console.WriteLine("You have signed up successfully, manager");
+                return newUser;
             }
             catch (ValidationException ex)
             {
                 Console.WriteLine("Username and Password must be in between 3 and 12");
+                return null;
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.ToString());
+                return null;
             }
         }
 
@@ -84,9 +89,20 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
                 Console.WriteLine("This file does not exist");
                 return;
             }
-            bool isSuccessful = _flightService.ImportFlightData(productInfo[1]);
-            if (!isSuccessful) Console.WriteLine("Please use the Validate command before importing as this file contains invalid fields");
-            else Console.WriteLine("Imported successfully");
+
+            try
+            {
+                _flightService.ImportFlightData(productInfo[1]);
+                Console.WriteLine("Imported successfully");
+            }
+            catch(FormatException ex)
+            {
+                Console.WriteLine("Please use the Validate command before importing as this file contains invalid fields \n");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Upload did not succeed. Please try again later. \n {ex}");
+            }
         }
 
         public void ValidateCSV(string[] productInfo)

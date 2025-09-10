@@ -2,7 +2,7 @@
 using ATB.Data.Models;
 using ATB.Logic.Enums;
 using AirportTicketBookingExercise.Logic.Utils;
-using ATB.Logic;
+using AirportTicketBookingExercise.Domain.Models;
 
 namespace ATB.Data.Repository
 {

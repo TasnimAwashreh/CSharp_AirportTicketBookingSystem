@@ -1,4 +1,5 @@
 ﻿using System.Globalization;
+using AirportTicketBookingExercise.Domain.Models;
 
 namespace ATB.Logic.Enums
 {

@@ -6,19 +6,15 @@ using AirportTicketBookingExercise.Data.Repository;
 using AirportTicketBookingExercise.App.Commands.CommandExecuter;
 using AirportTicketBookingExercise.App.Commands.Enums;
 using AirportTicketBookingExercise.App.Commands.Helpers;
+using AirportTicketBookingExercise.App;
 
 namespace ATB.App.Configuration
 {
     public static class ServiceCollectionExtensions
     {
-        public static IServiceCollection AddRepositories(this IServiceCollection services)
+        public static IServiceCollection AddRepositories(this IServiceCollection services,
+            string usersPath, string flightsPath, string bookingsPath)
         {
-            const string bookingFile = "bookings.csv";
-            const string userFile = "users.csv";
-            const string flightsFile = "flights.csv";
-            string bookingsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", bookingFile);
-            string usersPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", userFile);
-            string flightsPath = Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "..", "Data", "Db", flightsFile);
 
             services
                     .AddSingleton(_ => new DatabaseManager(usersPath, bookingsPath, flightsPath))

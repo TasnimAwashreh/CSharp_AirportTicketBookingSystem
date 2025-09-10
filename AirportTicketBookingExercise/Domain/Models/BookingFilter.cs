@@ -1,4 +1,4 @@
-﻿namespace ATB.Logic
+﻿namespace AirportTicketBookingExercise.Domain.Models
 {
     public class BookingFilter
     {
