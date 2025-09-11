@@ -1,16 +1,17 @@
 ﻿using ATB.Data.Models;
 using ATB.Logic.Service;
 using System.ComponentModel.DataAnnotations;
+using System.Data;
 
 namespace AirportTicketBookingExercise.App.Commands.Helpers
 {
     public class ManagerHelper
     {
-        private readonly IFlightservice _flightService;
+        private readonly IFlightService _flightService;
         private readonly IUserService _userService;
         private readonly IBookingService _bookingService;
 
-        public ManagerHelper(IFlightservice flightService, IUserService userService, IBookingService bookingService)
+        public ManagerHelper(IFlightService flightService, IUserService userService, IBookingService bookingService)
         {
             _flightService = flightService;
             _userService = userService;
@@ -19,21 +20,35 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
 
         public User? ManagerSignUp(string[] productInfo)
         {
-            if (productInfo.Length < 3)
-            {
-                Console.WriteLine("Please enter a username and password");
-                return null;
-            }
-
             try
             {
-                _userService.CreateUser(productInfo[1], productInfo[2], UserType.Manager);
+                if (productInfo.Length < 3)
+                    throw new FormatException();
+
+                var user = new User
+                {
+                    Name = productInfo[1],
+                    Password = productInfo[2],
+                    UserType = UserType.Manager
+                };
+
+                _userService.CreateUser(user);
                 var newUser = _userService.GetUserByName(productInfo[1]);
                 if (newUser == null) Console.WriteLine("User has not been added, please try again another time");
                 else Console.WriteLine("You have signed up successfully, manager");
                 return newUser;
             }
-            catch (ValidationException ex)
+            catch(FormatException)
+            {
+                Console.WriteLine("Please enter a username and password");
+                return null;
+            }
+            catch (DuplicateNameException)
+            {
+                Console.WriteLine("This user already exists!");
+                return null;
+            }
+            catch (ValidationException)
             {
                 Console.WriteLine("Username and Password must be in between 3 and 12");
                 return null;
@@ -55,7 +70,14 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
 
             try
             {
-                User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Manager);
+                var user = new User
+                {
+                    Name = productInfo[1],
+                    Password = productInfo[2],
+                    UserType = UserType.Manager
+                };
+
+                User? loggingInUser = _userService.Authenticate(user);
                 if (loggingInUser == null)
                 {
                     Console.WriteLine("Incorrect username or password, please try again");
@@ -65,7 +87,7 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
                 Console.WriteLine($"Welcome back, {loggingInUser.Name}!");
                 return loggingInUser;
             }
-            catch (ValidationException ex) 
+            catch (KeyNotFoundException ex) 
             {
                 Console.WriteLine("Username and Password must be in between 3 and 12");
                 return null;

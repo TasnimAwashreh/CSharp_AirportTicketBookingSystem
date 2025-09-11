@@ -15,44 +15,43 @@ namespace ATB.Logic.Service
             _userRepository = userRepository;
         }
 
-        public User? Authenticate(string username, string password, UserType usertype)
+        public User? Authenticate(User user)
         {
-            var user = GetUserByName(username);
-            if (user == null || user.Password != password || user.UserType != usertype) 
+            var existingUser = GetUserByName(user.Name);
+            if (existingUser == null || existingUser.Password != user.Password || existingUser.UserType != user.UserType) 
             {
-                throw new AuthenticationException();
+                throw new KeyNotFoundException();
             }
             return user;
         }
 
-        public void CreateUser(string name, string password, UserType usertype)
+        public void CreateUser(User user)
         {
-            var user = new User
-            {
-                Name = name,
-                Password = password,
-                UserType = usertype
-            };
-
             var context = new ValidationContext(user, null, null);
             var validationResults = new List<ValidationResult>();
             bool isFieldValid = Validator.TryValidateObject(user, context, validationResults, true);
             if (!isFieldValid)
                 throw new ValidationException();
 
-            if (_userRepository.GetUser(name) != null)
+            if (_userRepository.GetUser(user.Name) != null)
                 throw new DuplicateNameException();
             _userRepository.CreateUser(user);
         }
 
         public User? GetUser(int userId)
         {
-            return _userRepository.GetUser(userId);
+            User? user = _userRepository.GetUser(userId);
+            if (user == null)
+                throw new KeyNotFoundException();
+            return user;
         }
 
         public User? GetUserByName(string username)
         {
-            return _userRepository.GetUser(username);
+            User? user = _userRepository.GetUser(username);
+            if (user == null)
+                throw new KeyNotFoundException();
+            return user;
         }
 
         public List<User> GetUserByType(UserType type)

@@ -8,11 +8,11 @@ using AirportTicketBookingExercise.Domain.Models;
 
 namespace ATB.Logic.Service
 {
-    public class Flightservice : IFlightservice
+    public class FlightService : IFlightService
     {
         private IFlightRepository _flightRepo;
 
-        public Flightservice(IFlightRepository fightRepo)
+        public FlightService(IFlightRepository fightRepo)
         {
             _flightRepo = fightRepo;
         }

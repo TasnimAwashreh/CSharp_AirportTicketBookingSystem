@@ -2,16 +2,17 @@
 using ATB.Logic.Enums;
 using ATB.Logic.Service;
 using System.ComponentModel.DataAnnotations;
+using System.Xml.Linq;
 
 namespace AirportTicketBookingExercise.App.Commands.Helpers
 {
     public class PassengerHelper
     {
-        private readonly IFlightservice _flightService;
+        private readonly IFlightService _flightService;
         private readonly IUserService _userService;
         private readonly IBookingService _bookingService;
 
-        public PassengerHelper(IFlightservice flightService, IUserService userService, IBookingService bookingService)
+        public PassengerHelper(IFlightService flightService, IUserService userService, IBookingService bookingService)
         {
             _flightService = flightService;
             _userService = userService;
@@ -27,7 +28,13 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
             }
             try
             {
-                _userService.CreateUser(productInfo[1], productInfo[2], UserType.Passenger);
+                var user = new User
+                {
+                    Name = productInfo[1],
+                    Password = productInfo[2],
+                    UserType = UserType.Passenger
+                };
+                _userService.CreateUser(user);
                 Console.WriteLine("You have signed up successfully, passenger");
             }
             catch (ValidationException ex) { Console.WriteLine("Username and Password must be in between 3 and 12"); }
@@ -44,7 +51,14 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
 
             try
             {
-                User? loggingInUser = _userService.Authenticate(productInfo[1], productInfo[2], UserType.Passenger);
+                var user = new User
+                {
+                    Name = productInfo[1],
+                    Password = productInfo[2],
+                    UserType = UserType.Passenger
+                };
+
+                User? loggingInUser = _userService.Authenticate(user);
                 if (loggingInUser == null)
                     Console.WriteLine("Incorrect username or password, please try again");
                 else
@@ -54,7 +68,7 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
                 }
                 return loggingInUser;
             }
-            catch (ValidationException ex) 
+            catch (KeyNotFoundException ex) 
             {
                 Console.WriteLine("Username and Password must be in between 3 and 12");
                 return null;

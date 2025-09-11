@@ -29,9 +29,7 @@ namespace AirportTicketBookingExercise.Logic.Utils
             using (var csv = new CsvReader(reader, CultureInfo.InvariantCulture))
             {
                 csv.Context.RegisterClassMap<TMap>();
-                var records = csv.GetRecords<T>();
-                if (records.Any())
-                    recordList = records.ToList();
+                recordList = csv.GetRecords<T>().ToList();
             }
             return recordList;
         }

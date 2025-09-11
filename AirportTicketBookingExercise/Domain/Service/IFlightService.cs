@@ -3,7 +3,7 @@ using ATB.Logic.Enums;
 
 namespace ATB.Logic.Service
 {
-    public interface IFlightservice
+    public interface IFlightService
     {
         List<Flight> GetFlights();
         public string ValidateFlightData(string importPath);

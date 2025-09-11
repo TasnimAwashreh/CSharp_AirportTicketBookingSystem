@@ -30,7 +30,7 @@ namespace ATB.App.Configuration
         {
             services
                 .AddScoped<IUserService, UserService>()
-                .AddScoped<IFlightservice, Flightservice>()
+                .AddScoped<IFlightService, FlightService>()
                 .AddScoped<IBookingService, BookingService>();
             return services;
         }

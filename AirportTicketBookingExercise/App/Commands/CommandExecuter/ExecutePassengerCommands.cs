@@ -7,13 +7,13 @@ namespace AirportTicketBookingExercise.App.Commands.CommandExecuter
 {
     public class ExecutePassengerCommands : ICommandExecuter<PassengerCommand>
     {
-        private readonly IFlightservice _flightService;
+        private readonly IFlightService _flightService;
         private readonly IUserService _userService;
         private readonly IBookingService _bookingService;
 
         private PassengerHelper _passengerHelper;
 
-        public ExecutePassengerCommands(IFlightservice flightService, IUserService userService, IBookingService bookingService, PassengerHelper passengerHelper)
+        public ExecutePassengerCommands(IFlightService flightService, IUserService userService, IBookingService bookingService, PassengerHelper passengerHelper)
         {
             _flightService = flightService;
             _userService = userService;
