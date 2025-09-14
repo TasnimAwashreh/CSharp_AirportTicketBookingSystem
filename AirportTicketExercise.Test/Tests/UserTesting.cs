@@ -7,6 +7,7 @@ using System.Data;
 
 namespace AirportTicketExercise.Test.Tests
 {
+    [Collection("User Service")]
     public class UserTesting
     {
         private Mock<IUserRepository> _mockRepo;
