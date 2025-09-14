@@ -44,10 +44,10 @@ namespace ATB.Logic.Service
             return strBuilder.ToString();
         }
 
-        public void ImportFlightData(string importPath)
+        public List<Flight> ImportFlightData(string importPath)
         {
             List<Flight> importedFlightData = new List<Flight>();
-            CsvActionsHelper.GetAllRecords<Flight, FlightMap>(importPath);
+            importedFlightData = CsvActionsHelper.GetAllRecords<Flight, FlightMap>(importPath);
             
             foreach (var flight in importedFlightData)
             {
@@ -60,6 +60,7 @@ namespace ATB.Logic.Service
             }
 
             _flightRepo.AddFlights(importedFlightData);
+            return importedFlightData;
         }
 
         public List<Flight> Search(string[] searchInput)

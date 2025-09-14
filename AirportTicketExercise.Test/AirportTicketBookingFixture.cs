@@ -1,16 +1,13 @@
 ﻿using AirportTicketBookingExercise.App.Commands.Helpers;
 using AirportTicketBookingExercise.App.Configuration;
+using AirportTicketBookingExercise.Logic.Utils;
 using ATB.App;
 using ATB.App.Configuration;
 using ATB.Data.Db;
+using ATB.Data.Models;
 using ATB.Logic.Service;
+using CsvHelper;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace AirportTicketExercise.Test
 {

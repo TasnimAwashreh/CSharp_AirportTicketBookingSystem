@@ -6,20 +6,19 @@ using Moq;
 using System.ComponentModel.DataAnnotations;
 using System.Data;
 
-namespace AirportTicketExercise.Test
+namespace AirportTicketExercise.Test.Tests
 {
     [Collection("User Service")]
-    public class UserTesting : IClassFixture<AirportTicketBookingFixture>
+    public class UserIntegrationTesting : IClassFixture<AirportTicketBookingFixture>
     {
         private readonly AirportTicketBookingFixture _fixture;
 
-        public UserTesting(AirportTicketBookingFixture atbFixture)
+        public UserIntegrationTesting(AirportTicketBookingFixture atbFixture)
         {
             _fixture = atbFixture;
         }
 
         [Theory]
-        [Trait("Category", "CreateUser")]
         [InlineData("CreateUser1", "NewPassword1", UserType.Manager)]
         [InlineData("!Passenger1", "!@#$%1", UserType.Passenger)]
         [InlineData("2331", "123456789101", UserType.Passenger)]
@@ -32,7 +31,7 @@ namespace AirportTicketExercise.Test
                 Password = password,
                 UserType = userType
             };
-            _fixture.UserService.CreateUser(expectedUser);
+            CreateUser(expectedUser);
 
             User? actualUser = _fixture.UserService.Authenticate(expectedUser);
 
@@ -41,7 +40,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "CreateUser")]
         [InlineData("CreateUser1", "NewPassword1", UserType.Manager)]
         [InlineData("!Passenger1", "!@#$%1", UserType.Passenger)]
         [InlineData("2331", "123456789101", UserType.Passenger)]
@@ -55,16 +53,15 @@ namespace AirportTicketExercise.Test
                 UserType = userType
             };
 
-            _fixture.UserService.CreateUser(user);
+            CreateUser(user);
 
             Assert.Throws<DuplicateNameException>(() =>
             {
-                _fixture.UserService.CreateUser(user);
+                CreateUser(user);
             });
         }
 
         [Theory]
-        [Trait("Category", "CreateUser")]
         [InlineData("ManagerUser1234567", "Password", UserType.Manager)]
         [InlineData("ManagerUser", "Password123123123123", UserType.Manager)]
         [InlineData("", "Password", UserType.Passenger)]
@@ -90,7 +87,6 @@ namespace AirportTicketExercise.Test
 
 
         [Theory]
-        [Trait("Category", "AuthenticateUser")]
         [InlineData("ManagerUser2", "pass2", UserType.Manager)]
         [InlineData("!Passenger2", "!@#$%2", UserType.Passenger)]
         [InlineData("23312", "123456789", UserType.Passenger)]
@@ -103,7 +99,7 @@ namespace AirportTicketExercise.Test
                 Password = password,
                 UserType = userType
             };
-            _fixture.UserService.CreateUser(expectedUser);
+            CreateUser(expectedUser);
 
             User? actualUser = _fixture.UserService.Authenticate(expectedUser);
 
@@ -112,7 +108,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "AuthenticateUser")]
         [InlineData("ManagerUser3", "pass3", UserType.Manager)]
         [InlineData("!Passenger3", "!@#$%3", UserType.Passenger)]
         [InlineData("23323", "1234567891023", UserType.Passenger)]
@@ -132,7 +127,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "GetUser")]
         [InlineData("ManagerUser3", "pass3", UserType.Manager)]
         [InlineData("!Passenger3", "!@#$%3", UserType.Passenger)]
         [InlineData("23323", "12345678910", UserType.Passenger)]
@@ -145,7 +139,7 @@ namespace AirportTicketExercise.Test
                 Password = password,
                 UserType = userType
             };
-            _fixture.UserService.CreateUser(expectedUser);
+            CreateUser(expectedUser);
 
             User? actualUser = _fixture.UserService.GetUser(expectedUser.UserId);
 
@@ -154,7 +148,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "GetUser")]
         [InlineData("ManagerUser3", "pass3", UserType.Manager)]
         [InlineData("!Passenger3", "!@#$%3", UserType.Passenger)]
         [InlineData("23323", "12345678910", UserType.Passenger)]
@@ -174,7 +167,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "GetUser")]
         [InlineData("ManagerUser3", "pass3", UserType.Manager)]
         [InlineData("!Passenger3", "!@#$%3", UserType.Passenger)]
         [InlineData("23323", "12345678910", UserType.Passenger)]
@@ -187,7 +179,7 @@ namespace AirportTicketExercise.Test
                 Password = password,
                 UserType = userType
             };
-            _fixture.UserService.CreateUser(expectedUser);
+            CreateUser(expectedUser);
 
             User? actualUser = _fixture.UserService.GetUserByName(expectedUser.Name);
 
@@ -196,7 +188,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "GetUser")]
         [InlineData("ManagerUser3", "pass3", UserType.Manager)]
         [InlineData("!Passenger3", "!@#$%3", UserType.Passenger)]
         [InlineData("23323", "12345678910", UserType.Passenger)]
@@ -216,7 +207,6 @@ namespace AirportTicketExercise.Test
         }
 
         [Theory]
-        [Trait("Category", "GetUser")]
         [InlineData(UserType.Manager, 3)]
         [InlineData(UserType.Passenger, 2)]
         public void GetUsersByType_WithValidData_ShouldReturnUserList(UserType expectedUserType, int expectedSize)
@@ -259,11 +249,11 @@ namespace AirportTicketExercise.Test
                 UserType = UserType.Manager
             };
 
-            _fixture.UserService.CreateUser(user1);
-            _fixture.UserService.CreateUser(user2);
-            _fixture.UserService.CreateUser(user3);
-            _fixture.UserService.CreateUser(user4);
-            _fixture.UserService.CreateUser(user5);
+            CreateUser(user1);
+            CreateUser(user2);
+            CreateUser(user3);
+            CreateUser(user4);
+            CreateUser(user5);
 
             //Act
             var actualUserList = _fixture.UserService.GetUserByType(expectedUserType);
@@ -273,5 +263,12 @@ namespace AirportTicketExercise.Test
                     .HaveCount(expectedSize)
                     .And.OnlyContain(user => user.UserType == expectedUserType);
         }
+
+        private void CreateUser(User user)
+        {
+            _fixture.UserService.CreateUser(user);
+        }
+
+
     }
 }

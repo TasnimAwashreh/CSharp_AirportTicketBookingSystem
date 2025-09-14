@@ -9,14 +9,12 @@ namespace ATB.Logic.Service
     public class BookingService : IBookingService
     {
         private readonly IBookingRepository _bookingRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IFlightRepository _flightRepository;
         private readonly IBookingsFilterRepository _bookingsFilterRepository;
 
-        public BookingService(IBookingRepository bookingRepository, IUserRepository userRepository, IFlightRepository flightRepository, IBookingsFilterRepository bookingsFilterRepository)
+        public BookingService(IBookingRepository bookingRepository, IFlightRepository flightRepository, IBookingsFilterRepository bookingsFilterRepository)
         {
             _bookingRepository = bookingRepository;
-            _userRepository = userRepository;
             _flightRepository = flightRepository;
             _bookingsFilterRepository = bookingsFilterRepository;
         }
@@ -65,11 +63,14 @@ namespace ATB.Logic.Service
             _bookingRepository.UpdateBookingClass(bookingId, bookingClass);
         }
 
-        public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)
+        public void PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser)
         {
             Flight? flight = _flightRepository.GetFlight(flightId);
-            if (flight == null || flight.SeatsAvailable >= flight.SeatCapacity)
-                return false;
+            if (flight == null) 
+                throw new KeyNotFoundException();
+            if (flight.SeatsAvailable >= flight.SeatCapacity)
+                throw new InvalidOperationException();
+
             decimal price = bookingClass switch
             {
                 BookingClass.First => flight.FirstClassPrice,
@@ -78,7 +79,7 @@ namespace ATB.Logic.Service
                 _ => 0
             };
             if (price == 0)
-                return false;
+                throw new InvalidOperationException();
             var Booking = new Booking
             {
                 FlightId = flightId,
@@ -87,7 +88,6 @@ namespace ATB.Logic.Service
             };
             _bookingRepository.CreateBooking(Booking);
             _flightRepository.AddPassengerToSeat(flight);
-            return true;
         }
 
         public List<Booking> FilterBookings(string[] filterInput)

@@ -7,7 +7,7 @@ namespace ATB.Logic.Service
     {
         List<Flight> GetFlights();
         public string ValidateFlightData(string importPath);
-        public void ImportFlightData(string importPath);
+        public List<Flight> ImportFlightData(string importPath);
         public string FlightsToString(List<Flight> Flights);
         public List<Flight> Search(string[] searchInput);
 

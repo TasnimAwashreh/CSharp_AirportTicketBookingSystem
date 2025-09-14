@@ -11,7 +11,7 @@ namespace ATB.Logic.Service
         bool IsBookingValidById(int BookingId, int passengerId);
         List<Booking> FilterBookings(string[] filterInput);
         public bool UpdateBookingClass(int bookingId, BookingClass newClass);
-        public bool PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser);
+        public void PassengerBookFlight(int flightId, BookingClass bookingClass, User loggedInUser);
         public void Cancel(int bookingId, User loggedInUser);
         public void Modify(int bookingId, BookingClass bookingClass, User loggedInUser);
         public string BookingsToString(List<Booking> BookingList);

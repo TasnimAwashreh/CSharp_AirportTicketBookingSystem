@@ -34,7 +34,7 @@ namespace AirportTicketBookingExercise.App.Commands.CommandExecuter
             }
             else if (loggedInUser.UserType == UserType.Passenger)
             {
-                                Console.WriteLine("Only managers can use these commands! Please log out as a passenger and log back in as a manager");
+                Console.WriteLine("Only managers can use these commands! Please log out as a passenger and log back in as a manager");
                 return loggedInUser;
             }
             else
