@@ -9,7 +9,7 @@ on:
     - '**.csproj'
 
 env:
-  DOTNET_VERSION: '8.0.x' # The .NET SDK version to use
+  DOTNET_VERSION: '8.0.3'
 
 jobs:
   build-and-test:
@@ -29,7 +29,6 @@ jobs:
 
     - name: Create placeholder CSVs
       run: |
-        mkdir -p AirportTicketBookingExercise/Data/Db
         echo "UserId,Name,Password,UserType" > AirportTicketBookingExercise/Data/Db/users.csv
         echo "BookingId,UserId,FlightId,Date" > AirportTicketBookingExercise/Data/Db/bookings.csv
         echo "FlightId,FlightName,DepartureCountry,DestinationCountry" > AirportTicketBookingExercise/Data/Db/flights.csv
