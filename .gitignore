@@ -366,7 +366,3 @@ FodyWeavers.xsd
 /AirportTicketBookingExercise/Data/Db/users.csv
 /AirportTicketBookingExercise/Data/Db/flights.csv
 /Flights.csv
-/AirportTicketExercise.Test/Db/bookings.csv
-/AirportTicketExercise.Test/Db/flights.csv
-/AirportTicketExercise.Test/Db/users.csv
-/AirportTicketExercise.Test/Db/importedflights.csv
