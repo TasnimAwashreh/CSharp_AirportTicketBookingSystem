@@ -27,6 +27,12 @@ jobs:
       with:
         dotnet-version: ${{ env.DOTNET_VERSION }}
 
+    - name: Create placeholder CSVs
+      run: |
+        echo "UserId,Name,Password,UserType" > AirportTicketBookingExercise/Data/Db/users.csv
+        echo "BookingId,UserId,FlightId,Date" > AirportTicketBookingExercise/Data/Db/bookings.csv
+        echo "FlightId,FlightName,DepartureCountry,DestinationCountry" > AirportTicketBookingExercise/Data/Db/flights.csv
+
     - name: Install dependencies
       run: dotnet restore
       
