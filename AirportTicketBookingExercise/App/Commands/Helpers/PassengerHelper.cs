@@ -90,15 +90,23 @@ namespace AirportTicketBookingExercise.App.Commands.Helpers
                 }
                 int flightId = int.Parse(productInfo[1]);
                 BookingClass bookingClass = productInfo[2].ParseBookingClass();
-                bool isBookingSuccessful = _bookingService.PassengerBookFlight(flightId, bookingClass, loggedInUser);
-                if (!isBookingSuccessful)
+                _bookingService.PassengerBookFlight(flightId, bookingClass, loggedInUser);
+
                     Console.WriteLine("Please make sure the flight and flight class is available when booking");
-                else
-                    Console.WriteLine("Booking successful! Please enjoy your flight");
+
+                Console.WriteLine("Booking successful! Please enjoy your flight");
             }
             catch (FormatException)
             {
                 Console.WriteLine("Please enter the id of the flight you want to book and the class (first, economy, business)");
+            }
+            catch (InvalidOperationException)
+            {
+                Console.WriteLine("Please make sure the flight class is available when booking");
+            }
+            catch (KeyNotFoundException)
+            {
+                Console.WriteLine("Please make sure the flight is available when booking");
             }
             catch (Exception ex)
             {

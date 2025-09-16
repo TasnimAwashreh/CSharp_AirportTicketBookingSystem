@@ -1,0 +1,6 @@
+FlightId,FlightName,DepartureCountry,DestinationCountry,DepartureAirport,ArrivalAirport,DepartureDate,EconomyPrice,BuisnessPrice,FirstClassPrice,SeatCapacity,SeatsAvailable
+1,SkyJet 101,Germany,France,Berlin Brandenburg,Charles de Gaulle,09/17/2025 18:29:25,120.50,350.00,750.00,180,150
+2,EuroFly 202,Spain,Italy,Madrid Barajas,Rome Fiumicino,09/21/2025 18:29:25,90.00,280.00,600.00,200,180
+3,AirConnect 303,Netherlands,United Kingdom,Amsterdam Schiphol,London Heathrow,09/15/2025 18:29:25,70.00,250.00,500.00,150,120
+4,TransEuro 404,Sweden,Norway,Stockholm Arlanda,Oslo Gardermoen,09/24/2025 18:29:25,85.00,260.00,520.00,160,140
+5,Baltic Wings 505,Poland,Lithuania,Warsaw Chopin,Vilnius Airport,09/19/2025 18:29:25,65.00,220.00,480.00,140,100

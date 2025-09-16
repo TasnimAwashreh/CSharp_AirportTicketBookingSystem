@@ -21,7 +21,6 @@ namespace ATB.Data.Db
             CsvActionsHelper.CreateCSVFile<User, UserMap>(_usersPath);
             CsvActionsHelper.CreateCSVFile<Booking, BookingMap>(_bookingsPath);
             CsvActionsHelper.CreateCSVFile<Flight, FlightMap>(_flightsPath);
-            
         }
     }
 }
