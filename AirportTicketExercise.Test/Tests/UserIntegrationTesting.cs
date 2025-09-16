@@ -9,11 +9,11 @@ using System.Data;
 namespace AirportTicketExercise.Test.Tests
 {
     [Collection("User Service")]
-    public class UserIntegrationTesting : IClassFixture<AirportTicketBookingFixture>
+    public class UserIntegrationTesting : IClassFixture<UserServiceFixture>
     {
-        private readonly AirportTicketBookingFixture _fixture;
+        private readonly UserServiceFixture _fixture;
 
-        public UserIntegrationTesting(AirportTicketBookingFixture atbFixture)
+        public UserIntegrationTesting(UserServiceFixture atbFixture)
         {
             _fixture = atbFixture;
         }

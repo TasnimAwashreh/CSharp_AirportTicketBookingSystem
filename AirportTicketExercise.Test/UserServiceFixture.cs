@@ -11,16 +11,14 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace AirportTicketExercise.Test
 {
-    public class AirportTicketBookingFixture : IDisposable
+    public class UserServiceFixture : IDisposable
     {
         public ServiceProvider ServiceProvider { get; }
-        public IBookingService BookingService { get; }
-        public IFlightService FlightService { get; }
         public IUserService UserService { get; }
 
         private DatabaseManager _databaseManager { get; }
 
-        public AirportTicketBookingFixture()
+        public UserServiceFixture()
         {
             var services = new ServiceCollection();
             services
@@ -31,10 +29,7 @@ namespace AirportTicketExercise.Test
             using var scope = ServiceProvider.CreateScope();
             _databaseManager = scope.ServiceProvider.GetRequiredService<DatabaseManager>();
             _databaseManager.CreateDatabase();
-
-            FlightService = scope.ServiceProvider.GetRequiredService<IFlightService>();
             UserService = scope.ServiceProvider.GetRequiredService<IUserService>();
-            BookingService = scope.ServiceProvider.GetRequiredService<IBookingService>();
 
             ResetFiles();
         }
